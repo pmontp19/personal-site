@@ -2,30 +2,21 @@
 import Header from "../components/Header.astro";
 import Layout from "../layouts/Layout.astro";
 import InteractiveAvatar from "../components/InteractiveAvatar.astro";
+import BlogPosts from "../components/BlogPosts.astro";
+import MagicCard from "../components/MagicCard.astro";
 
 const year = new Date().getFullYear();
 ---
 
 <Layout>
-	<!-- Header -->
-	<header>
-		<div class="container">
-			<div class="header-content">
-				<a href="/" class="logo"> Jane Doe </a>
-				<nav>
-					<a href="/blog">Blog</a>
-					<a href="/cv">CV</a>
-				</nav>
-			</div>
-		</div>
-	</header>
+	 <Header />
 
 	<main class="container">
 		<!-- About Me -->
 		<section class="about">
 			<div class="about-grid">
 				<div class="about-content">
-					<h1>Hello, I'm Jane Doe</h1>
+					<h1>Hola, soc Pere Montpeó</h1>
 					<p>
 						I'm a software engineer passionate about creating
 						intuitive and efficient web applications. With over 5
@@ -44,62 +35,19 @@ const year = new Date().getFullYear();
 
 		<!-- Current Job -->
 		<section class="job">
-			<h2>Current Position</h2>
-			<div class="job-card">
-				<h3>Senior Frontend Engineer</h3>
-				<p class="company">TechCorp Inc.</p>
+			<h2>Actualment</h2>
+			<MagicCard>
+				<h3>Software Engineer</h3>
+				<p class="company">Decathlon</p>
 				<p class="description">
 					Leading the development of our flagship product, focusing on
 					performance optimization and accessibility.
 				</p>
-			</div>
+			</MagicCard>
 		</section>
 
 		<!-- Blog -->
-		<section class="blog">
-			<div class="blog-header">
-				<h2>Recent Blog Posts</h2>
-				<a href="/blog" class="view-all"> View all posts → </a>
-			</div>
-			<div class="posts-grid">
-				{
-					[
-						{
-							title: "Optimizing React Performance",
-							excerpt:
-								"Learn how to identify and fix common performance bottlenecks in React applications.",
-							date: "April 2, 2025",
-							slug: "optimizing-react-performance",
-						},
-						{
-							title: "The Future of Web Development",
-							excerpt:
-								"Exploring upcoming technologies that will shape the future of web development.",
-							date: "March 15, 2025",
-							slug: "future-of-web-development",
-						},
-						{
-							title: "Building Accessible UIs",
-							excerpt:
-								"A comprehensive guide to creating web applications that everyone can use.",
-							date: "February 28, 2025",
-							slug: "building-accessible-uis",
-						},
-					].map((post) => (
-						<article>
-							<div class="post-content">
-								<time>{post.date}</time>
-								<h3>{post.title}</h3>
-								<p>{post.excerpt}</p>
-							</div>
-							<a href={`/blog/${post.slug}`} class="read-more">
-								Read more →
-							</a>
-						</article>
-					))
-				}
-			</div>
-		</section>
+		<BlogPosts />
 	</main>
 
 	<!-- Footer -->
@@ -107,12 +55,11 @@ const year = new Date().getFullYear();
 		<div class="container">
 			<div class="footer-content">
 				<p class="copyright">
-					&copy; <span id="footer-year">{year}</span> Jane Doe. All rights
-					reserved.
+					&copy; <span id="footer-year">{year}</span> Pere Montpeó. Tots els drets reservats.
 				</p>
 				<div class="social-links">
 					<a
-						href="https://github.com"
+						href="https://github.com/pmontp19"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -132,7 +79,7 @@ const year = new Date().getFullYear();
 						<span class="sr-only">GitHub</span>
 					</a>
 					<a
-						href="https://twitter.com"
+						href="https://twitter.com/pmontp19"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -151,7 +98,7 @@ const year = new Date().getFullYear();
 						<span class="sr-only">Twitter</span>
 					</a>
 					<a
-						href="https://linkedin.com"
+						href="https://linkedin.com/in/perem"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -326,30 +273,6 @@ const year = new Date().getFullYear();
 		}
 	}
 
-	.job-card {
-		border-radius: 0.5rem;
-		border: 1px solid #1e293b;
-		background-color: var(--card);
-		padding: 1rem;
-	}
-
-	@media (min-width: 768px) {
-		.job-card {
-			padding: 1.5rem;
-		}
-	}
-
-	.job-card h3 {
-		font-size: 1.125rem;
-		font-weight: 500;
-	}
-
-	@media (min-width: 768px) {
-		.job-card h3 {
-			font-size: 1.25rem;
-		}
-	}
-
 	.company {
 		color: #9ca3af;
 	}
@@ -358,111 +281,6 @@ const year = new Date().getFullYear();
 		margin-top: 0.5rem;
 		font-size: 0.875rem;
 		color: #6b7280;
-	}
-
-	/* Blog section */
-	.blog-header {
-		margin-bottom: 1rem;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	@media (min-width: 768px) {
-		.blog-header {
-			margin-bottom: 1.5rem;
-		}
-	}
-
-	.view-all {
-		font-size: 0.875rem;
-		font-weight: 500;
-	}
-
-	.view-all:hover {
-		text-decoration: underline;
-	}
-
-	/* Blog posts grid */
-	.posts-grid {
-		display: grid;
-		gap: 1rem;
-	}
-
-	@media (min-width: 640px) {
-		.posts-grid {
-			grid-template-columns: repeat(2, 1fr);
-			gap: 1.5rem;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.posts-grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-
-	/* Blog post article */
-	.posts-grid article {
-		border-radius: 0.5rem;
-		border: 1px solid #1e293b;
-		background-color: var(--card);
-		padding: 1rem;
-	}
-
-	@media (min-width: 768px) {
-		.posts-grid article {
-			padding: 1.5rem;
-		}
-	}
-
-	.post-content {
-		margin-bottom: 0.5rem;
-	}
-
-	.post-content time {
-		display: block;
-		font-size: 0.75rem;
-		color: #6b7280;
-	}
-
-	@media (min-width: 640px) {
-		.post-content time {
-			font-size: 0.875rem;
-		}
-	}
-
-	.post-content h3 {
-		font-size: 1.125rem;
-		font-weight: 500;
-	}
-
-	@media (min-width: 768px) {
-		.post-content h3 {
-			font-size: 1.25rem;
-		}
-	}
-
-	.post-content p {
-		font-size: 0.875rem;
-		color: #9ca3af;
-	}
-
-	@media (min-width: 640px) {
-		.post-content p {
-			font-size: 1rem;
-		}
-	}
-
-	.read-more {
-		margin-top: 0.75rem;
-		display: inline-block;
-		font-size: 0.875rem;
-		font-weight: 500;
-	}
-
-	.read-more:hover {
-		text-decoration: underline;
 	}
 
 	/* Footer */

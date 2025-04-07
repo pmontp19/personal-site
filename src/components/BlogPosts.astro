@@ -1,120 +1,167 @@
 ---
-// Since we're just building a simple homepage example, I'll add some placeholder blog posts
-// In a full implementation, you would fetch these from your content collection
+// Import content collection utilities
+import { getCollection } from "astro:content";
+import MagicCard from "./MagicCard.astro";
 
-const blogPosts = [
-  {
-    title: "Getting started",
-    description: "Hit the ground running.",
-    date: "Mar 22 2024",
-    slug: "getting-started"
-  },
-  {
-    title: "Building with Astro",
-    description: "Learn how to build fast websites with Astro.",
-    date: "Mar 28 2024",
-    slug: "building-with-astro"
-  },
-  {
-    title: "Modern Web Development",
-    description: "Best practices for modern web development.",
-    date: "Apr 1 2024",
-    slug: "modern-web-development"
-  }
-];
+// Get all blog posts and sort them by date (newest first)
+const allPosts = await getCollection("blog");
+const sortedPosts = allPosts
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3); // Just take the 3 most recent posts for the homepage
+
+// Format date function
+function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat("ca-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+}
 ---
 
 <section class="section blog-section">
-  <div class="container">
-    <h2 class="section-title">Latest Blog Posts</h2>
-    <div class="blog-posts">
-      {blogPosts.map((post) => (
-        <article class="blog-post">
-          <h3 class="post-title">
-            <a href={`/blog/${post.slug}`}>{post.title}</a>
-          </h3>
-          <div class="post-meta">{post.date}</div>
-          <p class="post-description">{post.description}</p>
-          <a href={`/blog/${post.slug}`} class="read-more">Read More</a>
-        </article>
-      ))}
-    </div>
-    <div class="view-all">
-      <a href="/blog" class="view-all-link">View All Posts</a>
-    </div>
+  <div class="section-header">
+    <h2 class="section-title">Apunts recents</h2>
+    <a href="/blog" class="view-all-link-text">Veure tots →</a>
+  </div>
+
+  <div class="blog-posts">
+    {
+      sortedPosts.map((post) => (
+        <MagicCard class="blog-post-card">
+          <div class="post-content">
+            <time datetime={post.data.date.toISOString()}>
+              {formatDate(post.data.date)}
+            </time>
+            <h3 class="post-title">
+              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+            </h3>
+            <p class="post-description">{post.data.description}</p>
+          </div>
+          <a href={`/blog/${post.slug}`} class="read-more">
+            Llegir més →
+          </a>
+        </MagicCard>
+      ))
+    }
   </div>
 </section>
 
 <style>
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+	h2 {
+		margin-bottom: 1rem;
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+
+	@media (min-width: 768px) {
+		h2 {
+			margin-bottom: 1.5rem;
+			font-size: 1.5rem;
+		}
+	}
+
+  .view-all-link-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .view-all-link-text:hover {
+    text-decoration: underline;
+  }
+
   .blog-posts {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-bottom: 30px;
+    gap: 1rem;
   }
 
-  .blog-post {
-    padding: 25px;
-    border-radius: 8px;
-    background-color: var(--color-accent);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  @media (min-width: 640px) {
+    .blog-posts {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
   }
 
-  .blog-post:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  @media (min-width: 1024px) {
+    .blog-posts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Since MagicCard handles the base card styling, we only need to add specific blog post styling */
+  .blog-post-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .post-content {
+    flex: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  time {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    time {
+      font-size: 0.875rem;
+    }
   }
 
   .post-title {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.3rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
   }
 
-  .post-meta {
-    color: var(--color-text-light);
-    font-size: 0.9rem;
-    margin-bottom: 10px;
+  @media (min-width: 768px) {
+    .post-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .post-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .post-title a:hover {
+    color: #3b82f6;
   }
 
   .post-description {
-    margin-bottom: 15px;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin: 0;
+  }
+
+  @media (min-width: 640px) {
+    .post-description {
+      font-size: 1rem;
+    }
   }
 
   .read-more {
+    margin-top: auto;
     display: inline-block;
+    font-size: 0.875rem;
     font-weight: 500;
   }
 
-  .view-all {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .view-all-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-    color: white;
-    border-radius: 5px;
-    font-weight: 500;
-    transition: opacity 0.2s ease;
-  }
-
-  .view-all-link:hover {
-    opacity: 0.9;
-    color: white;
-  }
-
-  @media (max-width: 900px) {
-    .blog-posts {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 600px) {
-    .blog-posts {
-      grid-template-columns: 1fr;
-    }
+  .read-more:hover {
+    text-decoration: underline;
+    color: #3b82f6;
   }
 </style>

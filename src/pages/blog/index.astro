@@ -1,0 +1,125 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import MagicCard from "../../components/MagicCard.astro";
+import { getCollection } from "astro:content";
+
+// Get all blog posts and sort by date (newest first)
+const allPosts = await getCollection("blog");
+const sortedPosts = allPosts.sort((a, b) => 
+  b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Format date function
+function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat('ca-ES', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  }).format(date);
+}
+---
+
+<Layout title="Blog | Pere Montpeó">
+  <Header />
+
+  <main class="container">
+    <section class="blog-section">
+      <h1>Apunts</h1>
+      <p class="subtitle">Pensaments, tutorials i apunts sobre desenvolupament web i tecnologia.</p>
+      
+      <div class="posts">
+        {sortedPosts.map((post) => (
+          <MagicCard class="post-card">
+            <div class="post-content">
+              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+              <h2 class="post-title">{post.data.title}</h2>
+              <p class="post-excerpt">{post.data.description}</p>
+            </div>
+            <a href={`/blog/${post.slug}`} class="read-more">Llegir més →</a>
+          </MagicCard>
+        ))}
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .blog-section {
+    padding: 2rem 0 3rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #9ca3af;
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
+
+  .posts {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  /* Specific styling for blog post content inside MagicCard */
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .post-content {
+    flex: 1;
+  }
+
+  .post-content time {
+    display: block;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-excerpt {
+    color: #9ca3af;
+    margin-bottom: 1rem;
+  }
+
+  .read-more {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: auto;
+  }
+
+  .read-more:hover {
+    text-decoration: underline;
+    color: #3b82f6;
+  }
+
+  @media (min-width: 768px) {
+    .posts {
+      gap: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .post-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
