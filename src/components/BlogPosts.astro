@@ -1,0 +1,120 @@
+---
+// Since we're just building a simple homepage example, I'll add some placeholder blog posts
+// In a full implementation, you would fetch these from your content collection
+
+const blogPosts = [
+  {
+    title: "Getting started",
+    description: "Hit the ground running.",
+    date: "Mar 22 2024",
+    slug: "getting-started"
+  },
+  {
+    title: "Building with Astro",
+    description: "Learn how to build fast websites with Astro.",
+    date: "Mar 28 2024",
+    slug: "building-with-astro"
+  },
+  {
+    title: "Modern Web Development",
+    description: "Best practices for modern web development.",
+    date: "Apr 1 2024",
+    slug: "modern-web-development"
+  }
+];
+---
+
+<section class="section blog-section">
+  <div class="container">
+    <h2 class="section-title">Latest Blog Posts</h2>
+    <div class="blog-posts">
+      {blogPosts.map((post) => (
+        <article class="blog-post">
+          <h3 class="post-title">
+            <a href={`/blog/${post.slug}`}>{post.title}</a>
+          </h3>
+          <div class="post-meta">{post.date}</div>
+          <p class="post-description">{post.description}</p>
+          <a href={`/blog/${post.slug}`} class="read-more">Read More</a>
+        </article>
+      ))}
+    </div>
+    <div class="view-all">
+      <a href="/blog" class="view-all-link">View All Posts</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .blog-posts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  .blog-post {
+    padding: 25px;
+    border-radius: 8px;
+    background-color: var(--color-accent);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .blog-post:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .post-title {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+  }
+
+  .post-meta {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .post-description {
+    margin-bottom: 15px;
+  }
+
+  .read-more {
+    display: inline-block;
+    font-weight: 500;
+  }
+
+  .view-all {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .view-all-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+  }
+
+  .view-all-link:hover {
+    opacity: 0.9;
+    color: white;
+  }
+
+  @media (max-width: 900px) {
+    .blog-posts {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .blog-posts {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

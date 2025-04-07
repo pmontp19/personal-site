@@ -1,0 +1,108 @@
+---
+---
+
+<section id="about" class="section about-section">
+  <div class="container">
+    <div class="about-content">
+      <div class="about-text">
+        <h2 class="section-title">About Me</h2>
+        <p>
+          Hello! I'm a passionate web developer and creative thinker with a strong focus on building 
+          modern, user-friendly applications. With expertise in frontend technologies and a keen eye 
+          for design, I create seamless digital experiences that are both functional and beautiful.
+        </p>
+        <p>
+          When I'm not coding, you can find me exploring new technologies, contributing to open source projects, 
+          or enjoying outdoor activities. I believe in continuous learning and sharing knowledge with the community.
+        </p>
+        <div class="skills">
+          <div class="skill-tag">JavaScript</div>
+          <div class="skill-tag">TypeScript</div>
+          <div class="skill-tag">React</div>
+          <div class="skill-tag">Node.js</div>
+          <div class="skill-tag">Astro</div>
+          <div class="skill-tag">CSS/SCSS</div>
+        </div>
+      </div>
+      <div class="about-image">
+        <div class="image-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <p>Your Photo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section {
+    background-color: white;
+  }
+  
+  .about-content {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 40px;
+    align-items: center;
+  }
+  
+  .about-text p {
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+  
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 25px;
+  }
+  
+  .skill-tag {
+    background: linear-gradient(90deg, rgba(50, 69, 255, 0.1), rgba(188, 82, 238, 0.1));
+    border: 1px solid rgba(50, 69, 255, 0.3);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .about-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .image-placeholder {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-text-light);
+    border: 3px solid rgba(50, 69, 255, 0.1);
+  }
+  
+  .image-placeholder p {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 900px) {
+    .about-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .about-image {
+      order: -1;
+      margin-bottom: 30px;
+    }
+  }
+</style>

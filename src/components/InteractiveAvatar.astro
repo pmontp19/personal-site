@@ -1,0 +1,311 @@
+---
+// Interactive Avatar Component
+import { Image } from "astro:assets";
+import avatarImage from "../assets/avatar.png";
+
+let isWinking = false;
+---
+
+<div id="avatarContainer">
+    <div class="face-container">
+        <Image
+            src={avatarImage}
+            alt="Avatar"
+            class="avatar-image"
+            loading="eager"
+        />
+
+        <div class="eyes-overlay">
+            <svg
+                viewBox="0 0 200 200"
+                xmlns="http://www.w3.org/2000/svg"
+                class="eyes-svg"
+            >
+                <g class="eye">
+                    <circle cx="74" cy="71" r="6" fill="#fdf4e4"></circle>
+                    <ellipse
+                        id="leftPupil"
+                        cx="74"
+                        cy="71"
+                        rx="3.5"
+                        ry="5"
+                        fill="#111827"></ellipse>
+                </g>
+
+                <!-- Right eye - will change between winking and normal -->
+                <g id="rightEye" class="eye">
+                    <circle cx="106" cy="71" r="6" fill="#fdf4e4"></circle>
+
+                    <ellipse
+                        id="rightPupil"
+                        cx="106"
+                        cy="71"
+                        rx="3.5"
+                        ry="5"
+                        fill="#111827"></ellipse>
+                </g>
+
+                <g class="eye-wink hidden">
+                    <rect
+                        id="winkRect"
+                        x="102"
+                        y="70"
+                        width="10"
+                        height="3"
+                        rx="1.5"
+                        fill="#111827"
+                        class="wink"></rect>
+                </g>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Flag to prevent overlapping wink animations
+    let isWinking = false;
+
+    // --- DOM Element Cache ---
+    // We select elements once on load for better performance.
+    let avatarContainer: HTMLElement | null = null;
+    let leftPupil: SVGElement | null = null;
+    let rightPupil: SVGElement | null = null;
+    let winkElement: SVGGElement | null = null; // Cache the wink group
+    let winkRect: SVGRectElement | null = null; // Cache the wink rect itself if needed for position updates
+
+    /**
+     * Updates the position of an SVG element (pupil or wink).
+     * @param {SVGElement | null} element - The SVG element to move.
+     * @param {number} baseX - The base X coordinate (center).
+     * @param {number} baseY - The base Y coordinate (center).
+     * @param {number} offsetX - The calculated horizontal offset based on cursor/touch.
+     * @param {number} offsetY - The calculated vertical offset based on cursor/touch.
+     */
+    function updateElementPosition(
+        element: SVGElement | null,
+        baseX: number,
+        baseY: number,
+        offsetX: number,
+        offsetY: number,
+    ) {
+        if (!element) return;
+
+        const newX = (baseX + offsetX).toString();
+        const newY = (baseY + offsetY).toString();
+
+        // Update attributes based on element type
+        if (element.tagName.toLowerCase() === "ellipse") {
+            element.setAttribute("cx", newX);
+            element.setAttribute("cy", newY);
+        } else if (element.tagName.toLowerCase() === "rect") {
+            // Adjust position for rect (top-left corner)
+            element.setAttribute("x", newX);
+            element.setAttribute("y", newY);
+        }
+    }
+
+    /**
+     * Handles mouse and touch movement to make the eyes follow.
+     * @param {number} clientX - The client X coordinate from the event.
+     * @param {number} clientY - The client Y coordinate from the event.
+     */
+    function handlePointerMove(clientX: number, clientY: number) {
+        if (!avatarContainer) return;
+
+        const avatarRect = avatarContainer.getBoundingClientRect();
+        // Calculate the approximate center of the eyes within the SVG viewBox (0-200)
+        // These values (90, 64) might need adjustment depending on the avatar image layout.
+        // They represent the perceived center point from which the eyes should track.
+        const avatarCenterX = avatarRect.left + (avatarRect.width * 90) / 200;
+        const avatarCenterY = avatarRect.top + (avatarRect.height * 64) / 200;
+
+        // Calculate direction vector from avatar eye center to pointer
+        const deltaX = clientX - avatarCenterX;
+        const deltaY = clientY - avatarCenterY;
+
+        // Calculate distance and limit movement range
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const maxDistance = 4; // Max pixels the pupils can move from center
+        const clampedDistance = Math.min(distance, maxDistance);
+
+        // Calculate the final offset, preserving direction
+        const normalizedX = distance === 0 ? 0 : (deltaX / distance) * clampedDistance;
+        const normalizedY = distance === 0 ? 0 : (deltaY / distance) * clampedDistance;
+
+        // Update SVG element positions using the cached elements
+        // Base coordinates are the original 'cx'/'cy' or 'x'/'y' from the SVG
+        updateElementPosition(leftPupil, 74, 71, normalizedX, normalizedY);
+        updateElementPosition(rightPupil, 106, 71, normalizedX, normalizedY);
+
+        // --- Wink Movement ---
+        // This moves the wink rectangle along with the pupils.
+        // If the wink should stay fixed relative to the eye circle, remove this line.
+        updateElementPosition(winkRect, 102, 70, normalizedX, normalizedY);
+         // --- End Wink Movement ---
+    }
+
+    /**
+     * Triggers the wink animation using CSS classes.
+     */
+    function triggerWink() {
+        // Only wink if not already winking
+        if (!isWinking && rightPupil && winkElement) {
+            isWinking = true;
+
+            // Hide the pupil, show the wink
+            rightPupil.classList.add("hidden");
+            winkElement.classList.remove("hidden");
+
+            // Set a timeout to revert the wink
+            setTimeout(() => {
+                // Show the pupil, hide the wink
+                if (rightPupil) rightPupil.classList.remove("hidden");
+                if (winkElement) winkElement.classList.add("hidden");
+                isWinking = false; // Allow winking again
+            }, 300); // Wink duration in milliseconds
+        }
+    }
+
+    /**
+     * Initializes the component, caches elements, and sets up listeners.
+     */
+    function initializeAvatar() {
+        // Cache DOM elements
+        avatarContainer = document.getElementById("avatarContainer");
+        leftPupil = document.getElementById("leftPupil") as SVGElement | null;
+        rightPupil = document.getElementById("rightPupil") as SVGElement | null;
+        winkElement = document.querySelector(".eye-wink") as SVGGElement | null; // Cache the group
+        winkRect = document.getElementById("winkRect") as SVGRectElement | null; // Cache the rect
+
+        // Ensure initial state (wink hidden)
+        if (winkElement) {
+             winkElement.classList.add("hidden");
+        }
+         if (rightPupil) {
+            rightPupil.classList.remove("hidden");
+        }
+
+
+        if (!avatarContainer) {
+            console.error("Avatar container not found!");
+            return;
+        }
+
+        // --- Event Listeners ---
+
+        // Eyes follow mouse movement globally on the window.
+        // To track only when hovering over the avatar, change 'window' to 'avatarContainer'.
+        window.addEventListener("mousemove", (e: MouseEvent) => {
+            handlePointerMove(e.clientX, e.clientY);
+        });
+
+        // Eyes follow touch movement globally
+        window.addEventListener("touchmove", (e: TouchEvent) => {
+            if (e.touches.length > 0) {
+                handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true }); // Use passive listener for touchmove performance
+
+        // Trigger wink on click/tap
+        avatarContainer.addEventListener("click", triggerWink);
+        avatarContainer.addEventListener("touchstart", (e) => {
+             // Prevent triggering mousemove right after touchstart
+             e.preventDefault();
+             triggerWink();
+        }, { passive: false }); // Need false to allow preventDefault
+
+        // Random winking interval
+        const randomWinkInterval = setInterval(() => {
+            // Approx 10% chance to wink every 3 seconds
+            if (Math.random() < 0.1) {
+                triggerWink();
+            }
+        }, 3000);
+
+        // --- Astro View Transitions Cleanup ---
+        // Remove listeners when the component is about to be swapped out
+        // to prevent memory leaks.
+        document.addEventListener("astro:before-swap", () => {
+            window.removeEventListener("mousemove", handlePointerMove);
+            window.removeEventListener("touchmove", handlePointerMove);
+            // No need to remove listeners on avatarContainer if it's being removed anyway
+            clearInterval(randomWinkInterval);
+        }, { once: true }); // Listener should only run once per swap
+    }
+
+    // Initialize when the DOM is ready
+    if (document.readyState === "loading") {
+        // Loading hasn't finished yet
+        document.addEventListener("DOMContentLoaded", initializeAvatar);
+    } else {
+        // `DOMContentLoaded` has already fired
+        initializeAvatar();
+    }
+
+</script>
+
+
+<style>
+    #avatarContainer {
+        position: relative;
+        height: 12rem; /* h-48 */
+        width: 12rem; /* w-48 */
+        overflow: hidden;
+        border-radius: 9999px; /* rounded-full */
+        background-color: #1f2937; /* bg-gray-800 */
+    }
+
+    @media (min-width: 640px) {
+        #avatarContainer {
+            height: 14rem; /* sm:h-56 */
+            width: 14rem; /* sm:w-56 */
+        }
+    }
+
+    @media (min-width: 768px) {
+        #avatarContainer {
+            height: 16rem; /* md:h-64 */
+            width: 16rem; /* md:w-64 */
+        }
+    }
+
+    .face-container {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+    }
+
+    .avatar-image {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        z-index: 1;
+    }
+
+    .eyes-overlay {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 2;
+        /* Make the overlay transparent except for the eyes */
+        pointer-events: none; /* Allow clicks to pass through to image */
+    }
+
+    /* Utility class to hide elements */
+    .hidden {
+        display: none !important; /* Use !important to override potential SVG attributes */
+    }
+
+    /#leftPupil,
+    #rightPupil,
+    #winkRect {
+        transition:
+            cx 0.1s ease-out,
+            cy 0.1s ease-out,
+            x 0.1s ease-out,
+            y 0.1s ease-out;
+    }
+</style>
