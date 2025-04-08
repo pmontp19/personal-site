@@ -1,6 +1,5 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Header from "../../components/Header.astro";
 import { getCollection } from "astro:content";
 
 // Generate paths for all blog posts
@@ -26,8 +25,6 @@ function formatDate(date: Date): string {
 ---
 
 <Layout title={`${entry.data.title} | Pere Montpeó`}>
-  <Header />
-
   <main class="container">
     <article class="post">
       <div class="post-header">
@@ -81,12 +78,12 @@ function formatDate(date: Date): string {
   .back-link {
     display: inline-block;
     font-size: 0.875rem;
-    color: #9ca3af;
+    color: var(--text-muted);
     margin-bottom: 1rem;
   }
 
   .back-link:hover {
-    color: #3b82f6;
+    color: var(--primary);
     text-decoration: underline;
   }
 
@@ -106,7 +103,7 @@ function formatDate(date: Date): string {
 
   .post-content {
     line-height: 1.7;
-    color: #e5e7eb;
+    color: var(--foreground);
     font-size: 1.125rem;
   }
 
@@ -151,14 +148,14 @@ function formatDate(date: Date): string {
   }
 
   .post-content :global(code) {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.875rem;
   }
 
   .post-content :global(blockquote) {
-    border-left: 4px solid #3b82f6;
+    border-left: 4px solid var(--primary);
     padding-left: 1rem;
-    color: #9ca3af;
+    color: var(--text-muted);
     font-style: italic;
     margin: 1.5rem 0;
   }
@@ -182,14 +179,10 @@ function formatDate(date: Date): string {
     text-align: left;
   }
 
-  .post-content :global(table th) {
-    background-color: #1f2937;
-  }
-
   .post-footer {
     margin-top: 3rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #1f2937;
+    border-top: 1px solid var(--border-muted);
   }
 
   .post-navigation {
@@ -216,7 +209,7 @@ function formatDate(date: Date): string {
 
   .share-section p {
     font-size: 0.875rem;
-    color: #9ca3af;
+    color: var(--text-muted);
   }
 
   .share-buttons {
@@ -231,13 +224,13 @@ function formatDate(date: Date): string {
     width: 2rem;
     height: 2rem;
     border-radius: 9999px;
-    background-color: #1f2937;
-    color: #e5e7eb;
+    background-color: var(--card);
+    color: var(--foreground);
     transition: background-color 0.2s;
   }
 
   .share-button:hover {
-    background-color: #2563eb;
+    background-color: var(--primary);
   }
 
   .sr-only {
