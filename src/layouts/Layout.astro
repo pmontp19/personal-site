@@ -25,7 +25,8 @@ import Footer from "../components/Footer.astro";
 				if (userTheme === "light" || userTheme === "dark") {
 					toggleTheme(userTheme === "dark");
 				} else {
-					toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+					//toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+					toggleTheme(true); // Default to dark theme
 				}
 			}
 
