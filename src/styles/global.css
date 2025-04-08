@@ -22,6 +22,8 @@
   --radius: 0.5rem;
   --text-muted: hsl(215.4, 16.3%, 46.9%);
   --border-muted: hsl(222.2, 47.4%, 11.2%);
+  
+  color-scheme: light;
 }
 
 /* Dark mode variables */
@@ -47,6 +49,12 @@
   --ring: hsl(224.3, 76.3%, 48%);
   --text-muted: hsl(215, 20.2%, 65.1%);
   --border-muted: hsl(217.2, 32.6%, 17.5%);
+  
+  color-scheme: dark;
+}
+
+html {
+  overflow-y: scroll;
 }
 
 /* Base styles */
@@ -61,6 +69,7 @@ body {
   color: var(--foreground);
   font-family: 'Geist Sans', sans-serif;
   line-height: 1.5;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Container utility */
@@ -115,4 +124,48 @@ a:focus {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Animation for elements */
+.animate {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.animate.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Theme toggle buttons styles */
+.theme-toggle-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle-button:hover {
+  background-color: var(--secondary);
+  color: var(--primary);
+}
+
+.theme-toggle-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.theme-toggle-button svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke: currentColor;
+  stroke-width: 1.5;
 }
