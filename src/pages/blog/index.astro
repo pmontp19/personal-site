@@ -2,11 +2,22 @@
 import Layout from "../../layouts/Layout.astro";
 import MagicCard from "../../components/MagicCard.astro";
 import { getCollection } from "astro:content";
+import { calculateReadingTime } from "../../utils/readingTime";
 
 // Get all blog posts and sort by date (newest first)
 const allPosts = await getCollection("blog");
 const sortedPosts = allPosts.sort((a, b) => 
   b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Calculate reading time for each post
+const postsWithReadingTime = await Promise.all(
+  sortedPosts.map(async (post) => {
+    // Use post.body directly if available or fall back to post.data.description
+    const contentForReadingTime = post.body || post.data.description || '';
+    const readingTime = calculateReadingTime(contentForReadingTime);
+    return { ...post, readingTime };
+  })
 );
 
 // Format date function
@@ -26,10 +37,13 @@ function formatDate(date: Date): string {
       <p class="subtitle">Pensaments, tutorials i apunts sobre desenvolupament web i tecnologia.</p>
       
       <div class="posts">
-        {sortedPosts.map((post) => (
+        {postsWithReadingTime.map((post) => (
           <MagicCard class="post-card">
             <div class="post-content">
-              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+              <div class="post-meta">
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <span class="reading-time">{post.readingTime}</span>
+              </div>
               <h2 class="post-title">{post.data.title}</h2>
               <p class="post-excerpt">{post.data.description}</p>
             </div>
@@ -74,11 +88,33 @@ function formatDate(date: Date): string {
     flex: 1;
   }
 
-  .post-content time {
-    display: block;
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-meta time, .reading-time {
     font-size: 0.875rem;
     color: var(--text-muted);
-    margin-bottom: 0.5rem;
+  }
+
+  .reading-time {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .reading-time::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
   }
 
   .post-title {

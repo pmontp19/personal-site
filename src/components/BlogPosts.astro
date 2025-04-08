@@ -2,6 +2,7 @@
 // Import content collection utilities
 import { getCollection } from "astro:content";
 import MagicCard from "./MagicCard.astro";
+import { calculateReadingTime } from "../utils/readingTime";
 
 // Get all blog posts and sort them by date (newest first)
 const allPosts = await getCollection("blog");
@@ -17,6 +18,16 @@ function formatDate(date: Date): string {
     day: "numeric",
   }).format(date);
 }
+
+// Get reading time for each post
+const postsWithReadingTime = await Promise.all(
+  sortedPosts.map(async (post) => {
+    // Use post.body directly if available or fall back to post.data.description
+    const contentForReadingTime = post.body || post.data.description || '';
+    const readingTime = calculateReadingTime(contentForReadingTime);
+    return { ...post, readingTime };
+  })
+);
 ---
 
 <section class="section blog-section animate">
@@ -27,12 +38,15 @@ function formatDate(date: Date): string {
 
   <div class="blog-posts">
     {
-      sortedPosts.map((post) => (
+      postsWithReadingTime.map((post) => (
         <MagicCard class="blog-post-card">
           <div class="post-content">
-            <time datetime={post.data.date.toISOString()}>
-              {formatDate(post.data.date)}
-            </time>
+            <div class="post-meta">
+              <time datetime={post.data.date.toISOString()}>
+                {formatDate(post.data.date)}
+              </time>
+              <span class="reading-time">{post.readingTime}</span>
+            </div>
             <h3 class="post-title">
               <a href={`/blog/${post.slug}`}>{post.data.title}</a>
             </h3>
@@ -55,18 +69,18 @@ function formatDate(date: Date): string {
     margin-bottom: 1.5rem;
   }
 
-	h2 {
-		margin-bottom: 1rem;
-		font-size: 1.25rem;
-		font-weight: 600;
-	}
+  h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
 
-	@media (min-width: 768px) {
-		h2 {
-			margin-bottom: 1.5rem;
-			font-size: 1.5rem;
-		}
-	}
+  @media (min-width: 768px) {
+    h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+  }
 
   .view-all-link-text {
     font-size: 0.875rem;
@@ -107,15 +121,38 @@ function formatDate(date: Date): string {
     margin-bottom: 0.5rem;
   }
 
-  time {
-    display: block;
-    font-size: 0.75rem;
-    color: #6b7280;
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 0.5rem;
   }
 
+  time, .reading-time {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+
+  .reading-time {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .reading-time::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #6b7280;
+  }
+
   @media (min-width: 640px) {
-    time {
+    time, .reading-time {
       font-size: 0.875rem;
     }
   }

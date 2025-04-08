@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { calculateReadingTime } from "../../utils/readingTime";
 
 // Generate paths for all blog posts
 export async function getStaticPaths() {
@@ -13,6 +14,11 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
+
+// Calculate reading time from raw content instead of accessing body
+// Use entry.body if available (for some Markdown collections) or fall back to entry.data.description
+const contentForReadingTime = entry.body || entry.data.description || '';
+const readingTime = calculateReadingTime(contentForReadingTime);
 
 // Format date function
 function formatDate(date: Date): string {
@@ -30,7 +36,10 @@ function formatDate(date: Date): string {
       <div class="post-header">
         <a href="/blog" class="back-link">← Tornar a tots els articles</a>
         <h1>{entry.data.title}</h1>
-        <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+        <div class="post-meta">
+          <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+          <span class="reading-time">{readingTime}</span>
+        </div>
       </div>
 
       <div class="post-content">
@@ -94,11 +103,33 @@ function formatDate(date: Date): string {
     line-height: 1.2;
   }
 
-  time {
-    display: block;
-    color: #6b7280;
-    font-size: 0.875rem;
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
+  }
+
+  time, .reading-time {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .reading-time {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .reading-time::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #6b7280;
   }
 
   .post-content {
