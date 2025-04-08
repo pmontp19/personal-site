@@ -2,53 +2,33 @@
 import Layout from "../../layouts/Layout.astro";
 import MagicCard from "../../components/MagicCard.astro";
 import { getCollection } from "astro:content";
-import { calculateReadingTime } from "../../utils/readingTime";
 
 // Get all blog posts and sort by date (newest first)
 const allPosts = await getCollection("blog");
 const sortedPosts = allPosts.sort((a, b) => 
   b.data.date.valueOf() - a.data.date.valueOf()
 );
-
-// Calculate reading time for each post
-const postsWithReadingTime = await Promise.all(
-  sortedPosts.map(async (post) => {
-    // Use post.body directly if available or fall back to post.data.description
-    const contentForReadingTime = post.body || post.data.description || '';
-    const readingTime = calculateReadingTime(contentForReadingTime);
-    return { ...post, readingTime };
-  })
-);
-
-// Format date function
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('ca-ES', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  }).format(date);
-}
 ---
 
-<Layout title="Blog | Pere Montpeó">
+<Layout title="Apunts | Pere Montpeó">
   <main class="container">
     <section class="blog-section">
       <h1>Apunts</h1>
       <p class="subtitle">Pensaments, tutorials i apunts sobre desenvolupament web i tecnologia.</p>
       
       <div class="posts">
-        {postsWithReadingTime.map((post) => (
-          <MagicCard class="post-card">
-            <div class="post-content">
-              <div class="post-meta">
-                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-                <span class="reading-time">{post.readingTime}</span>
+        {sortedPosts.map((post) => (
+          <a href={`/blog/${post.slug}`} class="post-link">
+            <MagicCard class="post-card">
+              <div class="post-content">
+                <h2 class="post-title">{post.data.title}</h2>
+                <p class="post-excerpt">{post.data.description}</p>
               </div>
-              <h2 class="post-title">{post.data.title}</h2>
-              <p class="post-excerpt">{post.data.description}</p>
-            </div>
-            <a href={`/blog/${post.slug}`} class="read-more">Llegir més →</a>
-          </MagicCard>
+              <div class="arrow">
+                <span>→</span>
+              </div>
+            </MagicCard>
+          </a>
         ))}
       </div>
     </section>
@@ -75,74 +55,67 @@ function formatDate(date: Date): string {
   .posts {
     display: grid;
     gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .post-link {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+    display: block;
+  }
+
+  .post-link:hover {
+    transform: translateY(-3px);
+  }
+
+  .post-link:hover .arrow span {
+    transform: translateX(5px);
   }
 
   /* Specific styling for blog post content inside MagicCard */
   .post-card {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     height: 100%;
+    padding: 1.25rem;
   }
 
   .post-content {
     flex: 1;
   }
 
-  .post-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .post-meta time, .reading-time {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-  }
-
-  .reading-time {
-    position: relative;
-    padding-left: 1rem;
-  }
-
-  .reading-time::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: var(--text-muted);
-  }
-
   .post-title {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   .post-excerpt {
     color: var(--text-muted);
-    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  .read-more {
-    display: inline-block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-top: auto;
+  .arrow {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
   }
 
-  .read-more:hover {
-    text-decoration: underline;
-    color: var(--primary);
+  .arrow span {
+    transition: transform 0.2s ease;
+    font-size: 1.1rem;
   }
 
   @media (min-width: 768px) {
     .posts {
-      gap: 2rem;
+      gap: 1.5rem;
     }
 
     h1 {
@@ -151,8 +124,8 @@ function formatDate(date: Date): string {
   }
 
   @media (min-width: 1024px) {
-    .post-title {
-      font-size: 1.5rem;
+    .posts {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
   }
 </style>

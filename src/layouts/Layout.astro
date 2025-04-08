@@ -61,9 +61,17 @@ import Footer from "../components/Footer.astro";
 		</script>
 	</head>
 	<body>
-		<Header />
-		<slot />
-		<Footer />
+		<div class="page-layout">
+			<header class="page-header">
+				<Header />
+			</header>
+			<main class="page-main">
+				<slot />
+			</main>
+			<footer class="page-footer">
+				<Footer />
+			</footer>
+		</div>
 	</body>
 </html>
 
@@ -119,7 +127,7 @@ import Footer from "../components/Footer.astro";
 		}
 	}
 
-	function toggleTheme(dark) {
+	function toggleTheme(dark: boolean) {
 		const css = document.createElement("style");
 
 		css.appendChild(
@@ -157,6 +165,12 @@ import Footer from "../components/Footer.astro";
 		noiseDarkUrl: `url(${noiseDark.src})`,
 	}}
 >
+	html, body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
 	body {
 		background-image: var(--noiseUrl);
 		background-size: auto;
@@ -170,5 +184,28 @@ import Footer from "../components/Footer.astro";
 
 	.dark body {
 		background-image: var(--noiseDarkUrl);
+	}
+
+	.page-layout {
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		grid-template-areas:
+			"header"
+			"main"
+			"footer";
+		min-height: 100vh;
+	}
+
+	.page-header {
+		grid-area: header;
+	}
+
+	.page-main {
+		grid-area: main;
+	}
+
+	.page-footer {
+		grid-area: footer;
+		margin-top: auto;
 	}
 </style>
