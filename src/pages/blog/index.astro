@@ -1,36 +1,71 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import MagicCard from "../../components/MagicCard.astro";
 import { getCollection } from "astro:content";
 
 // Get all blog posts and sort by date (newest first)
 const allPosts = await getCollection("blog");
-const sortedPosts = allPosts.sort((a, b) => 
+const sortedPosts = allPosts.sort((a, b) =>
   b.data.date.valueOf() - a.data.date.valueOf()
 );
+
+// Helper function to format date
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('ca-ES', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+};
+
+const pageTitle = "Apunts | Pere Montpeó";
+const pageDescription = "Pensaments, tutorials i apunts sobre desenvolupament web i tecnologia.";
+const siteAuthor = "Pere Montpeó";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Apunts - Blog Posts",
+  "description": pageDescription,
+  "itemListElement": sortedPosts.map((post, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "item": {
+      "@type": "BlogPosting",
+      "headline": post.data.title,
+      "url": new URL(`/blog/${post.slug}`, Astro.url.origin).toString(),
+      "datePublished": post.data.date.toISOString(),
+      "author": {
+        "@type": "Person",
+        "name": siteAuthor
+      },
+      "description": post.data.description
+    }
+  }))
+};
+
+const jsonLdScript = JSON.stringify(jsonLd);
 ---
 
-<Layout title="Apunts | Pere Montpeó">
+<Layout title={pageTitle}>
+  <script type="application/ld+json" set:html={jsonLdScript} />
+
   <main class="container">
     <section class="blog-section">
       <h1>Apunts</h1>
-      <p class="subtitle">Pensaments, tutorials i apunts sobre desenvolupament web i tecnologia.</p>
-      
-      <div class="posts">
+      <p class="subtitle">{pageDescription}</p>
+
+      <ul class="posts-list">
         {sortedPosts.map((post) => (
-          <a href={`/blog/${post.slug}`} class="post-link">
-            <MagicCard class="post-card">
-              <div class="post-content">
-                <h2 class="post-title">{post.data.title}</h2>
-                <p class="post-excerpt">{post.data.description}</p>
-              </div>
-              <div class="arrow">
-                <span>→</span>
-              </div>
-            </MagicCard>
-          </a>
+          <li>
+            <a href={`/blog/${post.slug}`}>
+              <time datetime={post.data.date.toISOString()} class="post-date">
+                {formatDate(post.data.date)}
+              </time>
+              <span class="post-title">{post.data.title}</span>
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   </main>
 </Layout>
@@ -52,80 +87,56 @@ const sortedPosts = allPosts.sort((a, b) =>
     margin-bottom: 2rem;
   }
 
-  .posts {
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  /* New styles for the post list */
+  .posts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 
-  .post-link {
+  .posts-list li {
+    margin-bottom: 0.75rem; /* Spacing between list items */
+  }
+
+  .posts-list a {
+    display: flex; /* Align date and title on the same line */
+    align-items: baseline; /* Align text nicely */
+    gap: 0.75rem; /* Space between date and title */
     text-decoration: none;
-    color: inherit;
-    transition: transform 0.2s ease;
-    display: block;
+    color: var(--foreground);
+    transition: color 0.2s ease;
   }
 
-  .post-link:hover {
-    transform: translateY(-3px);
+  .posts-list a:hover,
+  .posts-list a:focus {
+    color: var(--primary);
+    text-decoration: none; /* Keep no underline on hover by default */
   }
 
-  .post-link:hover .arrow span {
-    transform: translateX(5px);
+  .posts-list a:hover .post-title,
+  .posts-list a:focus .post-title {
+     text-decoration: underline; /* Underline title on hover/focus */
   }
 
-  /* Specific styling for blog post content inside MagicCard */
-  .post-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    padding: 1.25rem;
-  }
 
-  .post-content {
-    flex: 1;
+  .post-date {
+    font-family: 'Geist Mono', monospace; /* Use monospace for date */
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    white-space: nowrap; /* Prevent date from wrapping */
   }
 
   .post-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .post-excerpt {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .arrow {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.5rem;
-  }
-
-  .arrow span {
-    transition: transform 0.2s ease;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 500;
   }
 
   @media (min-width: 768px) {
-    .posts {
-      gap: 1.5rem;
-    }
-
     h1 {
       font-size: 2.5rem;
     }
-  }
-
-  @media (min-width: 1024px) {
-    .posts {
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    .post-title {
+      font-size: 1.1rem;
     }
   }
 </style>

@@ -12,7 +12,7 @@ const { pathname } = Astro.url;
         <ul class="nav-list">
           <li class="nav-item"><a href="/" class=`nav-link ${pathname === '/' ? 'active' : ''}`>Inici</a></li>
           <li class="nav-item"><a href="/blog" class=`nav-link ${pathname.startsWith('/blog') ? 'active' : ''}`>Apunts</a></li>
-          <li class="nav-item"><a href="#about" class="nav-link">CV</a></li>
+          <li class="nav-item"><a href="/experience" class=`nav-link ${pathname.startsWith('/experience') ? 'active' : ''}`>Experiència</a></li>
           <li class="nav-item"><a href="#contact" class="nav-link">Contacte</a></li>
         </ul>
       </nav>
