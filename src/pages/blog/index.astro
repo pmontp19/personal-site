@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { formatDate } from "../../utils/date";
 
 // Get all blog posts and sort by date (newest first)
 const allPosts = await getCollection("blog");
@@ -8,14 +9,14 @@ const sortedPosts = allPosts.sort((a, b) =>
   b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-// Helper function to format date
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('ca-ES', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-};
+const postsByYear: { [year: number]: typeof sortedPosts } = {};
+sortedPosts.forEach((post) => {
+  const year = post.data.date.getFullYear();
+  if (!postsByYear[year]) {
+    postsByYear[year] = [];
+  }
+  postsByYear[year].push(post);
+});
 
 const pageTitle = "Apunts | Pere Montpeó";
 const pageDescription = "Pensaments, tutorials i apunts sobre desenvolupament web i tecnologia.";
@@ -50,7 +51,7 @@ const jsonLdScript = JSON.stringify(jsonLd);
   <script type="application/ld+json" set:html={jsonLdScript} />
 
   <main class="container">
-    <section class="blog-section">
+    <section class="blog-section section">
       <h1>Apunts</h1>
       <p class="subtitle">{pageDescription}</p>
 
@@ -71,70 +72,56 @@ const jsonLdScript = JSON.stringify(jsonLd);
 </Layout>
 
 <style>
-  .blog-section {
-    padding: 2rem 0 3rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  .subtitle {
-    color: var(--text-muted);
-    font-size: 1.125rem;
-    margin-bottom: 2rem;
-  }
-
-  /* New styles for the post list */
+  /* Keep specific styles for the post list */
   .posts-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    max-width: 700px;
   }
 
   .posts-list li {
-    margin-bottom: 0.75rem; /* Spacing between list items */
+    margin-bottom: 0.75rem;
   }
 
   .posts-list a {
-    display: flex; /* Align date and title on the same line */
-    align-items: baseline; /* Align text nicely */
-    gap: 0.75rem; /* Space between date and title */
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
     text-decoration: none;
     color: var(--foreground);
     transition: color 0.2s ease;
+    padding: 0.25rem 0; /* Add some vertical padding for easier clicking */
   }
 
   .posts-list a:hover,
   .posts-list a:focus {
     color: var(--primary);
-    text-decoration: none; /* Keep no underline on hover by default */
+    text-decoration: none;
   }
 
   .posts-list a:hover .post-title,
   .posts-list a:focus .post-title {
-     text-decoration: underline; /* Underline title on hover/focus */
+     text-decoration: underline;
+     text-decoration-thickness: 1px;
+     text-underline-offset: 2px;
   }
 
-
   .post-date {
-    font-family: 'Geist Mono', monospace; /* Use monospace for date */
-    font-size: 0.9rem;
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.85rem;
     color: var(--text-muted);
-    white-space: nowrap; /* Prevent date from wrapping */
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent date from shrinking */
   }
 
   .post-title {
     font-size: 1rem;
     font-weight: 500;
+    line-height: 1.4;
   }
 
   @media (min-width: 768px) {
-    h1 {
-      font-size: 2.5rem;
-    }
     .post-title {
       font-size: 1.1rem;
     }

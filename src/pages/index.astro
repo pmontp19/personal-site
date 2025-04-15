@@ -9,9 +9,7 @@ const year = new Date().getFullYear();
 
 // Get the latest experience item
 const allExperiences = await getCollection("experience", ({ data }) => {
-  // Filter out drafts if necessary, assuming a 'draft' property
-  // return data.draft !== true;
-  return true; // Keep all for now, adjust if needed
+  return true;
 });
 
 // Sort experiences by date (assuming a 'date' or 'startDate' property in frontmatter)
@@ -20,17 +18,17 @@ const sortedExperiences = allExperiences.sort(
   (a, b) =>
     new Date(b.data.startDate).getTime() - new Date(a.data.startDate).getTime()
 );
-const latestExperience = sortedExperiences[0]; // Get the most recent one
+const latestExperience = sortedExperiences[0];
 ---
 
 <Layout>
   <main class="container">
     <!-- About Me -->
-    <section class="about animate">
+    <section class="about section animate">
       <div class="about-grid">
         <div class="about-content">
           <h1>Hola, soc Pere Montpeó</h1>
-          <p>
+          <p class="subtitle">
             Enginyer de programari especialitzat en tot i en res. Actualment,
             fent que els ordinadors facin coses sols. Si no estic programant,
             segurament em trobaràs sobre la bicicleta, a la cuina o llegint.
@@ -43,27 +41,27 @@ const latestExperience = sortedExperiences[0]; // Get the most recent one
     </section>
 
     <!-- Current Job -->
-    <section class="job animate">
+    <section class="job section animate">
       <div class="section-header">
         <h2>Actualment</h2>
-        <a href="/experience" class="view-all-link-text">Veure tot →</a>
+        <a href="/experience" class="view-all-link-text button-link">Veure tot →</a>
       </div>
       {
         latestExperience && (
           <MagicCard>
             <h3>{latestExperience.data.role}</h3>
-            <p class="company">{latestExperience.data.company}</p>
-            <p class="description">{latestExperience.data.description}</p>
-			<a href="/experience" class="read-more">
-            Llegir més →
-          </a>
+            <p class="company text-muted">{latestExperience.data.company}</p>
+            <p class="description text-muted">{latestExperience.data.description}</p>
+            <a href="/experience" class="read-more button-link">
+              Llegir més →
+            </a>
           </MagicCard>
         )
       }
     </section>
 
     <!-- Blog -->
-    <BlogPosts />
+    <BlogPosts class="section animate" />
   </main>
 </Layout>
 
@@ -82,76 +80,63 @@ const latestExperience = sortedExperiences[0]; // Get the most recent one
     height: 4rem;
     align-items: center;
     justify-content: space-between;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 80rem;
+    margin: 0 auto;
   }
 
-  .section-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 1.5rem;
+  @media (min-width: 640px) {
+    .header-content {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
   }
 
-  .read-more {
-    margin-top: auto;
-    display: inline-block;
-    font-size: 0.875rem;
-    font-weight: 500;
+  @media (min-width: 1024px) {
+    .header-content {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
 
-  .read-more:hover {
-    text-decoration: underline;
-    color: #3b82f6;
+  .logo a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--foreground);
+    text-decoration: none;
   }
 
-  .logo {
-    font-size: 1.25rem;
-    font-weight: 500;
+  .logo img {
+    height: 1.5rem;
+    width: 1.5rem;
   }
 
-  nav {
+  .nav-links {
     display: flex;
     gap: 1rem;
   }
 
-  @media (min-width: 640px) {
-    nav {
-      gap: 1.5rem;
-    }
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
   }
 
-  nav a {
-    font-size: 0.875rem;
-    font-weight: 500;
+  .nav-links a:hover,
+  .nav-links a:focus {
+    color: var(--foreground);
+    text-decoration: none; /* Remove underline on hover/focus if desired */
   }
 
-  /* Main content */
-  main {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-
-  @media (min-width: 768px) {
-    main {
-      padding-top: 3rem;
-      padding-bottom: 3rem;
-    }
-  }
-
-  /* Section styles */
-  section {
-    margin-bottom: 3rem;
-  }
-
-  @media (min-width: 768px) {
-    section {
-      margin-bottom: 5rem;
-    }
-  }
-
-  /* About section */
+  /* About Section */
   .about-grid {
     display: grid;
+    grid-template-columns: 1fr;
     gap: 2rem;
+    align-items: center;
   }
 
   @media (min-width: 768px) {
@@ -161,90 +146,45 @@ const latestExperience = sortedExperiences[0]; // Get the most recent one
     }
   }
 
-  .about-content {
-    order: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .about-content h1 {
+    margin-bottom: 1rem;
   }
 
   .profile-image {
     display: flex;
     justify-content: center;
     order: 1;
-    margin-bottom: 1rem;
   }
 
   @media (min-width: 768px) {
     .about-content {
       order: 1;
     }
-
     .profile-image {
       justify-content: flex-end;
       order: 2;
-      margin-bottom: 0;
     }
   }
 
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-  }
-
-  @media (min-width: 640px) {
-    h1 {
-      font-size: 1.875rem;
-    }
-  }
-
-  @media (min-width: 768px) {
-    h1 {
-      font-size: 2.25rem;
-    }
-  }
-
-  .about-content p {
-    font-size: 1rem;
-    color: var(--text-muted);
-  }
-
-  @media (min-width: 640px) {
-    .about-content p {
-      font-size: 1.125rem;
-    }
-  }
-
-  /* Job section */
-  h2 {
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  @media (min-width: 768px) {
-    h2 {
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-    }
-  }
-
+  /* Styles specific to the content within MagicCard */
   .company {
-    color: var(--text-muted);
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
   }
 
   .description {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem; /* Add margin below description */
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
   }
 
-  /* Footer */
+  .read-more {
+    margin-top: auto;
+  }
+
   footer {
     border-top: 1px solid var(--border-muted);
     background-color: #111827;
+    margin-top: 3rem;
   }
 
   .footer-content {
@@ -253,32 +193,21 @@ const latestExperience = sortedExperiences[0]; // Get the most recent one
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 1rem;
+    text-align: center;
   }
 
   @media (min-width: 768px) {
     .footer-content {
-      padding-top: 2rem;
-      padding-bottom: 2rem;
-    }
-  }
-
-  @media (min-width: 640px) {
-    .footer-content {
       flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
     }
   }
 
-  .copyright {
-    font-size: 0.75rem;
+  .footer-text {
+    font-size: 0.875rem;
     color: var(--text-muted);
-  }
-
-  @media (min-width: 640px) {
-    .copyright {
-      font-size: 0.875rem;
-    }
   }
 
   .social-links {
@@ -288,14 +217,30 @@ const latestExperience = sortedExperiences[0]; // Get the most recent one
 
   .social-links a {
     color: var(--text-muted);
+    transition: color 0.2s ease;
   }
 
-  .social-links a:hover {
-    color: #e5e7eb;
+  .social-links a:hover,
+  .social-links a:focus {
+    color: var(--foreground);
   }
 
   .social-links svg {
     width: 1.25rem;
     height: 1.25rem;
+  }
+
+  /* Section Header for Job and Blog */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
   }
 </style>

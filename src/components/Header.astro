@@ -22,57 +22,71 @@ const { pathname } = Astro.url;
 
 <style>
   header {
-    padding: 20px 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0; /* Adjusted padding */
+    border-bottom: 1px solid var(--border); /* Use border variable */
     background-color: var(--background);
     position: sticky;
     top: 0;
     z-index: 100;
+    /* Removed box-shadow, using border instead */
   }
 
   .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 3.5rem;
   }
 
   .logo a {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.25rem;
+    font-weight: 600;
     color: var(--foreground);
     text-decoration: none;
+  }
+  .logo a:hover {
+    text-decoration: none;
+    color: var(--primary);
   }
 
   .nav-list {
     display: flex;
     list-style: none;
+    padding: 0;
+    margin: 0;
     gap: 1.5rem;
   }
 
   .nav-link {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    color: var(--foreground);
+    color: var(--text-muted); /* Use muted color for non-active links */
     text-decoration: none;
     transition: color 0.2s ease;
+    padding: 0.5rem 0; /* Add padding for easier clicking */
   }
 
-  .nav-link:hover {
+  .nav-link:hover,
+  .nav-link:focus {
     color: var(--primary);
+    text-decoration: none;
   }
-  
+
   .nav-link.active {
-    font-weight: 800;
+    color: var(--foreground); /* Use foreground color for active */
+    font-weight: 600;
     position: relative;
     text-decoration: none;
-
   }
 
 
   @media (max-width: 768px) {
+    /* Keep responsive adjustments */
     .header-content {
       flex-direction: column;
-      gap: 15px;
+      gap: 1rem;
+      height: auto;
+      padding: 0.5rem 0; /* Add padding when stacked */
     }
 
     .nav-list {

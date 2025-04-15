@@ -25,8 +25,7 @@ import Footer from "../components/Footer.astro";
 				if (userTheme === "light" || userTheme === "dark") {
 					toggleTheme(userTheme === "dark");
 				} else {
-					//toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
-					toggleTheme(true); // Default to dark theme
+					toggleTheme(true);
 				}
 			}
 
@@ -176,11 +175,12 @@ import Footer from "../components/Footer.astro";
 		background-image: var(--noiseUrl);
 		background-size: auto;
 		background-repeat: repeat;
-		background-attachment: scroll;
+		background-attachment: fixed; /* Keep noise fixed */
 		background-clip: border-box;
 		background-origin: padding-box;
 		background-position: 0 0;
-		background-color: var(--background);
+		background-color: var(--background); /* Ensure background color uses variable */
+		/* Font-family and color are inherited from global.css */
 	}
 
 	.dark body {
@@ -188,25 +188,24 @@ import Footer from "../components/Footer.astro";
 	}
 
 	.page-layout {
-		display: grid;
-		grid-template-rows: auto 1fr auto;
-		grid-template-areas:
-			"header"
-			"main"
-			"footer";
+		display: flex; /* Use flex for simpler footer sticking */
+		flex-direction: column;
 		min-height: 100vh;
 	}
 
 	.page-header {
-		grid-area: header;
+		/* Header styles are handled by Header.astro component */
+		position: sticky; /* Ensure header remains sticky */
+		top: 0;
+		z-index: 100;
 	}
 
 	.page-main {
-		grid-area: main;
+		flex-grow: 1; /* Allow main content to take available space */
 	}
 
 	.page-footer {
-		grid-area: footer;
-		margin-top: auto;
+		/* Footer styles are handled by Footer.astro component */
+		margin-top: auto; /* Push footer to bottom */
 	}
 </style>

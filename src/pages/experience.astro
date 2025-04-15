@@ -10,22 +10,19 @@ const experiences = (await getCollection('experience')).sort(
 
 <Layout title="Work Experience">
   <main class="container">
-    <section class="experience-section">
-      <h1>Work Experience</h1>
-      <p class="subtitle">My professional journey and the skills I've developed along the way</p>
-      
+    <section class="experience-section section">
       <div class="experiences">
         {experiences.map((exp, index) => (
-          <div class="experience-card"> 
+          <div class="card">
             <div class="experience-content">
               <h2 class="job-title">{exp.data.role}</h2>
-              <p class="company-name">{exp.data.company}</p>
-              
-              <p class="date-range">
+              <p class="company-name text-muted">{exp.data.company}</p>
+
+              <p class="date-range text-muted">
                 {exp.data.startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })} - 
                 {exp.data.endDate ? exp.data.endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : 'Present'}
               </p>
-              
+
               <div class="description">
                 <p>{exp.data.description}</p>
               </div>
@@ -35,16 +32,16 @@ const experiences = (await getCollection('experience')).sort(
                 <Fragment set:html={exp.body} />
               </div>
 
-              {/* Re-add Show more button if body exists */}
+              {/* Show more button */}
               {exp.body.trim() && (
                 <div class="show-more-container">
-                  <button class="show-more-button" aria-expanded="false" aria-controls={`markdown-content-${index}`}>
+                  <button class="show-more-button button-link" aria-expanded="false" aria-controls={`markdown-content-${index}`}>
                     <span>Show more</span>
                     <span class="arrow-down">▼</span>
                   </button>
                 </div>
               )}
-              
+
               {exp.data.tags && exp.data.tags.length > 0 && (
                 <div class="skills-section">
                   <h3>Skills & Technologies</h3>
@@ -64,207 +61,139 @@ const experiences = (await getCollection('experience')).sort(
 </Layout>
 
 <style>
-  .experience-section {
-    padding: 2rem 0 3rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .subtitle {
-    color: var(--text-muted);
-    font-size: 1.125rem;
-    text-align: center;
-    margin-bottom: 2.5rem;
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
   .experiences {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    max-width: 900px; /* Keep max-width or adjust as needed */
+    max-width: 800px;
     margin: 0 auto;
   }
 
-  .experience-card {
-    background-color: var(--card);
-    color: var(--card-foreground);
-    border: 1px solid var(--border);
-    border-radius: var(--radius); /* Use global radius */
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Optional subtle shadow */
-    transition: border-color 0.2s ease; /* Smooth transition */
-  }
-
-  /* Optional: Add a subtle hover effect */
-  .experience-card:hover {
-    border-color: var(--border-muted); 
-  }
-
-  .job-title {
+  /* Styles specific to content *inside* the .card */
+  .card .job-title {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-top: 0;
   }
 
-  .company-name {
-    font-size: 1.25rem;
-    color: var(--text-muted);
+  .card .company-name {
+    font-size: 1.125rem;
     margin-bottom: 0.5rem;
   }
 
-  .date-range {
+  .card .date-range {
     font-size: 0.9rem;
-    color: var(--text-muted);
     margin-bottom: 1rem;
   }
 
-  .description {
-    margin-bottom: 1rem;
-    line-height: 1.5;
+  .card .description p {
+     margin-bottom: 1rem;
+     line-height: 1.5;
+  }
+
+  .card .skills-section {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .card .skills-section h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .card .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   /* Styles for the initially hidden markdown content */
   .markdown-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease-out, margin-top 0.4s ease-out;
+    transition: max-height 0.4s ease-out, margin-top 0.4s ease-out, opacity 0.4s ease-out;
     margin-top: 0;
-    line-height: 1.6; /* Adjust line-height for readability */
+    opacity: 0;
+    line-height: 1.6;
   }
 
   .markdown-content.expanded {
-    max-height: 1000px; /* Adjust as needed, should be larger than expected content */
-    margin-top: 1rem; /* Add space when expanded */
-    transition: max-height 0.4s ease-in, margin-top 0.4s ease-in;
+    max-height: 1000px;
+    margin-top: 1rem;
+    opacity: 1;
+    transition: max-height 0.4s ease-in, margin-top 0.4s ease-in, opacity 0.4s ease-in;
   }
 
-  /* Ensure paragraphs inside markdown have margin */
-  .markdown-content :global(p) {
+  /* Global markdown content styling (can move to global.css if used elsewhere) */
+  .markdown-content :global(p),
+  .markdown-content :global(ul),
+  .markdown-content :global(ol) {
     margin-bottom: 1em;
   }
   .markdown-content :global(ul),
   .markdown-content :global(ol) {
     margin-left: 1.5rem;
-    margin-bottom: 1em;
   }
   .markdown-content :global(li) {
     margin-bottom: 0.5em;
   }
+  .markdown-content :global(a) {
+    /* Inherit global link styles */
+  }
+  .markdown-content :global(strong) {
+    font-weight: 600;
+  }
+  .markdown-content :global(code) {
+     font-family: 'Geist Mono', monospace;
+     background-color: var(--secondary);
+     padding: 0.1em 0.3em;
+     border-radius: 4px;
+     font-size: 0.9em;
+  }
+  .markdown-content :global(pre) {
+     background-color: var(--secondary);
+     padding: 1em;
+     border-radius: var(--radius);
+     overflow-x: auto;
+     margin-bottom: 1em;
+  }
+   .markdown-content :global(pre code) {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: 0.85em;
+   }
 
-  /* Re-add Show more button styles */
+
+  /* Show more button specific styles */
   .show-more-container {
     display: flex;
     justify-content: center;
-    margin: 1rem 0 0; /* Adjust margin */
-  }
-
-  .show-more-button {
-    display: inline-flex; /* Use inline-flex */
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    font-size: 0.95rem;
-    color: var(--primary); /* Use primary color for interaction */
-    cursor: pointer;
-    padding: 0.25rem 0.5rem; /* Add some padding */
-    border-radius: var(--radius);
-    transition: background-color 0.2s ease;
-  }
-  .show-more-button:hover {
-     background-color: var(--secondary);
-     text-decoration: none; /* Remove underline on hover */
+    margin: 1rem 0 0;
   }
 
   .arrow-down {
     font-size: 0.7rem;
     transition: transform 0.3s ease;
+    margin-left: 0.25rem;
   }
 
-  .markdown-content.expanded + .show-more-container .arrow-down {
+  /* Rotation handled by JS adding/removing class or direct style */
+  .show-more-button[aria-expanded="true"] .arrow-down {
       transform: rotate(180deg);
   }
 
-  .skills-section {
-    margin-top: 1.5rem;
-  }
-
-  .skills-section h3 {
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .tag {
-    background-color: var(--secondary); /* Use --secondary instead of --bg-secondary */
-    color: var(--foreground); /* Use --foreground instead of --text-color */
-    font-size: 0.85rem;
-    padding: 0.35rem 0.75rem;
-    border-radius: 2rem;
-    display: inline-block;
-  }
 
   @media (min-width: 768px) {
-    .experience-card {
-      padding: 2rem; /* Keep or adjust padding for larger screens */
+    .card {
+      padding: 2rem;
     }
-
-    .job-title {
+    .card .job-title {
       font-size: 1.75rem;
     }
   }
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const showMoreButtons = document.querySelectorAll('.show-more-button');
-    
-    showMoreButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const controlsId = button.getAttribute('aria-controls');
-        // Ensure controlsId exists before proceeding
-        if (!controlsId) {
-          console.error('Button is missing aria-controls attribute:', button);
-          return; 
-        }
-
-        const content = document.getElementById(controlsId);
-        const arrow = button.querySelector('.arrow-down');
-        const buttonTextSpan = button.querySelector('span:first-child'); // Get the text span
-
-        // Ensure all required elements were found
-        if (!content || !arrow || !buttonTextSpan) {
-          console.error('Could not find required elements for button:', button);
-          return;
-        }
-        
-        const isExpanded = button.getAttribute('aria-expanded') === 'true';
-        
-        if (isExpanded) {
-          content.classList.remove('expanded');
-          button.setAttribute('aria-expanded', 'false');
-          (arrow as HTMLElement).style.transform = 'rotate(0deg)'; // Reset arrow rotation
-          buttonTextSpan.textContent = 'Show more'; // Update text
-        } else {
-          content.classList.add('expanded');
-          button.setAttribute('aria-expanded', 'true');
-          (arrow as HTMLElement).style.transform = 'rotate(180deg)'; // Rotate arrow
-          buttonTextSpan.textContent = 'Show less'; // Update text
-        }
-      });
-    });
-  });
-</script>
