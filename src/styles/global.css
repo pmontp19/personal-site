@@ -152,7 +152,6 @@ a:focus {
 .section {
   padding-top: 2rem;
   padding-bottom: 2rem;
-  margin-bottom: 1rem;
 }
 
 @media (min-width: 768px) {

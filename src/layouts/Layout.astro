@@ -6,238 +6,248 @@ import "@fontsource/geist-mono";
 import "@fontsource/geist-sans";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import { ClientRouter } from 'astro:transitions'; // Import ViewTransitions
+import { ClientRouter } from "astro:transitions"; // Import ViewTransitions
 
 interface Props {
-    title?: string;
+  title?: string;
 }
 
-const { title = 'Pere Montpeó' } = Astro.props as Props;
+const { title = "Pere Montpeó" } = Astro.props as Props;
 ---
 
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" media="(prefers-color-scheme: dark)">
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" media="(prefers-color-scheme: light)">
-        <link rel="icon" type="image/x-icon" href="/favicon.svg">
-        <meta name="generator" content={Astro.generator} />
-        <title>{title}</title>
-        {/* Add the ViewTransitions component here */}
-        <ClientRouter />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <title>{title}</title>
+    {/* Add the ViewTransitions component here */}
+    <ClientRouter />
 
-        <script is:inline>
-            // Keep preloadTheme exactly as it was - prevents FOUC on initial load
-            function toggleThemeClass(dark) {
-                 // Simplified function just for adding/removing class in head script
-                 if (dark) {
-                    document.documentElement.classList.add("dark");
-                } else {
-                    document.documentElement.classList.remove("dark");
-                }
-            }
+    <script is:inline>
+      // Keep preloadTheme exactly as it was - prevents FOUC on initial load
+      function toggleThemeClass(dark) {
+        // Simplified function just for adding/removing class in head script
+        if (dark) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      }
 
-            function preloadTheme() {
-                const userTheme = localStorage.getItem("theme"); // Use getItem for safety
-                let applyDarkMode;
+      function preloadTheme() {
+        const userTheme = localStorage.getItem("theme"); // Use getItem for safety
+        let applyDarkMode;
 
-                if (userTheme === "dark") {
-                    applyDarkMode = true;
-                } else if (userTheme === "light") {
-                    applyDarkMode = false;
-                } else { // "system" or null/undefined
-                    applyDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-                }
-                toggleThemeClass(applyDarkMode); // Apply class directly
-            }
-            preloadTheme();
-        </script>
-    </head>
-    <body>
-        {/* Your body structure */}
-        <div class="page-layout">
-            <header class="page-header">
-                <Header />
-            </header>
-            <main class="page-main">
-                <slot />
-            </main>
-            <footer class="page-footer">
-                <Footer />
-            </footer>
-        </div>
-    </body>
+        if (userTheme === "dark") {
+          applyDarkMode = true;
+        } else if (userTheme === "light") {
+          applyDarkMode = false;
+        } else {
+          // "system" or null/undefined
+          applyDarkMode = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+        }
+        toggleThemeClass(applyDarkMode); // Apply class directly
+      }
+      preloadTheme();
+    </script>
+  </head>
+  <body>
+    {/* Your body structure */}
+    <div class="page-layout">
+      <header class="page-header">
+        <Header />
+      </header>
+      <main class="page-main">
+        <slot />
+      </main>
+      <footer class="page-footer">
+        <Footer />
+      </footer>
+    </div>
+  </body>
 </html>
 
 <script>
-    // This function handles applying the theme AND disabling transitions temporarily
-    function toggleTheme(dark: boolean) {
-        const css = document.createElement("style");
-        css.appendChild(
-            document.createTextNode(
-                `* {
+  // This function handles applying the theme AND disabling transitions temporarily
+  function toggleTheme(dark: boolean) {
+    const css = document.createElement("style");
+    css.appendChild(
+      document.createTextNode(
+        `* {
                     -webkit-transition: none !important;
                     -moz-transition: none !important;
                     -o-transition: none !important;
                     -ms-transition: none !important;
                     transition: none !important;
                 }`
-            )
-        );
-        document.head.appendChild(css);
+      )
+    );
+    document.head.appendChild(css);
 
-        if (dark) {
-            document.documentElement.classList.add("dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-        }
-
-        // Force repaint/reflow to ensure class is applied before removing transition override
-        window.getComputedStyle(document.documentElement).opacity;
-        document.head.removeChild(css);
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
 
-    function init() {
-        // --- START: Apply theme based on localStorage on init ---
-        const userTheme = localStorage.getItem("theme") || "system"; // Default to system
-        let applyDarkMode;
+    // Force repaint/reflow to ensure class is applied before removing transition override
+    window.getComputedStyle(document.documentElement).opacity;
+    document.head.removeChild(css);
+  }
 
-        if (userTheme === "dark") {
-            applyDarkMode = true;
-        } else if (userTheme === "light") {
-            applyDarkMode = false;
-        } else { // "system"
-            applyDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        }
-        // Use the main toggleTheme function which handles transition disabling
-        toggleTheme(applyDarkMode);
-        // --- END: Apply theme based on localStorage on init ---
+  function init() {
+    // --- START: Apply theme based on localStorage on init ---
+    const userTheme = localStorage.getItem("theme") || "system"; // Default to system
+    let applyDarkMode;
 
-        // --- Existing init logic ---
-        onScroll(); // Setup scroll listener state
-        animate();  // Trigger entry animations
-
-        // Setup button listeners
-        const lightThemeButton = document.getElementById("light-theme-button");
-        lightThemeButton?.addEventListener("click", () => {
-            localStorage.setItem("theme", "light");
-            toggleTheme(false);
-        });
-
-        const darkThemeButton = document.getElementById("dark-theme-button");
-        darkThemeButton?.addEventListener("click", () => {
-            localStorage.setItem("theme", "dark");
-            toggleTheme(true);
-        });
-
-        const systemThemeButton = document.getElementById("system-theme-button");
-        systemThemeButton?.addEventListener("click", () => {
-            // Set to system and immediately apply the current system theme
-            localStorage.setItem("theme", "system");
-            toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
-        });
-
-        // Listener for OS theme changes (only applies if theme is 'system')
-        window.matchMedia("(prefers-color-scheme: dark)")
-            .addEventListener("change", event => {
-                if (localStorage.getItem("theme") === "system") {
-                    toggleTheme(event.matches);
-                }
-            }
-        );
-
-        // Setup scroll listener
-        document.addEventListener("scroll", onScroll); // Add listener
+    if (userTheme === "dark") {
+      applyDarkMode = true;
+    } else if (userTheme === "light") {
+      applyDarkMode = false;
+    } else {
+      // "system"
+      applyDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
+    // Use the main toggleTheme function which handles transition disabling
+    toggleTheme(applyDarkMode);
+    // --- END: Apply theme based on localStorage on init ---
 
-    function animate() {
-        // Ensure elements are queryable after swap
-        requestAnimationFrame(() => {
-             const animateElements = document.querySelectorAll(".animate");
-             animateElements.forEach((element, index) => {
-                 // Reset any previous state if needed before adding 'show'
-                 element.classList.remove("show");
-                 // Use a small delay to ensure styles are applied after swap
-                 setTimeout(() => {
-                     element.classList.add("show");
-                 }, index * 150 + 50); // Added small base delay
-             });
-        });
-    }
+    // --- Existing init logic ---
+    onScroll(); // Setup scroll listener state
+    animate(); // Trigger entry animations
 
-
-    function onScroll() {
-        if (window.scrollY > 0) {
-            document.documentElement.classList.add("scrolled");
-        } else {
-            document.documentElement.classList.remove("scrolled");
-        }
-    }
-
-    // Run init on initial load AFTER the DOM is ready
-    document.addEventListener("DOMContentLoaded", init);
-
-    // Run init AFTER content is swapped by View Transitions
-    document.addEventListener("astro:after-swap", init);
-
-    // Cleanup scroll listener on navigate away (optional but good practice)
-    document.addEventListener('astro:before-swap', () => {
-        document.removeEventListener('scroll', onScroll);
+    // Setup button listeners
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
     });
 
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      // Set to system and immediately apply the current system theme
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    // Listener for OS theme changes (only applies if theme is 'system')
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        if (localStorage.getItem("theme") === "system") {
+          toggleTheme(event.matches);
+        }
+      });
+
+    // Setup scroll listener
+    document.addEventListener("scroll", onScroll); // Add listener
+  }
+
+  function animate() {
+    // Ensure elements are queryable after swap
+    requestAnimationFrame(() => {
+      const animateElements = document.querySelectorAll(".animate");
+      animateElements.forEach((element, index) => {
+        // Reset any previous state if needed before adding 'show'
+        element.classList.remove("show");
+        // Use a small delay to ensure styles are applied after swap
+        setTimeout(
+          () => {
+            element.classList.add("show");
+          },
+          index * 150 + 50
+        ); // Added small base delay
+      });
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  // Run init on initial load AFTER the DOM is ready
+  document.addEventListener("DOMContentLoaded", init);
+
+  // Run init AFTER content is swapped by View Transitions
+  document.addEventListener("astro:after-swap", init);
+
+  // Cleanup scroll listener on navigate away (optional but good practice)
+  document.addEventListener("astro:before-swap", () => {
+    document.removeEventListener("scroll", onScroll);
+  });
 </script>
 
 {/* Keep your <style> block as is */}
 <style
-    define:vars={{
-        noiseUrl: `url(${noise.src})`,
-        noiseDarkUrl: `url(${noiseDark.src})`,
-    }}
+  define:vars={{
+    noiseUrl: `url(${noise.src})`,
+    noiseDarkUrl: `url(${noiseDark.src})`,
+  }}
 >
-    /* Your existing styles */
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
+  /* Your existing styles */
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
 
-    body {
-        background-image: var(--noiseUrl);
-        background-size: auto;
-        background-repeat: repeat;
-        background-attachment: fixed; /* Keep noise fixed */
-        background-clip: border-box;
-        background-origin: padding-box;
-        background-position: 0 0;
-        background-color: var(--background); /* Ensure background color uses variable */
-        /* Font-family and color are inherited from global.css */
-    }
+  body {
+    background-image: var(--noiseUrl);
+    background-size: auto;
+    background-repeat: repeat;
+    background-attachment: fixed; /* Keep noise fixed */
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-color: var(
+      --background
+    ); /* Ensure background color uses variable */
+    /* Font-family and color are inherited from global.css */
+  }
 
-    .dark body {
-        background-image: var(--noiseDarkUrl);
-    }
+  .dark body {
+    background-image: var(--noiseDarkUrl);
+  }
 
-    .page-layout {
-        display: flex; /* Use flex for simpler footer sticking */
-        flex-direction: column;
-        min-height: 100vh;
-    }
+  .page-layout {
+    display: flex; /* Use flex for simpler footer sticking */
+    flex-direction: column;
+    min-height: 100vh;
+  }
 
-    .page-header {
-        /* Header styles are handled by Header.astro component */
-        position: sticky; /* Ensure header remains sticky */
-        top: 0;
-        z-index: 100;
-    }
+  .page-header {
+    /* Header styles are handled by Header.astro component */
+    position: sticky; /* Ensure header remains sticky */
+    top: 0;
+    z-index: 100;
+  }
 
-    .page-main {
-        flex-grow: 1; /* Allow main content to take available space */
-    }
+  .page-main {
+    flex-grow: 1; /* Allow main content to take available space */
+  }
 
-    .page-footer {
-        /* Footer styles are handled by Footer.astro component */
-        margin-top: auto; /* Push footer to bottom */
-    }
+  .page-footer {
+    /* Footer styles are handled by Footer.astro component */
+    margin-top: auto; /* Push footer to bottom */
+  }
 </style>
