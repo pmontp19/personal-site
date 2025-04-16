@@ -1,92 +1,141 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
-import { formatDate } from '../utils/date'; // Import formatDate
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { formatDate } from "../utils/date"; // Import formatDate
 
 // Get all entries from the 'experience' collection
-const experiences = (await getCollection('experience')).sort(
+const experiences = (await getCollection("experience")).sort(
   (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
 );
 
-const dateOptions: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric' };
-const locale = 'ca';
+const dateOptions: Intl.DateTimeFormatOptions = {
+  month: "long",
+  year: "numeric",
+};
+const locale = "ca";
 ---
 
 <Layout title="Experiència | Pere Montpeó">
   <main class="container">
     <section class="experience-section section">
       <div class="experiences">
-        {experiences.map((exp, index) => (
-          <div class="card">
-            <div class="experience-content">
-              <h2 class="job-title" transition:name={`role-${exp.slug}`}>{exp.data.role}</h2>
-              <p class="company-name text-muted" transition:name={`company-${exp.slug}`}>{exp.data.company}</p>
+        {
+          experiences.map((exp, index) => (
+            <div class="card">
+              <div class="experience-content">
+                <h2 class="job-title" transition:name={`role-${exp.slug}`}>
+                  {exp.data.role}
+                </h2>
+                <p
+                  class="company-name text-muted"
+                  transition:name={`company-${exp.slug}`}
+                >
+                  {exp.data.company}
+                </p>
 
-              <p class="date-range text-muted">
-                {formatDate(exp.data.startDate, dateOptions, locale)} - 
-                {exp.data.endDate ? formatDate(exp.data.endDate, dateOptions, locale) : 'Present'}
-              </p>
+                <p class="date-range text-muted">
+                  {formatDate(exp.data.startDate, dateOptions, locale)} -
+                  {exp.data.endDate
+                    ? formatDate(exp.data.endDate, dateOptions, locale)
+                    : "Present"}
+                </p>
 
-              <div class="description">
-                <p>{exp.data.description}</p>
-              </div>
-
-              {/* Container for the markdown body content */}
-              <div class="markdown-content" id={`markdown-content-${index}`}>
-                <Fragment set:html={exp.body} />
-              </div>
-
-              {/* Show more button */}
-              {exp.body.trim() && (
-                <div class="show-more-container">
-                  <button class="show-more-button button-link" aria-expanded="false" aria-controls={`markdown-content-${index}`}>
-                    <span>Show more</span>
-                    <span class="arrow-down">▼</span>
-                  </button>
+                <div class="description">
+                  <p>{exp.data.description}</p>
                 </div>
-              )}
 
-              {exp.data.tags && exp.data.tags.length > 0 && (
-                <div class="skills-section">
-                  <h3>Skills & Technologies</h3>
-                  <div class="tags">
-                    {exp.data.tags.map(tag => (
-                      <span class="tag">{tag}</span>
-                    ))}
+                <div class="markdown-content" id={`markdown-content-${index}`}>
+                  <Fragment set:html={exp.body} />
+                </div>
+
+                {exp.body && exp.body.trim() && (
+                  <div class="show-more-container">
+                    <button
+                      class="show-more-button button-link"
+                      aria-expanded="false"
+                      aria-controls={`markdown-content-${index}`}
+                    >
+                      <span>Show more</span>
+                      <span class="arrow-down">▼</span>
+                    </button>
                   </div>
-                </div>
-              )}
+                )}
+
+                {exp.data.tags && exp.data.tags.length > 0 && (
+                  <div class="skills-section">
+                    <h3>Skills & Technologies</h3>
+                    <div class="tags">
+                      {exp.data.tags.map((tag) => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        }
       </div>
     </section>
   </main>
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const showMoreButtons = document.querySelectorAll('.show-more-button');
+  function initializeShowMore() {
+    const showMoreButtons = document.querySelectorAll(".show-more-button");
 
-    showMoreButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const contentId = button.getAttribute('aria-controls');
-        const contentElement = contentId ? document.getElementById(contentId) : null;
-        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    // Store listeners to remove them later
+    const listeners = new Map();
+
+    showMoreButtons.forEach((button) => {
+      const clickHandler = () => {
+        const contentId = button.getAttribute("aria-controls");
+        const contentElement = contentId
+          ? document.getElementById(contentId)
+          : null;
+        const isExpanded = button.getAttribute("aria-expanded") === "true";
 
         if (contentElement) {
-          button.setAttribute('aria-expanded', String(!isExpanded));
-          contentElement.classList.toggle('expanded');
+          button.setAttribute("aria-expanded", String(!isExpanded));
+          contentElement.classList.toggle("expanded");
 
-          // Optional: Change button text
-          const buttonTextSpan = button.querySelector('span:not(.arrow-down)');
+          const buttonTextSpan = button.querySelector("span:not(.arrow-down)");
           if (buttonTextSpan) {
-            buttonTextSpan.textContent = isExpanded ? 'Show more' : 'Show less';
+            buttonTextSpan.textContent = isExpanded ? "Show more" : "Show less";
           }
         }
-      });
+      };
+
+      button.addEventListener("click", clickHandler);
+      // Store the handler to remove it later
+      listeners.set(button, clickHandler);
     });
-  });
+
+    // Cleanup function to remove listeners before swap
+    const cleanup = () => {
+      showMoreButtons.forEach((button) => {
+        const handler = listeners.get(button);
+        if (handler) {
+          button.removeEventListener("click", handler);
+        }
+      });
+      // Remove the cleanup listener itself
+      document.removeEventListener("astro:before-swap", cleanup);
+    };
+
+    // Add cleanup listener for Astro transitions
+    document.addEventListener("astro:before-swap", cleanup, { once: true });
+  }
+
+  // Initial load
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeShowMore);
+  } else {
+    initializeShowMore();
+  }
+
+  // Re-initialize after Astro navigations
+  document.addEventListener("astro:page-load", initializeShowMore);
 </script>
 
 <style>
@@ -120,8 +169,8 @@ const locale = 'ca';
   }
 
   .card .description p {
-     margin-bottom: 1rem;
-     line-height: 1.5;
+    margin-bottom: 1rem;
+    line-height: 1.5;
   }
 
   .card .skills-section {
@@ -145,7 +194,9 @@ const locale = 'ca';
   .markdown-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease-out, margin-top 0.4s ease-out;
+    transition:
+      max-height 0.4s ease-out,
+      margin-top 0.4s ease-out;
     margin-top: 0;
     line-height: 1.6;
   }
@@ -153,7 +204,9 @@ const locale = 'ca';
   .markdown-content.expanded {
     max-height: 1000px; /* Adjust as needed */
     margin-top: 1rem;
-    transition: max-height 0.4s ease-in, margin-top 0.4s ease-in;
+    transition:
+      max-height 0.4s ease-in,
+      margin-top 0.4s ease-in;
   }
 
   /* Global markdown content styling (can move to global.css if used elsewhere) */
@@ -176,26 +229,25 @@ const locale = 'ca';
     font-weight: 600;
   }
   .markdown-content :global(code) {
-     font-family: 'Geist Mono', monospace;
-     background-color: var(--secondary);
-     padding: 0.1em 0.3em;
-     border-radius: 4px;
-     font-size: 0.9em;
+    font-family: "Geist Mono", monospace;
+    background-color: var(--secondary);
+    padding: 0.1em 0.3em;
+    border-radius: 4px;
+    font-size: 0.9em;
   }
   .markdown-content :global(pre) {
-     background-color: var(--secondary);
-     padding: 1em;
-     border-radius: var(--radius);
-     overflow-x: auto;
-     margin-bottom: 1em;
+    background-color: var(--secondary);
+    padding: 1em;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin-bottom: 1em;
   }
-   .markdown-content :global(pre code) {
-      background-color: transparent;
-      padding: 0;
-      border-radius: 0;
-      font-size: 0.85em;
-   }
-
+  .markdown-content :global(pre code) {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85em;
+  }
 
   /* Show more button specific styles */
   .show-more-container {
@@ -212,7 +264,7 @@ const locale = 'ca';
 
   /* Rotation handled by JS adding/removing class or direct style */
   .show-more-button[aria-expanded="true"] .arrow-down {
-      transform: rotate(180deg);
+    transform: rotate(180deg);
   }
 
   @media (min-width: 768px) {

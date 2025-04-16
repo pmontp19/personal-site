@@ -2,11 +2,6 @@
 import Layout from "../layouts/Layout.astro";
 import InteractiveAvatar from "../components/InteractiveAvatar.astro";
 
-const pageDescription =
-  "Posa't en contacte amb mi. Troba el meu correu electrònic i les meves xarxes socials.";
-
-// Placeholder data - replace with your actual details
-// Split email parts for basic obfuscation
 const emailUser = "peremontpeo";
 const emailDomain = "gmail.com";
 
@@ -17,7 +12,7 @@ const socialLinks = [
 ];
 ---
 
-<Layout title={"Contacte | Pere Montpeó"} description={pageDescription}>
+<Layout title={"Contacte | Pere Montpeó"}>
   <div class="container section">
     <div class="contact-header">
       <InteractiveAvatar />

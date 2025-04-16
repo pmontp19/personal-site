@@ -3,76 +3,48 @@ import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../../utils/date";
 
-// Get all blog posts and sort by date (newest first)
-const allPosts = await getCollection("blog");
-const sortedPosts = allPosts.sort((a, b) =>
-  b.data.date.valueOf() - a.data.date.valueOf()
-);
-
-const postsByYear: { [year: number]: typeof sortedPosts } = {};
-sortedPosts.forEach((post) => {
-  const year = post.data.date.getFullYear();
-  if (!postsByYear[year]) {
-    postsByYear[year] = [];
-  }
-  postsByYear[year].push(post);
-});
-
-const pageTitle = "Apunts | Pere Montpeó";
-const pageDescription = "Pensaments, tutorials i apunts sobre desenvolupament web i tecnologia.";
-const siteAuthor = "Pere Montpeó";
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "name": "Apunts - Blog Posts",
-  "description": pageDescription,
-  "itemListElement": sortedPosts.map((post, index) => ({
-    "@type": "ListItem",
-    "position": index + 1,
-    "item": {
-      "@type": "BlogPosting",
-      "headline": post.data.title,
-      "url": new URL(`/blog/${post.slug}`, Astro.url.origin).toString(),
-      "datePublished": post.data.date.toISOString(),
-      "author": {
-        "@type": "Person",
-        "name": siteAuthor
-      },
-      "description": post.data.description
-    }
-  }))
-};
-
-const jsonLdScript = JSON.stringify(jsonLd);
+// Fetch all blog posts, filter out drafts, and sort by date (most recent first)
+const allPosts = (
+  await getCollection("blog", ({ data }) => {
+    return data.draft !== true;
+  })
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Layout title={pageTitle}>
-  <script type="application/ld+json" set:html={jsonLdScript} />
-
+<Layout title="Blog - Pere Montpeó">
   <main class="container">
-    <section class="blog-section section">
+    <section class="section blog-index-section animate">
       <h1>Apunts</h1>
-      <p class="subtitle">{pageDescription}</p>
+      <p class="subtitle">
+        Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de
+        programari i altres coses que em semblen interessants.
+      </p>
 
       <ul class="posts-list">
-        {sortedPosts.map((post) => (
-          <li>
-            <a href={`/blog/${post.slug}`}>
-              <time datetime={post.data.date.toISOString()} class="post-date" transition:name={`date-${post.slug}`}>
-                {formatDate(post.data.date)}
-              </time>
-              <span class="post-title" transition:name={`title-${post.slug}`}>{post.data.title}</span>
-            </a>
-          </li>
-        ))}
+        {
+          allPosts.map((post) => (
+            <li>
+              <a href={`/blog/${post.slug}/`}>
+                <time
+                  datetime={post.data.date.toISOString()}
+                  class="post-date"
+                  transition:name={`date-${post.slug}`}
+                >
+                  {formatDate(post.data.date)}
+                </time>
+                <span class="post-title" transition:name={`title-${post.slug}`}>
+                  {post.data.title}
+                </span>
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </section>
   </main>
 </Layout>
 
 <style>
-  /* Keep specific styles for the post list */
   .posts-list {
     list-style: none;
     padding: 0;
@@ -91,39 +63,36 @@ const jsonLdScript = JSON.stringify(jsonLd);
     text-decoration: none;
     color: var(--foreground);
     transition: color 0.2s ease;
-    padding: 0.25rem 0; /* Add some vertical padding for easier clicking */
+    padding: 0.25rem 0;
   }
 
   .posts-list a:hover,
   .posts-list a:focus {
     color: var(--primary);
-    text-decoration: none;
+    text-decoration: none; /* Keep underline off on hover/focus for this style */
   }
 
-  .posts-list a:hover .post-title,
-  .posts-list a:focus .post-title {
-     text-decoration: underline;
-     text-decoration-thickness: 1px;
-     text-underline-offset: 2px;
+  .posts-list a:focus {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 
   .post-date {
-    font-family: 'Geist Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
     white-space: nowrap;
-    flex-shrink: 0; /* Prevent date from shrinking */
+    font-family: 'Geist Mono', monospace;
   }
 
   .post-title {
-    font-size: 1rem;
     font-weight: 500;
     line-height: 1.4;
   }
 
-  @media (min-width: 768px) {
-    .post-title {
-      font-size: 1.1rem;
-    }
+  /* Add subtle underline on hover for the title span only */
+  .posts-list a:hover .post-title,
+  .posts-list a:focus .post-title {
+    text-decoration: underline;
   }
 </style>

@@ -6,7 +6,7 @@ import "@fontsource/geist-mono";
 import "@fontsource/geist-sans";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import { ClientRouter } from "astro:transitions"; // Import ViewTransitions
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title?: string;
@@ -27,7 +27,6 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
     <meta name="apple-mobile-web-app-title" content="MyWebSite" />
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
-    {/* Add the ViewTransitions component here */}
     <ClientRouter />
 
     <script is:inline>
@@ -55,13 +54,12 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
             "(prefers-color-scheme: dark)"
           ).matches;
         }
-        toggleThemeClass(applyDarkMode); // Apply class directly
+        toggleThemeClass(applyDarkMode);
       }
       preloadTheme();
     </script>
   </head>
   <body>
-    {/* Your body structure */}
     <div class="page-layout">
       <header class="page-header">
         <Header />
@@ -105,7 +103,6 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
   }
 
   function init() {
-    // --- START: Apply theme based on localStorage on init ---
     const userTheme = localStorage.getItem("theme") || "system"; // Default to system
     let applyDarkMode;
 
@@ -119,13 +116,10 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
     }
     // Use the main toggleTheme function which handles transition disabling
     toggleTheme(applyDarkMode);
-    // --- END: Apply theme based on localStorage on init ---
 
-    // --- Existing init logic ---
-    onScroll(); // Setup scroll listener state
-    animate(); // Trigger entry animations
+    onScroll();
+    animate();
 
-    // Setup button listeners
     const lightThemeButton = document.getElementById("light-theme-button");
     lightThemeButton?.addEventListener("click", () => {
       localStorage.setItem("theme", "light");
@@ -154,8 +148,7 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
         }
       });
 
-    // Setup scroll listener
-    document.addEventListener("scroll", onScroll); // Add listener
+    document.addEventListener("scroll", onScroll);
   }
 
   function animate() {
@@ -184,10 +177,8 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
     }
   }
 
-  // Run init on initial load AFTER the DOM is ready
   document.addEventListener("DOMContentLoaded", init);
 
-  // Run init AFTER content is swapped by View Transitions
   document.addEventListener("astro:after-swap", init);
 
   // Cleanup scroll listener on navigate away (optional but good practice)
@@ -196,7 +187,6 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
   });
 </script>
 
-{/* Keep your <style> block as is */}
 <style
   define:vars={{
     noiseUrl: `url(${noise.src})`,
@@ -215,14 +205,11 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
     background-image: var(--noiseUrl);
     background-size: auto;
     background-repeat: repeat;
-    background-attachment: fixed; /* Keep noise fixed */
+    background-attachment: fixed;
     background-clip: border-box;
     background-origin: padding-box;
     background-position: 0 0;
-    background-color: var(
-      --background
-    ); /* Ensure background color uses variable */
-    /* Font-family and color are inherited from global.css */
+    background-color: var(--background);
   }
 
   .dark body {
@@ -230,24 +217,22 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
   }
 
   .page-layout {
-    display: flex; /* Use flex for simpler footer sticking */
+    display: flex;
     flex-direction: column;
     min-height: 100vh;
   }
 
   .page-header {
-    /* Header styles are handled by Header.astro component */
-    position: sticky; /* Ensure header remains sticky */
+    position: sticky;
     top: 0;
     z-index: 100;
   }
 
   .page-main {
-    flex-grow: 1; /* Allow main content to take available space */
+    flex-grow: 1;
   }
 
   .page-footer {
-    /* Footer styles are handled by Footer.astro component */
-    margin-top: auto; /* Push footer to bottom */
+    margin-top: auto;
   }
 </style>

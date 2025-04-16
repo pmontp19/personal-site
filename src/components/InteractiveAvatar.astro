@@ -1,5 +1,4 @@
 ---
-// Interactive Avatar Component
 import { Image } from "astro:assets";
 import avatarImage from "../assets/avatar.png";
 
@@ -7,7 +6,7 @@ let isWinking = false;
 let isBlinking = false;
 ---
 
-<div id="avatarContainer">
+<div id="avatarContainer" transition:name="avatar-transition">
     <div class="face-container">
         <Image
             src={avatarImage}
@@ -236,32 +235,44 @@ let isBlinking = false;
             return;
         }
 
-        window.addEventListener("mousemove", (e: MouseEvent) => {
-            handlePointerMove(e);
-        });
-
-        window.addEventListener("touchmove", (e: TouchEvent) => {
+        const handleMouseMove = (e: MouseEvent) => handlePointerMove(e);
+        const handleTouchMove = (e: TouchEvent) => {
             if (e.touches.length > 0) {
                 handlePointerMove(e);
             }
-        }, { passive: true });
-
-        avatarContainer.addEventListener("click", triggerWink);
-        avatarContainer.addEventListener("touchstart", (e) => {
+        };
+        const handleAvatarClick = () => triggerWink();
+        const handleAvatarTouchStart = (e: TouchEvent) => {
              e.preventDefault();
              triggerWink();
-        }, { passive: false });
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("touchmove", handleTouchMove, { passive: true });
+        avatarContainer.addEventListener("click", handleAvatarClick);
+        avatarContainer.addEventListener("touchstart", handleAvatarTouchStart, { passive: false });
 
         // Regular blinking interval - humans blink every 4-6 seconds on average
         const blinkInterval = setInterval(() => {
             triggerBlink();
         }, 5000 + Math.random() * 2000); // Random time between 5-7 seconds
 
-        document.addEventListener("astro:before-swap", () => {
-            window.removeEventListener("mousemove", handlePointerMove as EventListener);
-            window.removeEventListener("touchmove", handlePointerMove as EventListener);
+        const cleanup = () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("touchmove", handleTouchMove);
+            // Check if avatarContainer still exists before removing listeners
+            // It might have been removed by a previous transition swap
+            const currentAvatarContainer = document.getElementById("avatarContainer");
+            if (currentAvatarContainer) {
+                currentAvatarContainer.removeEventListener("click", handleAvatarClick);
+                currentAvatarContainer.removeEventListener("touchstart", handleAvatarTouchStart);
+            }
             clearInterval(blinkInterval);
-        }, { once: true });
+            // Remove the cleanup listener itself to prevent multiple calls if transitions are rapid
+            document.removeEventListener("astro:before-swap", cleanup);
+        };
+
+        document.addEventListener("astro:before-swap", cleanup, { once: true });
     }
 
     if (document.readyState === "loading") {
@@ -269,6 +280,9 @@ let isBlinking = false;
     } else {
         initializeAvatar();
     }
+
+    document.addEventListener("astro:page-load", initializeAvatar);
+
 </script>
 
 <style>

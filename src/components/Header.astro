@@ -6,7 +6,8 @@ const { pathname } = Astro.url;
   <div class="container">
     <div class="header-content">
       <div class="logo">
-        <a href="/">Pere Montpeó</a>
+        
+        <a href="/"><span class="logo-emoji">👨‍💻</span> Pere Montpeó</a>
       </div>
       <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">🍔</button>
       <nav class="main-nav">
@@ -107,6 +108,22 @@ const { pathname } = Astro.url;
     position: relative; /* Needed for absolute positioning of nav on mobile */
   }
 
+  .logo {
+    font-size: 1.5rem;
+    display: inline-flex; /* Align emoji and text */
+    align-items: center; /* Vertically center emoji and text */
+    gap: 0.5rem; /* Add space between emoji and text */
+  }
+
+  .logo-emoji {
+    display: inline-block; /* Needed for transform */
+    transition: transform 0.3s ease; /* Smooth transition for non-animation states */
+  }
+
+  .logo:hover .logo-emoji {
+    animation: tilt-n-move-shaking 0.5s infinite;
+  }
+
   .logo a {
     font-size: 1.25rem;
     font-weight: 600;
@@ -116,6 +133,14 @@ const { pathname } = Astro.url;
   .logo a:hover {
     text-decoration: none;
     color: var(--primary);
+  }
+
+  @keyframes tilt-n-move-shaking {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(2px, 2px) rotate(5deg); } /* Reduced intensity */
+    50% { transform: translate(0, 0) rotate(0eg); }
+    75% { transform: translate(-2px, 2px) rotate(-5deg); } /* Reduced intensity */
+    100% { transform: translate(0, 0) rotate(0deg); }
   }
 
   .menu-toggle {
