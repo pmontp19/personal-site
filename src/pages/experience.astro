@@ -127,14 +127,7 @@ const locale = "ca";
     document.addEventListener("astro:before-swap", cleanup, { once: true });
   }
 
-  // Initial load
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initializeShowMore);
-  } else {
-    initializeShowMore();
-  }
-
-  // Re-initialize after Astro navigations
+  // Initialize after Astro navigations (and initial load)
   document.addEventListener("astro:page-load", initializeShowMore);
 </script>
 

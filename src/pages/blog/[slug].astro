@@ -2,9 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { calculateReadingTime } from "../../utils/readingTime";
-import { ViewTransitions } from 'astro:transitions'; // Import ViewTransitions
 
-// Generate paths for all blog posts
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
   return blogEntries.map(entry => ({

@@ -18,7 +18,7 @@ const experience = defineCollection({
 		role: z.string(),
 		startDate: z.coerce.date(),
 		endDate: z.coerce.date().optional(), // Optional if it's the current job
-		description: z.string(), // A brief description of the role/achievements
+		description: z.string().optional(), // A brief description of the role/achievements
 		tags: z.array(z.string()).optional(), // Optional tags like skills or technologies
 	}),
 });
