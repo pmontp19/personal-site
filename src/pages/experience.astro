@@ -19,8 +19,8 @@ const locale = 'ca';
         {experiences.map((exp, index) => (
           <div class="card">
             <div class="experience-content">
-              <h2 class="job-title">{exp.data.role}</h2>
-              <p class="company-name text-muted">{exp.data.company}</p>
+              <h2 class="job-title" transition:name={`role-${exp.slug}`}>{exp.data.role}</h2>
+              <p class="company-name text-muted" transition:name={`company-${exp.slug}`}>{exp.data.company}</p>
 
               <p class="date-range text-muted">
                 {formatDate(exp.data.startDate, dateOptions, locale)} - 
@@ -71,7 +71,7 @@ const locale = 'ca';
     showMoreButtons.forEach(button => {
       button.addEventListener('click', () => {
         const contentId = button.getAttribute('aria-controls');
-        const contentElement = document.getElementById(contentId);
+        const contentElement = contentId ? document.getElementById(contentId) : null;
         const isExpanded = button.getAttribute('aria-expanded') === 'true';
 
         if (contentElement) {

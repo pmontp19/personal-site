@@ -49,8 +49,8 @@ const latestExperience = sortedExperiences[0];
       {
         latestExperience && (
           <MagicCard>
-            <h3>{latestExperience.data.role}</h3>
-            <p class="company text-muted">{latestExperience.data.company}</p>
+            <h3 transition:name={`role-${latestExperience.slug}`}>{latestExperience.data.role}</h3>
+            <p class="company text-muted" transition:name={`company-${latestExperience.slug}`}>{latestExperience.data.company}</p>
             <p class="description text-muted">{latestExperience.data.description}</p>
             <a href="/experience" class="read-more button-link">
               Llegir més →

@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { calculateReadingTime } from "../../utils/readingTime";
+import { ViewTransitions } from 'astro:transitions'; // Import ViewTransitions
 
 // Generate paths for all blog posts
 export async function getStaticPaths() {
@@ -35,9 +36,9 @@ function formatDate(date: Date): string {
     <article class="post">
       <div class="post-header">
         <a href="/blog" class="back-link">← Tornar a tots els articles</a>
-        <h1>{entry.data.title}</h1>
+        <h1 transition:name={`title-${entry.slug}`}>{entry.data.title}</h1>
         <div class="post-meta">
-          <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+          <time datetime={entry.data.date.toISOString()} transition:name={`date-${entry.slug}`}>{formatDate(entry.data.date)}</time>
           <span class="reading-time">{readingTime}</span>
         </div>
       </div>

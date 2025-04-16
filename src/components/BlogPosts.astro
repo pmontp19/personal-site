@@ -39,12 +39,12 @@ const postsWithReadingTime = await Promise.all(
         <MagicCard class="blog-post-card">
           <div class="post-content">
             <div class="post-meta text-muted">
-              <time datetime={post.data.date.toISOString()}>
+              <time datetime={post.data.date.toISOString()} transition:name={`date-${post.slug}`}>
                 {formatDate(post.data.date)}
               </time>
               <span class="reading-time">⌛ {post.readingTime}</span>
             </div>
-            <h3 class="post-title">
+            <h3 class="post-title" transition:name={`title-${post.slug}`}>
               <a href={`/blog/${post.slug}`}>{post.data.title}</a>
             </h3>
             <p class="post-description text-muted">{post.data.description}</p>
@@ -59,6 +59,10 @@ const postsWithReadingTime = await Promise.all(
 </section>
 
 <style>
+  h2 {
+    margin-bottom: 0;
+  }
+
   .section-header {
     display: flex;
     justify-content: space-between;
