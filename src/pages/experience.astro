@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import { formatDate } from '../utils/date'; // Import formatDate
 
 // Get all entries from the 'experience' collection
 const experiences = (await getCollection('experience')).sort(
@@ -8,7 +9,7 @@ const experiences = (await getCollection('experience')).sort(
 );
 ---
 
-<Layout title="Work Experience">
+<Layout title="Experiència | Pere Montpeó">
   <main class="container">
     <section class="experience-section section">
       <div class="experiences">
@@ -19,8 +20,8 @@ const experiences = (await getCollection('experience')).sort(
               <p class="company-name text-muted">{exp.data.company}</p>
 
               <p class="date-range text-muted">
-                {exp.data.startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })} - 
-                {exp.data.endDate ? exp.data.endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : 'Present'}
+                {formatDate(exp.data.startDate)} - 
+                {exp.data.endDate ? formatDate(exp.data.endDate) : 'Present'}
               </p>
 
               <div class="description">
@@ -186,7 +187,6 @@ const experiences = (await getCollection('experience')).sort(
   .show-more-button[aria-expanded="true"] .arrow-down {
       transform: rotate(180deg);
   }
-
 
   @media (min-width: 768px) {
     .card {
