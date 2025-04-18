@@ -30,6 +30,17 @@ function formatDate(date: Date): string {
 ---
 
 <Layout title={`${entry.data.title} | Pere Montpeó`}>
+  <head slot="head">
+    <meta property="og:title" content={entry.data.title} />
+    <meta property="og:description" content={entry.data.description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={`https://web.peremontpeo.workers.dev/blog/${entry.slug}`} />
+    <meta property="og:image" content={`https://web.peremontpeo.workers.dev/api/og-image/${entry.slug}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={entry.data.title} />
+    <meta name="twitter:description" content={entry.data.description} />
+    <meta name="twitter:image" content={`https://web.peremontpeo.workers.dev/api/og-image/${entry.slug}`} />
+  </head>
   <main class="container">
     <article class="post">
       <div class="post-header">

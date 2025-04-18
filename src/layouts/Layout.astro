@@ -27,6 +27,15 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
     <meta name="apple-mobile-web-app-title" content="MyWebSite" />
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content="Pere Montpeó personal site and blog." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://web.peremontpeo.workers.dev/" />
+    <meta property="og:image" content="https://web.peremontpeo.workers.dev/api/og-image/default" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content="Pere Montpeó personal site and blog." />
+    <meta name="twitter:image" content="https://web.peremontpeo.workers.dev/api/og-image/default" />
     <ClientRouter />
 
     <script is:inline>
