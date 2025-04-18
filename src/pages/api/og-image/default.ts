@@ -1,17 +1,17 @@
-import { createCanvas } from 'astro-og-canvas';
+import { OGImageRoute } from 'astro-og-canvas';
 
-export async function GET() {
-  const { png } = await createCanvas({
-    title: 'Pere Montpeó',
-    description: 'Personal site and blog',
-    siteName: 'peremontpeo.com',
-    // You can further customize colors, fonts, etc. if desired
-  });
-
-  return new Response(png, {
-    headers: {
-      'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=31536000, immutable',
+export const { GET } = OGImageRoute({
+  param: 'default', // Provide a string, even if not used in the route
+  pages: {
+    default: {
+      title: 'Pere Montpeó',
+      description: 'Personal site and blog',
+      siteName: 'peremontpeo.com',
     },
-  });
-}
+  },
+  getImageOptions: (key, page) => ({
+    title: page.title,
+    description: page.description,
+    siteName: page.siteName,
+  }),
+});
