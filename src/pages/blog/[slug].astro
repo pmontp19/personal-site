@@ -5,10 +5,13 @@ import { calculateReadingTime } from "../../utils/readingTime";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
-  return blogEntries.map(entry => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+  // Filter out drafts
+  return blogEntries
+    .filter(entry => entry.data.draft !== true)
+    .map(entry => ({
+      params: { slug: entry.slug },
+      props: { entry },
+    }));
 }
 
 const { entry } = Astro.props;
