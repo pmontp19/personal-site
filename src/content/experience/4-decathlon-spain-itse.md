@@ -1,13 +1,13 @@
 ---
 company: "Decathlon Spain"
-role: "Enginyer de Sistemes IT"
+role: "IT Systems Engineer"
 startDate: 2019-11-01
 endDate: 2022-03-01
-description: "Gestió d'infraestructura IT, lideratge de projectes de seguretat i adquisició d'actius IT."
-tags: ["IT Infrastructure", "IT Security", "OWASP", "Asset Management", "Cost Optimization"]
+description: "Managed IT infrastructure, led asset withdrawal, and automated large-scale network deployments."
+tags: ["IT Infrastructure", "Asset Management", "Cost Optimization", "Network Automation"]
 ---
 
-- Gestionar la infraestructura IT a 30 ubicacions, assegurant l'uptime acordat dels sistemes.
-- Conscienciacó de seguretat IT
-- Adquirir i desplegar actius IT per valor d'1,7 M€.
-- Formador
+- Managed IT infrastructure across 30 locations, ensuring system uptime.
+- Led the withdrawal of end-of-life IT assets.
+- Procured and deployed €1.7M worth of IT assets, optimizing costs.
+- Automated the deployment of 500 network switches across 150 locations.

@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
+import ExperienceEntry from "../components/ExperienceEntry.astro";
 import { formatDate } from "../utils/date"; // Import formatDate
 
 // Get all entries from the 'experience' collection
@@ -12,69 +13,71 @@ const dateOptions: Intl.DateTimeFormatOptions = {
   month: "long",
   year: "numeric",
 };
-const locale = "ca";
+const locale = "en";
 ---
 
 <Layout title="Experiència | Pere Montpeó">
   <main>
     <section class="experience-section section">
       <div class="experiences">
-        {
-          experiences.map((exp, index) => (
-            <div class="card">
-              <div class="experience-content">
-                <h2 class="job-title" transition:name={`role-${exp.slug}`}>
-                  {exp.data.role}
-                </h2>
-                <p
-                  class="company-name text-muted"
-                  transition:name={`company-${exp.slug}`}
-                >
-                  {exp.data.company}
-                </p>
+        <a href="/cv" class="cv-link">See the classic CV view →</a>
+        <div class="experiences">
+          {
+            experiences.map((exp, index) => (
+              <div class="card">
+                <div class="experience-content">
+                  <h2 class="job-title" transition:name={`role-${exp.slug}`}>
+                    {exp.data.role}
+                  </h2>
+                  <p
+                    class="company-name text-muted"
+                    transition:name={`company-${exp.slug}`}
+                  >
+                    {exp.data.company}
+                  </p>
 
-                <p class="date-range text-muted">
-                  {formatDate(exp.data.startDate, dateOptions, locale)} -
-                  {exp.data.endDate
-                    ? formatDate(exp.data.endDate, dateOptions, locale)
-                    : "Present"}
-                </p>
+                  <p class="date-range text-muted">
+                    {formatDate(exp.data.startDate, dateOptions, locale)} -
+                    {exp.data.endDate
+                      ? formatDate(exp.data.endDate, dateOptions, locale)
+                      : "Present"}
+                  </p>
 
-                <div class="description">
-                  <p>{exp.data.description}</p>
-                </div>
-
-                <div class="markdown-content" id={`markdown-content-${index}`}>
-                  <Fragment set:html={exp.body} />
-                </div>
-
-                {exp.body && exp.body.trim() && (
-                  <div class="show-more-container">
-                    <button
-                      class="show-more-button button-link"
-                      aria-expanded="false"
-                      aria-controls={`markdown-content-${index}`}
-                    >
-                      <span>Show more</span>
-                      <span class="arrow-down">▼</span>
-                    </button>
+                  <div class="description">
+                    <p>{exp.data.description}</p>
                   </div>
-                )}
 
-                {exp.data.tags && exp.data.tags.length > 0 && (
-                  <div class="skills-section">
-                    <h3>Skills & Technologies</h3>
-                    <div class="tags">
-                      {exp.data.tags.map((tag) => (
-                        <span class="tag">{tag}</span>
-                      ))}
+                  <div class="markdown-content" id={`markdown-content-${index}`}>
+                    <ExperienceEntry data={exp} index={index} />
+                  </div>
+                  {exp.body && exp.body.trim() && (
+                    <div class="show-more-container">
+                      <button
+                        class="show-more-button button-link"
+                        aria-expanded="false"
+                        aria-controls={`markdown-content-${index}`}
+                      >
+                        <span>Show more</span>
+                        <span class="arrow-down">▼</span>
+                      </button>
                     </div>
-                  </div>
-                )}
+                  )}
+
+                  {exp.data.tags && exp.data.tags.length > 0 && (
+                    <div class="skills-section">
+                      <h3>Skills & Technologies</h3>
+                      <div class="tags">
+                        {exp.data.tags.map((tag) => (
+                          <span class="tag">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
-        }
+            ))
+          }
+        </div>
       </div>
     </section>
   </main>

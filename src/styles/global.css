@@ -288,3 +288,17 @@ a:focus {
   stroke: currentColor;
   stroke-width: 1.5;
 }
+
+/* Horizontal rule styles */
+hr {
+  border: none;
+  border-top: 1.5px solid var(--border);
+  margin: 2.5rem 0;
+  width: 100%;
+  opacity: 0.7;
+}
+
+.dark hr {
+  border-top-color: var(--border-muted);
+  opacity: 0.5;
+}

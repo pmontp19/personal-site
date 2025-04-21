@@ -244,4 +244,25 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
   .page-footer {
     margin-top: auto;
   }
+
+  @media print {
+    body {
+      background-image: none;
+      background-color: white;
+    }
+    .page-header,
+    .page-footer {
+      display: none;
+    }
+    .page-main {
+      margin: 0;
+      padding: 0;
+    }
+    .page-layout {
+      min-height: auto;
+    }
+    .page-layout {
+      display: block;
+    }
+  }
 </style>

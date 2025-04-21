@@ -1,13 +1,13 @@
 ---
 company: "Decathlon Technology Spain"
-role: "Enginyer de Software"
+role: "Software Engineer"
 startDate: 2024-01-01
-description: "Lideratge tècnic frontend, automatització de proves E2E, CI/CD, i millora de col·laboració en temps real."
-tags: ["Vue", "TypeScript", "Java Spring", "Cypress", "Cucumber", "CI/CD", "GitHub Actions", "Event-Driven", "QA", "Frontend Architecture"]
+description: "Lead frontend development for Corporate Operations and Human Resources domains. Introduced E2E test automation, implemented CI/CD pipelines, and advocated for QA best practices."
+tags: ["Vue", "TypeScript", "Java Spring", "Cypress", "Cucumber", "CI/CD", "GitHub Actions", "QA", "Frontend Architecture"]
 ---
 
-- Liderar la iniciativa de desenvolupament frontend per als dominis d'Operacions Corporatives i Recursos Humans, assegurant una arquitectura escalable i mantenible amb Vue, TypeScript i Java Spring.
-- Introduir l'automatització de proves end-to-end utilitzant Cypress i Cucumber, millorant significativament la cobertura de proves i reduint els esforços manuals de QA.
-- Implementar pipelines d'automatització CI/CD amb GitHub Actions, reduint el temps de desplegament i millorant l'eficiència dels llançaments.
-- Promoure les millors pràctiques d'Enginyeria QA, centrant-se en la qualitat del codi, l'automatització de proves i una arquitectura frontend escalable.
-- Realitzar revisions de codi, optimitzacions de rendiment i proves automatitzades, assegurant l'estabilitat i mantenibilitat del sistema.
+- Lead the frontend development initiative for the Corporate Operations and Human Resources domains, ensuring a scalable and maintainable architecture with Vue, TypeScript, and Java Spring.
+- Introduced end-to-end test automation using Cypress and Cucumber, significantly improving test coverage and reducing manual QA efforts.
+- Implemented CI/CD automation pipelines with GitHub Actions, reducing deployment time and improving release efficiency.
+- Advocated for QA Engineering best practices, focusing on code quality, test automation, and scalable frontend architecture.
+- Conducted code reviews, performance optimizations, and automated testing, ensuring system stability and maintainability.

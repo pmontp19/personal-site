@@ -1,11 +1,10 @@
 ---
 company: "Decathlon Spain"
-role: "Responsable Tècnic de Vendes i Omnicanalitat"
+role: "Sales Specialist"
 startDate: 2015-08-01
 endDate: 2019-11-01
-description: "Desenvolupament d'aplicacions internes, disseny d'estratègies de vendes i gestió d'estoc."
-tags: ["PHP", "JavaScript", "Internal Tools", "Sales Strategy", "Stock Management", "Omnichannel"]
+description: "Developed and launched a customer-facing application, supporting stores in multiple countries."
+tags: ["PHP", "JavaScript", "Customer Application", "Sales"]
 ---
 
-- Definir la política comercial.
-- Gestionar l'estoc de productes, reduint les ruptures d'inventari.
+- Solo developed and launched a customer facing application in PHP & JavaScript, used across Spain, Portugal, and Poland store locations.

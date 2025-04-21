@@ -1,12 +1,11 @@
 ---
 company: "Decathlon Spain"
-role: "Desenvolupador de Software"
+role: "Software Developer"
 startDate: 2018-04-01
 endDate: 2019-11-01
-description: "Disseny i implementació d'aplicacions web per a clients i desenvolupament de serveis backend."
+description: "Developed backend services and collaborated with DevOps to improve deployments and reliability."
 tags: ["PHP", "Symfony", "JavaScript", "API REST", "MySQL", "MongoDB", "Backend", "DevOps"]
 ---
 
-- Dissenyar i implementar aplicacions web orientades al client utilitzades a Espanya, Portugal i Polònia per digitalitzar el meu perímetre de responsabilitat.
-- Desenvolupar serveis backend utilitzant PHP Symfony, JavaScript, API-REST, MySQL i MongoDB.
-- Treballar estretament amb l'equip DevOps per optimitzar els desplegaments i millorar la fiabilitat del sistema.
+- Developed backend services using PHP Symfony, JavaScript, API-REST, MySQL, and MongoDB.
+- Worked closely with the DevOps team to streamline deployments and improve system reliability.

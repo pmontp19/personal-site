@@ -1,0 +1,13 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  data: CollectionEntry<"experience">;
+  index: number;
+}
+
+const { data, index } = Astro.props;
+const { Content } = await data.render();
+---
+
+<Content />
