@@ -20,7 +20,7 @@ Astro és la baula perduda entre els frameworks de Javascript. No hi havia fins 
 
 Si no hi poses Javascript, no n'hi ha. Buscava una cosa que realment fos ràpida, generada al servidor, i alguns extres. 
 
-[v0](http://v0.dev) em va ajudar a genrar alguna part de l'UI concreta, i amb Copilot l'he adaptada al proojecte d'Astro. Crec que l'únic que Copilot (Gemini 2.5) no ha pogut resoldre són les View Transitions API que amb les últimes versions d'Astro vénen de sèrie, i les imatges d'open-graph, que s'ha enredat bastant i encara no ho he arreglat.
+[v0](http://v0.dev) em va ajudar a genrar alguna part de l'UI concreta, i amb Copilot l'he adaptada al projecte d'Astro. Crec que l'únic que Copilot (Gemini 2.5) no ha pogut resoldre són les View Transitions API que amb les últimes versions d'Astro vénen de sèrie, i les imatges d'open-graph, que s'ha enredat bastant i encara no ho he arreglat.
 
 Amb no gaire esforç pots començar el teu web, landing, blog, partint d'arxius Markdown o fins i tot MDX, fins a un CMS personalitzat.
 
