@@ -1,7 +1,5 @@
 ---
 import "../styles/global.css";
-import noise from "../assets/noise-light.png";
-import noiseDark from "../assets/noise-dark.png";
 import "@fontsource/geist-mono";
 import "@fontsource/geist-sans";
 import Header from "../components/Header.astro";
@@ -16,7 +14,7 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ca">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,13 +26,13 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
     <meta property="og:title" content={title} />
-    <meta property="og:description" content="Pere Montpeó personal site and blog." />
+    <meta property="og:description" content="Lloc web i blog de Pere Montpeó." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://web.peremontpeo.workers.dev/" />
+    <meta property="og:url" content="https://peremontpeo.dev/" />
     <meta property="og:image" content="https://web.peremontpeo.workers.dev/api/og-image/default" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content="Pere Montpeó personal site and blog." />
+    <meta name="twitter:description" content="Lloc web i blog de Pere Montpeó." />
     <meta name="twitter:image" content="https://web.peremontpeo.workers.dev/api/og-image/default" />
     <ClientRouter />
 
@@ -196,13 +194,7 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
   });
 </script>
 
-<style
-  define:vars={{
-    noiseUrl: `url(${noise.src})`,
-    noiseDarkUrl: `url(${noiseDark.src})`,
-  }}
->
-  /* Your existing styles */
+<style>
   html,
   body {
     height: 100%;
@@ -211,7 +203,6 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
   }
 
   body {
-    background-image: var(--noiseUrl);
     background-size: auto;
     background-repeat: repeat;
     background-attachment: fixed;
@@ -219,10 +210,6 @@ const { title = "Pere Montpeó" } = Astro.props as Props;
     background-origin: padding-box;
     background-position: 0 0;
     background-color: var(--background);
-  }
-
-  .dark body {
-    background-image: var(--noiseDarkUrl);
   }
 
   .page-layout {

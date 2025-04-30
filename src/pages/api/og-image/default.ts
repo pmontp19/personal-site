@@ -1,9 +1,9 @@
 import { OGImageRoute } from 'astro-og-canvas';
 
-export const { GET } = OGImageRoute({
+export const { getStaticPaths, GET } = OGImageRoute({
   param: 'default', // Provide a string, even if not used in the route
   pages: {
-    default: {
+    'default': {
       title: 'Pere Montpeó',
       description: 'Personal site and blog',
       siteName: 'peremontpeo.com',
