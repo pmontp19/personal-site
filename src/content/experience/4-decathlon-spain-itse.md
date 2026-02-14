@@ -10,4 +10,4 @@ tags: ["IT Infrastructure", "Asset Management", "Cost Optimization", "Network Au
 - Managed IT infrastructure across 30 locations, ensuring system uptime.
 - Led the withdrawal of end-of-life IT assets.
 - Procured and deployed €1.7M worth of IT assets, optimizing costs.
-- Automated the deployment of 500 network switches across 150 locations.
+- Automated the deployment of 500 network switches across 155 locations.

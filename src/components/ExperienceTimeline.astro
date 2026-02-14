@@ -1,0 +1,107 @@
+---
+import { formatDate } from "../utils/date";
+
+interface Experience {
+  slug: string;
+  data: {
+    role: string;
+    company: string;
+    startDate: Date;
+    endDate?: Date;
+  };
+}
+
+interface Props {
+  experiences: Experience[];
+  limit?: number;
+}
+
+const { experiences, limit = 3 } = Astro.props;
+const items = experiences.slice(0, limit);
+
+const dateOptions: Intl.DateTimeFormatOptions = {
+  month: "short",
+  year: "numeric",
+};
+const locale = "ca-ES";
+---
+
+<div class="timeline">
+  {items.map((exp) => (
+    <div class={`timeline-item ${!exp.data.endDate ? 'current' : ''}`}>
+      <div class={`timeline-dot ${!exp.data.endDate ? 'pulsating' : ''}`}></div>
+      <div class="timeline-content">
+        <h3 class="timeline-role">{exp.data.role}</h3>
+        <p class="timeline-company text-muted">{exp.data.company}</p>
+        <p class="timeline-date text-muted">
+          {formatDate(exp.data.startDate, dateOptions, locale)} — {exp.data.endDate ? formatDate(exp.data.endDate, dateOptions, locale) : "Actual"}
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .timeline {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    background-color: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+  }
+
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -1.5rem;
+    top: 0.35rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    border: 2px solid var(--background);
+  }
+
+  .timeline-dot.pulsating {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 40%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 0%, transparent);
+    }
+  }
+
+  .timeline-role {
+    font-size: 1.1rem;
+    margin-bottom: 0.125rem;
+  }
+
+  .timeline-company {
+    font-size: 0.95rem;
+    margin-bottom: 0.125rem;
+  }
+
+  .timeline-date {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+  }
+</style>
