@@ -23,7 +23,13 @@ const { pathname } = Astro.url;
 </header>
 
 <script>
+  let headerController: AbortController | null = null;
+
   const initHeader = () => {
+    if (headerController) headerController.abort();
+    headerController = new AbortController();
+    const { signal } = headerController;
+
     const menuToggle = document.querySelector('.menu-toggle');
     const mainNav = document.querySelector('.main-nav');
     if (!menuToggle || !mainNav) return;
@@ -52,8 +58,7 @@ const { pathname } = Astro.url;
       }
     };
 
-    menuToggle.removeEventListener('click', toggleMenu);
-    menuToggle.addEventListener('click', toggleMenu);
+    menuToggle.addEventListener('click', toggleMenu, { signal });
 
     // Handle anchor links: smooth scroll on homepage, navigate on other pages
     const anchorLinks = document.querySelectorAll('.anchor-link');
@@ -75,13 +80,13 @@ const { pathname } = Astro.url;
         // If on another page, let the default navigation happen (to /#section)
 
         closeMenu();
-      });
+      }, { signal });
     });
 
     // Close menu on any non-anchor nav click too
     const navLinks = document.querySelectorAll('.nav-link:not(.anchor-link)');
     navLinks.forEach(link => {
-      link.addEventListener('click', closeMenu);
+      link.addEventListener('click', closeMenu, { signal });
     });
 
     // Click outside to close
@@ -90,10 +95,9 @@ const { pathname } = Astro.url;
       if (!mainNav.contains(event.target as Node) && !menuToggle.contains(event.target as Node)) {
         closeMenu();
       }
-    });
+    }, { signal });
   };
 
-  initHeader();
   document.addEventListener('astro:page-load', initHeader);
 </script>
 
