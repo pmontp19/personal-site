@@ -6,7 +6,7 @@ const { pathname } = Astro.url;
   <div class="container">
     <div class="header-content">
       <div class="logo">
-        
+
         <a href="/"><span class="logo-emoji">👨‍💻</span> Pere Montpeó</a>
       </div>
       <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">🍔</button>
@@ -14,8 +14,8 @@ const { pathname } = Astro.url;
         <ul class="nav-list">
           <li class="nav-item"><a href="/" class=`nav-link ${pathname === '/' ? 'active' : ''}`>Inici</a></li>
           <li class="nav-item"><a href="/blog" class=`nav-link ${pathname.startsWith('/blog') ? 'active' : ''}`>Apunts</a></li>
-          <li class="nav-item"><a href="/experiencia" class=`nav-link ${pathname.startsWith('/experiencia') ? 'active' : ''}`>Experiència</a></li>
-          <li class="nav-item"><a href="/contact" class=`nav-link ${pathname.startsWith('/contact') ? 'active' : ''}`>Contacte</a></li>
+          <li class="nav-item"><a href="/#experiencia" class=`nav-link anchor-link ${pathname.startsWith('/experiencia') ? 'active' : ''}`>Experiència</a></li>
+          <li class="nav-item"><a href="/#contacte" class=`nav-link anchor-link ${pathname.startsWith('/contact') ? 'active' : ''}`>Contacte</a></li>
         </ul>
       </nav>
     </div>
@@ -23,54 +23,78 @@ const { pathname } = Astro.url;
 </header>
 
 <script>
-  const toggleMenu = () => {
+  const initHeader = () => {
     const menuToggle = document.querySelector('.menu-toggle');
     const mainNav = document.querySelector('.main-nav');
     if (!menuToggle || !mainNav) return;
 
-    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-    const newExpandedState = !isExpanded;
-    menuToggle.setAttribute('aria-expanded', newExpandedState.toString());
-    mainNav.classList.toggle('menu-open');
+    const closeMenu = () => {
+      if (mainNav.classList.contains('menu-open')) {
+        menuToggle.setAttribute('aria-expanded', 'false');
+        mainNav.classList.remove('menu-open');
+        menuToggle.textContent = '🍔';
+        menuToggle.classList.remove('menu-open-icon');
+      }
+    };
 
-    if (newExpandedState) {
-      menuToggle.textContent = '❌';
-      menuToggle.classList.add('menu-open-icon');
-    } else {
-      menuToggle.textContent = '🍔';
-      menuToggle.classList.remove('menu-open-icon');
-    }
+    const toggleMenu = () => {
+      const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      const newExpandedState = !isExpanded;
+      menuToggle.setAttribute('aria-expanded', newExpandedState.toString());
+      mainNav.classList.toggle('menu-open');
+
+      if (newExpandedState) {
+        menuToggle.textContent = '❌';
+        menuToggle.classList.add('menu-open-icon');
+      } else {
+        menuToggle.textContent = '🍔';
+        menuToggle.classList.remove('menu-open-icon');
+      }
+    };
+
+    menuToggle.removeEventListener('click', toggleMenu);
+    menuToggle.addEventListener('click', toggleMenu);
+
+    // Handle anchor links: smooth scroll on homepage, navigate on other pages
+    const anchorLinks = document.querySelectorAll('.anchor-link');
+    anchorLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (!href) return;
+
+        // If we're on the homepage, smooth-scroll to the anchor
+        if (window.location.pathname === '/') {
+          e.preventDefault();
+          const hash = href.replace('/', '');
+          const target = document.querySelector(hash);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            history.pushState(null, '', hash);
+          }
+        }
+        // If on another page, let the default navigation happen (to /#section)
+
+        closeMenu();
+      });
+    });
+
+    // Close menu on any non-anchor nav click too
+    const navLinks = document.querySelectorAll('.nav-link:not(.anchor-link)');
+    navLinks.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Click outside to close
+    document.addEventListener('click', (event: MouseEvent) => {
+      if (!mainNav.classList.contains('menu-open')) return;
+      if (!mainNav.contains(event.target as Node) && !menuToggle.contains(event.target as Node)) {
+        closeMenu();
+      }
+    });
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const mainNav = document.querySelector('.main-nav');
-
-    if (!mainNav || !menuToggle || !mainNav.classList.contains('menu-open')) {
-      return;
-    }
-
-    if (!mainNav.contains(event.target as Node) &&
-        !menuToggle.contains(event.target as Node)) {
-      toggleMenu();
-    }
-  };
-
-  const attachMenuListener = () => {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const mainNav = document.querySelector('.main-nav');
-
-    if (menuToggle && mainNav) {
-      menuToggle.removeEventListener('click', toggleMenu);
-      menuToggle.addEventListener('click', toggleMenu);
-
-      document.removeEventListener('click', handleClickOutside);
-      document.addEventListener('click', handleClickOutside);
-    }
-  };
-
-  attachMenuListener();
-  document.addEventListener('astro:page-load', attachMenuListener);
+  initHeader();
+  document.addEventListener('astro:page-load', initHeader);
 </script>
 
 <style>
@@ -91,7 +115,7 @@ const { pathname } = Astro.url;
     background-color: hsla(var(--background-hsl) / 0.9);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(var(--backdrop-blur));
-    -webkit-backdrop-filter: blur(var(--backdrop-blur)); /* Safari support */
+    -webkit-backdrop-filter: blur(var(--backdrop-blur));
   }
 
   .container {
@@ -105,19 +129,19 @@ const { pathname } = Astro.url;
     justify-content: space-between;
     align-items: center;
     height: 3.5rem;
-    position: relative; /* Needed for absolute positioning of nav on mobile */
+    position: relative;
   }
 
   .logo {
     font-size: 1.5rem;
-    display: inline-flex; /* Align emoji and text */
-    align-items: center; /* Vertically center emoji and text */
-    gap: 0.5rem; /* Add space between emoji and text */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .logo-emoji {
-    display: inline-block; /* Needed for transform */
-    transition: transform 0.3s ease; /* Smooth transition for non-animation states */
+    display: inline-block;
+    transition: transform 0.3s ease;
   }
 
   .logo:hover .logo-emoji {
@@ -137,9 +161,9 @@ const { pathname } = Astro.url;
 
   @keyframes tilt-n-move-shaking {
     0% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(2px, 2px) rotate(5deg); } /* Reduced intensity */
-    50% { transform: translate(0, 0) rotate(0eg); }
-    75% { transform: translate(-2px, 2px) rotate(-5deg); } /* Reduced intensity */
+    25% { transform: translate(2px, 2px) rotate(5deg); }
+    50% { transform: translate(0, 0) rotate(0deg); }
+    75% { transform: translate(-2px, 2px) rotate(-5deg); }
     100% { transform: translate(0, 0) rotate(0deg); }
   }
 
@@ -190,28 +214,22 @@ const { pathname } = Astro.url;
   .nav-link.active {
     color: var(--foreground);
     font-weight: 600;
-    position: relative; /* Needed for pseudo-element positioning */
-    /* Remove previous underline styles */
-    /* text-decoration: underline;
-    text-decoration-style: wavy;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px; */
+    position: relative;
   }
 
-  /* Add the neon glow effect using ::after */
   .nav-link.active::after {
     content: '';
     position: absolute;
     left: 0;
-    bottom: 10px; /* Position below the text, adjust as needed */
+    bottom: 10px;
     width: 100%;
-    height: 3px; /* Thickness of the main "LED" line */
-    background-color: var(--primary); /* Color of the "LED" */
-    border-radius: 1px; /* Slightly rounded ends */
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 1px;
     box-shadow:
-      0 0 6px var(--primary), /* Inner glow */
-      0 0 12px var(--primary); /* Outer glow */
-    transition: all 0.3s ease; /* Smooth transition if properties change */
+      0 0 6px var(--primary),
+      0 0 12px var(--primary);
+    transition: all 0.3s ease;
   }
 
   @media (max-width: 768px) {
@@ -230,7 +248,7 @@ const { pathname } = Astro.url;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       padding: 1rem 0;
-      z-index: 99; /* Ensure it's above content but below sticky header */
+      z-index: 99;
     }
 
     .main-nav.menu-open {
@@ -252,15 +270,11 @@ const { pathname } = Astro.url;
       padding: 0.75rem 1rem;
     }
 
-    .header-content {
-      /* Styles for mobile header content layout if needed */
-    }
-
     .nav-link.active::after {
-      bottom: 10px; /* Adjust position for centered text on mobile */
+      bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 20%; /* Make the glow shorter on mobile if desired */
+      width: 20%;
     }
   }
 </style>

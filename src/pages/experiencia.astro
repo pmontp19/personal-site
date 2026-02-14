@@ -13,14 +13,14 @@ const dateOptions: Intl.DateTimeFormatOptions = {
   month: "long",
   year: "numeric",
 };
-const locale = "en";
+const locale = "ca-ES";
 ---
 
 <Layout title="Experiència | Pere Montpeó">
   <main>
     <section class="experience-section section">
       <div class="experiences">
-        <a href="/cv" class="cv-link">See the classic CV view →</a>
+        <a href="/cv" class="cv-link">Veure el CV clàssic →</a>
         <div class="experiences">
           {
             experiences.map((exp, index) => (
@@ -40,7 +40,7 @@ const locale = "en";
                     {formatDate(exp.data.startDate, dateOptions, locale)} -
                     {exp.data.endDate
                       ? formatDate(exp.data.endDate, dateOptions, locale)
-                      : "Present"}
+                      : "Actual"}
                   </p>
 
                   <div class="description">
@@ -57,7 +57,7 @@ const locale = "en";
                         aria-expanded="false"
                         aria-controls={`markdown-content-${index}`}
                       >
-                        <span>Show more</span>
+                        <span>Veure més</span>
                         <span class="arrow-down">▼</span>
                       </button>
                     </div>
@@ -65,7 +65,7 @@ const locale = "en";
 
                   {exp.data.tags && exp.data.tags.length > 0 && (
                     <div class="skills-section">
-                      <h3>Skills & Technologies</h3>
+                      <h3>Habilitats i tecnologies</h3>
                       <div class="tags">
                         {exp.data.tags.map((tag) => (
                           <span class="tag">{tag}</span>
@@ -104,7 +104,7 @@ const locale = "en";
 
           const buttonTextSpan = button.querySelector("span:not(.arrow-down)");
           if (buttonTextSpan) {
-            buttonTextSpan.textContent = isExpanded ? "Show more" : "Show less";
+            buttonTextSpan.textContent = isExpanded ? "Veure més" : "Veure menys";
           }
         }
       };
@@ -245,7 +245,7 @@ const locale = "en";
     font-size: 0.85em;
   }
 
-  /* Show more button specific styles */
+  /* Veure més button specific styles */
   .show-more-container {
     display: flex;
     justify-content: center;

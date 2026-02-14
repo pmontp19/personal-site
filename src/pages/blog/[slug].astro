@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import { calculateReadingTime } from "../../utils/readingTime";
 
@@ -54,6 +55,17 @@ function formatDate(date: Date): string {
           <span class="reading-time">{readingTime}</span>
         </div>
       </div>
+
+      {entry.data.image && (
+        <div class="hero-image">
+          <Image
+            src={entry.data.image}
+            alt={entry.data.imageAlt || entry.data.title}
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 65ch) 100vw, 65ch"
+          />
+        </div>
+      )}
 
       <div class="post-content">
         <Content />
@@ -125,7 +137,7 @@ function formatDate(date: Date): string {
 
   time, .reading-time {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--text-muted);
   }
 
   .reading-time {
@@ -142,7 +154,17 @@ function formatDate(date: Date): string {
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background-color: #6b7280;
+    background-color: var(--text-muted);
+  }
+
+  .hero-image {
+    margin-bottom: 2rem;
+  }
+
+  .hero-image :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
   }
 
   .post-content {
@@ -170,7 +192,7 @@ function formatDate(date: Date): string {
   }
 
   .post-content :global(a) {
-    color: #3b82f6;
+    color: var(--primary);
     text-decoration: underline;
   }
 
@@ -185,7 +207,7 @@ function formatDate(date: Date): string {
 
   .post-content :global(pre) {
     border-radius: 0.375rem;
-    background-color: #1f2937;
+    background-color: var(--secondary);
     padding: 1rem;
     margin: 1.5rem 0;
     overflow-x: auto;
@@ -219,7 +241,7 @@ function formatDate(date: Date): string {
 
   .post-content :global(table th), .post-content :global(table td) {
     padding: 0.5rem;
-    border: 1px solid #374151;
+    border: 1px solid var(--border);
     text-align: left;
   }
 
@@ -241,7 +263,7 @@ function formatDate(date: Date): string {
   }
 
   .back-button:hover {
-    color: #3b82f6;
+    color: var(--primary);
     text-decoration: underline;
   }
 
