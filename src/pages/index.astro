@@ -10,9 +10,22 @@ import { getCollection } from "astro:content";
 const allExperiences = (await getCollection("experience")).sort(
   (a, b) => new Date(b.data.startDate).getTime() - new Date(a.data.startDate).getTime()
 );
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Pere Montpeó",
+  "url": "https://peremontpeo.dev",
+  "jobTitle": "Software Engineer",
+  "description": "Enginyer de programari especialitzat en desenvolupament web.",
+  "sameAs": [
+    "https://github.com/peremontpeo",
+    "https://linkedin.com/in/peremontpeo"
+  ]
+};
 ---
 
-<Layout>
+<Layout jsonLd={personSchema} canonicalUrl="https://peremontpeo.dev/" description="Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols.">
   <main>
     <!-- About Me -->
     <section id="sobre-mi" class="about section animate">

@@ -17,6 +17,11 @@ const titles: Record<string, string> = {
   en: 'CV - Pere Montpeó'
 };
 
+const descriptions: Record<string, string> = {
+  ca: 'Currículum vitae de Pere Montpeó. Experiència professional, educació i habilitats.',
+  en: 'Pere Montpeó\'s curriculum vitae. Professional experience, education and skills.'
+};
+
 const buttonText: Record<string, string> = {
   ca: 'Desa com a PDF',
   en: 'Save as PDF'
@@ -27,7 +32,7 @@ if (!cv) return Astro.redirect('/cv/en');
 const { Content } = await cv.render();
 ---
 
-<Layout title={titles[lang]} lang={lang}>
+<Layout title={titles[lang]} lang={lang} description={descriptions[lang]} canonicalUrl={`https://peremontpeo.dev/cv/${lang}/`}>
   <article class="cv-page">
     <div class="cv-actions">
       <LanguageSwitcher currentLang={lang} />

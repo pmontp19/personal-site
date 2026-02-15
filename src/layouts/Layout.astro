@@ -9,9 +9,14 @@ import { ClientRouter } from "astro:transitions";
 interface Props {
   title?: string;
   lang?: string;
+  description?: string;
+  canonicalUrl?: string;
+  jsonLd?: object;
 }
 
-const { title = "Pere Montpeó", lang = "ca" } = Astro.props as Props;
+const { title = "Pere Montpeó", lang = "ca", description = "Lloc web i blog de Pere Montpeó. Enginyer de programari especialitzat en desenvolupament web.", canonicalUrl, jsonLd } = Astro.props as Props;
+const siteUrl = "https://peremontpeo.dev";
+const pageUrl = canonicalUrl || siteUrl;
 ---
 
 <!doctype html>
@@ -19,22 +24,29 @@ const { title = "Pere Montpeó", lang = "ca" } = Astro.props as Props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={pageUrl} />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <meta name="apple-mobile-web-app-title" content="Pere Montpeó" />
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
     <meta property="og:title" content={title} />
-    <meta property="og:description" content="Lloc web i blog de Pere Montpeó." />
+    <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://peremontpeo.dev/" />
-    <meta property="og:image" content="https://web.peremontpeo.workers.dev/api/og-image/default" />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={`${siteUrl}/api/og-image/default`} />
+    <meta property="og:locale" content="ca_ES" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content="Lloc web i blog de Pere Montpeó." />
-    <meta name="twitter:image" content="https://web.peremontpeo.workers.dev/api/og-image/default" />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/api/og-image/default`} />
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+    <slot name="head" />
     <ClientRouter />
 
     <script is:inline>

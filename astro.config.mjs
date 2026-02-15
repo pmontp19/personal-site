@@ -5,6 +5,6 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://web.peremontpeo.workers.dev',
+  site: 'https://peremontpeo.dev',
   integrations: [sitemap()]
 });
