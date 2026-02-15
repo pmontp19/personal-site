@@ -1,6 +1,3 @@
----
-layout: ../layouts/Layout.astro
----
 # **Pere Montpeó**
 
 📍 Vilanova i la Geltrú, Barcelona | 🔗 [Website](https://peremontpeo.dev) | [GitHub](https://github.com/pmontp19) | [LinkedIn](https://linkedin.com/in/perem)

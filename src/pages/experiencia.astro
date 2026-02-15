@@ -26,15 +26,22 @@ const locale = "ca-ES";
             experiences.map((exp, index) => (
               <div class="card">
                 <div class="experience-content">
-                  <h2 class="job-title" transition:name={`role-${exp.slug}`}>
-                    {exp.data.role}
-                  </h2>
-                  <p
-                    class="company-name text-muted"
-                    transition:name={`company-${exp.slug}`}
-                  >
-                    {exp.data.company}
-                  </p>
+                  <div class="experience-header">
+                    {exp.data.logo && (
+                      <img src={exp.data.logo} alt={`${exp.data.company} logo`} class="company-logo" />
+                    )}
+                    <div class="experience-title-info">
+                      <h2 class="job-title" transition:name={`role-${exp.slug}`}>
+                        {exp.data.role}
+                      </h2>
+                      <p
+                        class="company-name text-muted"
+                        transition:name={`company-${exp.slug}`}
+                      >
+                        {exp.data.company}
+                      </p>
+                    </div>
+                  </div>
 
                   <p class="date-range text-muted">
                     {formatDate(exp.data.startDate, dateOptions, locale)} -
@@ -157,6 +164,26 @@ const locale = "ca-ES";
     font-size: 1.125rem;
     margin-bottom: 0.5rem;
     margin-top: 0;
+  }
+
+  .experience-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .experience-header .company-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .experience-title-info {
+    flex: 1;
+    min-width: 0;
   }
 
   .card .date-range {

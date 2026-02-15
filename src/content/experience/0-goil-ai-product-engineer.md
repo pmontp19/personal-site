@@ -4,6 +4,7 @@ role: "AI Product Engineer"
 startDate: 2025-08-01
 description: "Leading the AI platform development across the Goil ecosystem. Building LLM conversational layers, RAG integrations, multitenancy platform, and AI automation."
 tags: ["AI", "LLM", "RAG", "Vector DBs", "ASR", "TTS", "Multitenancy", "LLM Gateway", "FinOps"]
+logo: "/images/companies/goil.png"
 ---
 
 - Leading the development of the AI platform across the entire Goil ecosystem.

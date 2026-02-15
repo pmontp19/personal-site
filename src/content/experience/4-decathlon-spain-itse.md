@@ -5,6 +5,7 @@ startDate: 2019-11-01
 endDate: 2022-03-01
 description: "Managed IT infrastructure, led asset withdrawal, and automated large-scale network deployments."
 tags: ["IT Infrastructure", "Asset Management", "Cost Optimization", "Network Automation"]
+logo: "/images/companies/decathlon.png"
 ---
 
 - Managed IT infrastructure across 30 locations, ensuring system uptime.

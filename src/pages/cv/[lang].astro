@@ -1,0 +1,168 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'ca' } },
+    { params: { lang: 'en' } }
+  ];
+}
+
+const { lang } = Astro.params;
+
+const titles: Record<string, string> = {
+  ca: 'CV - Pere Montpeó',
+  en: 'CV - Pere Montpeó'
+};
+
+const buttonText: Record<string, string> = {
+  ca: 'Desa com a PDF',
+  en: 'Save as PDF'
+};
+
+const cv = await getEntry('cv', `cv-${lang}`);
+if (!cv) return Astro.redirect('/cv/en');
+const { Content } = await cv.render();
+---
+
+<Layout title={titles[lang]} lang={lang}>
+  <article class="cv-page">
+    <div class="cv-actions">
+      <LanguageSwitcher currentLang={lang} />
+      <button class="button-link pdf-button" onclick="window.print()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        {buttonText[lang]}
+      </button>
+    </div>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .cv-page {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .cv-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .cv-actions :global(.language-switcher) {
+    margin-bottom: 0;
+    justify-content: flex-start;
+  }
+
+  .pdf-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  @media (min-width: 768px) {
+    .cv-page {
+      padding: 3rem 2rem;
+    }
+  }
+
+  /* Prose styles for markdown content */
+  .prose :global(h1) {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose :global(h2) {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .prose :global(h3) {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose :global(h4) {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-muted);
+  }
+
+  .prose :global(p) {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-left: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 0.25rem;
+    line-height: 1.5;
+  }
+
+  .prose :global(a) {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .prose :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .prose :global(strong) {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .prose :global(hr) {
+    margin: 1.5rem 0;
+  }
+
+  /* Hide contact header on screen (shown in print) */
+  .prose > :global(:nth-child(1)),
+  .prose > :global(:nth-child(2)),
+  .prose > :global(:nth-child(3)),
+  .prose > :global(:nth-child(4)) {
+    display: none;
+  }
+
+  /* Print optimization */
+  @media print {
+    .cv-page {
+      padding: 0;
+      max-width: 100%;
+    }
+
+    .cv-actions {
+      display: none;
+    }
+
+    /* Show contact header in print */
+    .prose > :global(:nth-child(1)),
+    .prose > :global(:nth-child(2)),
+    .prose > :global(:nth-child(3)),
+    .prose > :global(:nth-child(4)) {
+      display: block;
+    }
+  }
+</style>

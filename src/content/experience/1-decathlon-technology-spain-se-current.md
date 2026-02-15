@@ -5,6 +5,7 @@ startDate: 2024-01-01
 endDate: 2025-07-01
 description: "Led frontend development for Corporate Operations and People domains. Introduced E2E test automation and advocated for QA Engineering best practices."
 tags: ["Vue", "TypeScript", "Java Spring", "Cypress", "Cucumber", "QA", "Frontend Architecture"]
+logo: "/images/companies/decathlon.png"
 ---
 
 - Led the frontend development initiative for the Corporate Operations and People domains, ensuring a scalable and maintainable architecture with Vue, TypeScript, and Java Spring.

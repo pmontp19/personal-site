@@ -5,6 +5,7 @@ startDate: 2023-01-01
 endDate: 2024-02-01
 description: "Designed and deployed a new innovation framework, led POC implementations, and identified market opportunities through data analysis."
 tags: ["Innovation", "MVP", "POC", "Data Analysis", "Agile", "Strategy"]
+logo: "/images/companies/decathlon.png"
 ---
 
 - Designed and deployed a new innovation framework, reducing MVP development time to 3 months.

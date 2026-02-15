@@ -19,13 +19,19 @@ const experience = defineCollection({
 		role: z.string(),
 		startDate: z.coerce.date(),
 		endDate: z.coerce.date().optional(),
-		description: z.string().optional(), 
+		description: z.string().optional(),
 		tags: z.array(z.string()).optional(),
+		logo: z.string().optional(),
 	}),
 });
 
+const cv = defineCollection({
+	type: 'content',
+	schema: z.object({}),
+});
 
 export const collections = {
 	blog,
-	experience, 
+	experience,
+	cv,
 };
