@@ -33,7 +33,7 @@ const { Content } = await cv.render();
 ---
 
 <Layout title={titles[lang]} lang={lang} description={descriptions[lang]} canonicalUrl={`https://peremontpeo.dev/cv/${lang}/`}>
-  <article class="cv-page">
+  <main class="cv-page">
     <div class="cv-actions">
       <LanguageSwitcher currentLang={lang} />
       <button class="button-link pdf-button" onclick="window.print()">
@@ -48,7 +48,7 @@ const { Content } = await cv.render();
     <div class="prose">
       <Content />
     </div>
-  </article>
+  </main>
 </Layout>
 
 <style>

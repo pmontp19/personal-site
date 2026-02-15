@@ -7,6 +7,11 @@
   font-display: swap;
 }
 
+/* Box-sizing reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* Global CSS Variables */
 :root {
   --background: hsl(0, 0%, 100%);
@@ -65,13 +70,11 @@
 /* Base Typography & Layout */
 html {
   overflow-y: scroll;
-  overflow-x: hidden;
   scroll-padding-top: 5rem; /* Offset for sticky header */
   scroll-behavior: smooth;
 }
 
 body {
-  overflow-x: hidden;
   background-color: var(--background);
   color: var(--foreground);
   font-family: 'Geist Sans', sans-serif;
