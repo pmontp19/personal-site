@@ -65,11 +65,13 @@
 /* Base Typography & Layout */
 html {
   overflow-y: scroll;
+  overflow-x: hidden;
   scroll-padding-top: 5rem; /* Offset for sticky header */
   scroll-behavior: smooth;
 }
 
 body {
+  overflow-x: hidden;
   background-color: var(--background);
   color: var(--foreground);
   font-family: 'Geist Sans', sans-serif;
