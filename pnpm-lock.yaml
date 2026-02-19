@@ -32,9 +32,15 @@ importers:
       geist:
         specifier: 1.7.0
         version: 1.7.0(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
+      hast-util-raw:
+        specifier: ^9.1.0
+        version: 9.1.0
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
+      unist-util-visit:
+        specifier: ^5.1.0
+        version: 5.1.0
 
 packages:
 
