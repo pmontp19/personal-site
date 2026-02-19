@@ -4,6 +4,8 @@ description: "Com la IA està canviant la manera com compartim coneixement com a
 date: 2026-01-20
 ---
 
+![Memòria col·lectiva](/images/blog/memoria-collectiva.jpg)
+
 Aquesta setmana, mentre tractava un error de Sentry, em va venir una reflexió al cap.
 
 Abans, quan tenia un problema, enganxava l'error a Google. Normalment acabava a [StackOverflow](https://stackoverflow.com). Allà compartia el problema, les pistes, les proves... la solució final era visible per tothom qui la busqués.
