@@ -172,19 +172,15 @@ const pageUrl = canonicalUrl || siteUrl;
   }
 
   function animate() {
-    // Ensure elements are queryable after swap
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     requestAnimationFrame(() => {
       const animateElements = document.querySelectorAll(".animate");
       animateElements.forEach((element, index) => {
-        // Reset any previous state if needed before adding 'show'
         element.classList.remove("show");
-        // Use a small delay to ensure styles are applied after swap
-        setTimeout(
-          () => {
-            element.classList.add("show");
-          },
-          index * 150 + 50
-        ); // Added small base delay
+        const delay = prefersReducedMotion ? 0 : index * 150 + 50;
+        setTimeout(() => {
+          element.classList.add("show");
+        }, delay);
       });
     });
   }
