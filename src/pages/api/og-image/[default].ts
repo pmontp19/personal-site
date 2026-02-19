@@ -1,19 +1,21 @@
-import { getCollection } from 'astro:content';
 import { OGImageRoute } from 'astro-og-canvas';
 
-const blogEntries = await getCollection('blog');
-const pages = Object.fromEntries(blogEntries.map(({ slug, data }) => [slug, data]));
-
 export const { getStaticPaths, GET } = OGImageRoute({
-  param: 'slug',
-  pages,
-  getImageOptions: (slug, page) => ({
+  param: 'default',
+  pages: {
+    'default': {
+      title: 'Pere Montpeó',
+      description: 'Enginyer de programari especialitzat en desenvolupament web',
+      siteName: 'peremontpeo.dev',
+    },
+  },
+  getImageOptions: (key, page) => ({
     title: page.title,
     description: page.description,
-    siteName: 'peremontpeo.dev',
+    siteName: page.siteName,
     logo: {
       path: './src/assets/avatar.png',
-      size: [64],
+      size: [96],
     },
     bgGradient: [[22, 27, 34]],
     border: {
@@ -25,14 +27,14 @@ export const { getStaticPaths, GET } = OGImageRoute({
     font: {
       title: {
         color: [255, 255, 255],
-        size: 64,
+        size: 80,
         weight: 'SemiBold',
         lineHeight: 1.2,
         families: ['Geist'],
       },
       description: {
         color: [156, 163, 175],
-        size: 32,
+        size: 36,
         weight: 'Normal',
         lineHeight: 1.4,
         families: ['Geist'],

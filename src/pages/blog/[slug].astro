@@ -45,7 +45,7 @@ const articleSchema = {
     "@type": "WebPage",
     "@id": pageUrl
   },
-  "image": entry.data.image ? `${siteUrl}${entry.data.image.src}` : `${siteUrl}/api/og-image/${entry.slug}`
+  "image": entry.data.image ? `${siteUrl}${entry.data.image.src}` : `${siteUrl}/api/og-image/${entry.slug}.png`
 };
 
 function formatDate(date: Date): string {
@@ -68,11 +68,11 @@ function formatDate(date: Date): string {
     <meta property="og:description" content={entry.data.description} />
     <meta property="og:type" content="article" />
     <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={`${siteUrl}/api/og-image/${entry.slug}`} />
+    <meta property="og:image" content={`${siteUrl}/api/og-image/${entry.slug}.png`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={entry.data.title} />
     <meta name="twitter:description" content={entry.data.description} />
-    <meta name="twitter:image" content={`${siteUrl}/api/og-image/${entry.slug}`} />
+    <meta name="twitter:image" content={`${siteUrl}/api/og-image/${entry.slug}.png`} />
   </head>
   <main>
     <article class="post">

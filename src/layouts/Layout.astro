@@ -37,12 +37,12 @@ const pageUrl = canonicalUrl || siteUrl;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={`${siteUrl}/api/og-image/default`} />
+    <meta property="og:image" content={`${siteUrl}/api/og-image/default.png`} />
     <meta property="og:locale" content="ca_ES" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${siteUrl}/api/og-image/default`} />
+    <meta name="twitter:image" content={`${siteUrl}/api/og-image/default.png`} />
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
