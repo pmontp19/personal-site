@@ -1,9 +1,6 @@
 ---
 import { Image } from "astro:assets";
 import avatarImage from "../assets/avatar.png";
-
-let isWinking = false;
-let isBlinking = false;
 ---
 
 <div id="avatarContainer" transition:name="avatar-transition">
@@ -81,8 +78,17 @@ let isBlinking = false;
 </div>
 
 <script>
+    const LEFT_PUPIL = { x: 74, y: 71 };
+    const RIGHT_PUPIL = { x: 106, y: 71 };
+    const WINK_RECT = { x: 102, y: 70 };
+    const LEFT_BLINK = { x: 70, y: 70 };
+    const RIGHT_BLINK = { x: 102, y: 70 };
+    const MAX_PUPIL_DISTANCE = 4;
+
     let isWinking = false;
     let isBlinking = false;
+    let isInitialized = false;
+    let blinkIntervalId: ReturnType<typeof setInterval> | null = null;
 
     let avatarContainer: HTMLElement | null = null;
     let leftPupil: SVGElement | null = null;
@@ -93,14 +99,6 @@ let isBlinking = false;
     let leftBlinkRect: SVGRectElement | null = null;
     let rightBlinkRect: SVGRectElement | null = null;
 
-    /**
-     * Updates the position of an SVG element (pupil or wink).
-     * @param {SVGElement | null} element - The SVG element to move.
-     * @param {number} baseX - The base X coordinate (center).
-     * @param {number} baseY - The base Y coordinate (center).
-     * @param {number} offsetX - The calculated horizontal offset based on cursor/touch.
-     * @param {number} offsetY - The calculated vertical offset based on cursor/touch.
-     */
     function updateElementPosition(
         element: SVGElement | null,
         baseX: number,
@@ -122,21 +120,22 @@ let isBlinking = false;
         }
     }
 
-    /**
-     * Handles mouse and touch movement to make the eyes follow.
-     * @param {number} clientX - The client X coordinate from the event.
-     * @param {number} clientY - The client Y coordinate from the event.
-     */
-    function handlePointerMove(event: MouseEvent | TouchEvent) {
-        if (!avatarContainer) return;
+    function isAvatarVisible(): boolean {
+        if (!avatarContainer) return false;
+        const rect = avatarContainer.getBoundingClientRect();
+        return rect.bottom > 0 && rect.top < window.innerHeight;
+    }
 
-        let clientX: number
+    function handlePointerMove(event: MouseEvent | TouchEvent) {
+        if (!avatarContainer || !isAvatarVisible()) return;
+
+        let clientX: number;
         let clientY: number;
 
         if (event instanceof MouseEvent) {
             clientX = event.clientX;
             clientY = event.clientY;
-        } else { 
+        } else {
             clientX = event.touches[0].clientX;
             clientY = event.touches[0].clientY;
         }
@@ -149,22 +148,18 @@ let isBlinking = false;
         const deltaY = clientY - avatarCenterY;
 
         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        const maxDistance = 4;
-        const clampedDistance = Math.min(distance, maxDistance);
+        const clampedDistance = Math.min(distance, MAX_PUPIL_DISTANCE);
 
         const normalizedX = distance === 0 ? 0 : (deltaX / distance) * clampedDistance;
         const normalizedY = distance === 0 ? 0 : (deltaY / distance) * clampedDistance;
 
-        updateElementPosition(leftPupil, 74, 71, normalizedX, normalizedY);
-        updateElementPosition(rightPupil, 106, 71, normalizedX, normalizedY);
-        updateElementPosition(winkRect, 102, 70, normalizedX, normalizedY);
-        updateElementPosition(leftBlinkRect, 70, 70, normalizedX, normalizedY);
-        updateElementPosition(rightBlinkRect, 102, 70, normalizedX, normalizedY);
+        updateElementPosition(leftPupil, LEFT_PUPIL.x, LEFT_PUPIL.y, normalizedX, normalizedY);
+        updateElementPosition(rightPupil, RIGHT_PUPIL.x, RIGHT_PUPIL.y, normalizedX, normalizedY);
+        updateElementPosition(winkRect, WINK_RECT.x, WINK_RECT.y, normalizedX, normalizedY);
+        updateElementPosition(leftBlinkRect, LEFT_BLINK.x, LEFT_BLINK.y, normalizedX, normalizedY);
+        updateElementPosition(rightBlinkRect, RIGHT_BLINK.x, RIGHT_BLINK.y, normalizedX, normalizedY);
     }
 
-    /**
-     * Triggers the wink animation using CSS classes.
-     */
     function triggerWink() {
         if (!isWinking && !isBlinking && rightPupil && winkElement) {
             isWinking = true;
@@ -180,34 +175,26 @@ let isBlinking = false;
         }
     }
 
-    /**
-     * Triggers the blink animation for both eyes.
-     */
     function triggerBlink() {
         if (!isBlinking && !isWinking && leftPupil && rightPupil && blinkElement) {
             isBlinking = true;
 
-            // Hide both pupils
             leftPupil.classList.add("hidden");
             rightPupil.classList.add("hidden");
-            
-            // Show blink elements
             blinkElement.classList.remove("hidden");
 
             setTimeout(() => {
-                // Restore normal state
                 if (leftPupil) leftPupil.classList.remove("hidden");
                 if (rightPupil) rightPupil.classList.remove("hidden");
                 if (blinkElement) blinkElement.classList.add("hidden");
                 isBlinking = false;
-            }, 200); // Slightly faster than wink for natural look
+            }, 200);
         }
     }
 
-    /**
-     * Initializes the component, caches elements, and sets up listeners.
-     */
     function initializeAvatar() {
+        if (isInitialized) return;
+        
         avatarContainer = document.getElementById("avatarContainer");
         leftPupil = document.getElementById("leftPupil") as SVGElement | null;
         rightPupil = document.getElementById("rightPupil") as SVGElement | null;
@@ -217,23 +204,12 @@ let isBlinking = false;
         leftBlinkRect = document.getElementById("leftBlinkRect") as SVGRectElement | null;
         rightBlinkRect = document.getElementById("rightBlinkRect") as SVGRectElement | null;
 
-        if (winkElement) {
-             winkElement.classList.add("hidden");
-        }
-        if (blinkElement) {
-             blinkElement.classList.add("hidden");
-        }
-        if (rightPupil) {
-            rightPupil.classList.remove("hidden");
-        }
-        if (leftPupil) {
-            leftPupil.classList.remove("hidden");
-        }
-
         if (!avatarContainer) {
             console.error("Avatar container not found!");
             return;
         }
+
+        isInitialized = true;
 
         const handleMouseMove = (e: MouseEvent) => handlePointerMove(e);
         const handleTouchMove = (e: TouchEvent) => {
@@ -242,33 +218,33 @@ let isBlinking = false;
             }
         };
         const handleAvatarClick = () => triggerWink();
-        const handleAvatarTouchStart = (e: TouchEvent) => {
-             e.preventDefault();
-             triggerWink();
-        };
+        const handleAvatarTouchStart = () => triggerWink();
 
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("touchmove", handleTouchMove, { passive: true });
         avatarContainer.addEventListener("click", handleAvatarClick);
-        avatarContainer.addEventListener("touchstart", handleAvatarTouchStart, { passive: false });
+        avatarContainer.addEventListener("touchstart", handleAvatarTouchStart, { passive: true });
 
-        // Regular blinking interval - humans blink every 4-6 seconds on average
-        const blinkInterval = setInterval(() => {
+        if (blinkIntervalId) {
+            clearInterval(blinkIntervalId);
+        }
+        blinkIntervalId = setInterval(() => {
             triggerBlink();
-        }, 5000 + Math.random() * 2000); // Random time between 5-7 seconds
+        }, 5000 + Math.random() * 2000);
 
         const cleanup = () => {
+            isInitialized = false;
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("touchmove", handleTouchMove);
-            // Check if avatarContainer still exists before removing listeners
-            // It might have been removed by a previous transition swap
             const currentAvatarContainer = document.getElementById("avatarContainer");
             if (currentAvatarContainer) {
                 currentAvatarContainer.removeEventListener("click", handleAvatarClick);
                 currentAvatarContainer.removeEventListener("touchstart", handleAvatarTouchStart);
             }
-            clearInterval(blinkInterval);
-            // Remove the cleanup listener itself to prevent multiple calls if transitions are rapid
+            if (blinkIntervalId) {
+                clearInterval(blinkIntervalId);
+                blinkIntervalId = null;
+            }
             document.removeEventListener("astro:before-swap", cleanup);
         };
 
@@ -282,7 +258,6 @@ let isBlinking = false;
     }
 
     document.addEventListener("astro:page-load", initializeAvatar);
-
 </script>
 
 <style>
