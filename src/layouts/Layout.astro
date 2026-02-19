@@ -234,24 +234,6 @@ const pageUrl = canonicalUrl || siteUrl;
     position: relative;
   }
 
-  .page-layout::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.04;
-    background-image: url('/noise-light.png');
-    background-repeat: repeat;
-  }
-
-  .dark .page-layout::after {
-    background-image: url('/noise-dark.png');
-  }
-
   .page-header {
     position: sticky;
     top: 0;
@@ -284,8 +266,6 @@ const pageUrl = canonicalUrl || siteUrl;
       min-height: auto;
       display: block;
     }
-    .page-layout::after {
-      display: none;
-    }
+
   }
 </style>
