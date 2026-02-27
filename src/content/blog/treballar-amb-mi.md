@@ -3,6 +3,7 @@ title: "Treballar amb Pere Montpeó: guia pràctica"
 description: "Com és treballar amb mi"
 date: 2025-05-07
 lastUpdated: 2026-02-19
+showHistory: true
 ---
 
 Sembla un títol molt pretensiós, però després de llegir el [post de Miguel Carranza](https://miguelcarranza.es/working-with-miguel) sobre com és treballar amb ell, vaig pensar que fer el mateix exercici m'ajudaria a conèixer-me millor, què faig i com ho faig. 
