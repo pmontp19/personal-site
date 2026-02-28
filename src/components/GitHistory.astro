@@ -97,6 +97,11 @@ const { history } = Astro.props;
   .history-toggle:hover {
     background: var(--secondary);
   }
+
+  .history-toggle:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
   
   .git-icon {
     opacity: 0.7;
