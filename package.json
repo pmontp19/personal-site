@@ -4,11 +4,13 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "tsx scripts/generate-git-history.ts && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "generate-history": "tsx scripts/generate-git-history.ts"
   },
   "dependencies": {
+    "@astrojs/mdx": "^4.3.13",
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.7.0",
     "@fontsource/geist-mono": "^5.2.7",
@@ -19,7 +21,12 @@
     "diff": "^8.0.3",
     "geist": "1.7.0",
     "hast-util-raw": "^9.1.0",
+    "htmldiff-js": "^1.0.5",
+    "marked": "^17.0.3",
     "sharp": "^0.34.5",
     "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }

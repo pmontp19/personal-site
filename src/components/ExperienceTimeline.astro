@@ -82,10 +82,13 @@ const locale = "ca-ES";
   }
 
   @keyframes pulse {
-    0%, 100% {
+    0% {
       box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 40%, transparent);
     }
-    50% {
+    70% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 0%, transparent);
+    }
+    100% {
       box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 0%, transparent);
     }
   }

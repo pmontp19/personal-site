@@ -3,8 +3,6 @@ import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import { calculateReadingTime } from "../../utils/readingTime";
-import { getGitHistory } from "../../utils/gitHistory";
-import GitHistory from "../../components/GitHistory.astro";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
@@ -22,11 +20,6 @@ const { Content } = await entry.render();
 
 const contentForReadingTime = entry.body || entry.data.description || '';
 const readingTime = calculateReadingTime(contentForReadingTime);
-
-// Get git history if enabled for this post
-const gitHistory = entry.data.showHistory 
-  ? getGitHistory(`src/content/blog/${entry.slug}.md`)
-  : { versions: [], hasHistory: false };
 
 const siteUrl = "https://peremontpeo.dev";
 const pageUrl = `${siteUrl}/blog/${entry.slug}`;
@@ -109,10 +102,6 @@ function formatDate(date: Date): string {
       <div class="post-content">
         <Content />
       </div>
-
-      {entry.data.showHistory && (
-        <GitHistory history={gitHistory} />
-      )}
 
       <div class="post-footer">
         <div class="post-navigation">
