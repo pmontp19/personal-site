@@ -17,21 +17,22 @@ const endpoint = `/data/git-history/${slug}.json`;
     </button>
 
     <div class="vv-scrubber" hidden>
-      <div class="vv-nav">
+      <div class="vv-timeline">
         <button class="vv-prev" type="button" aria-label="Versió anterior">&larr;</button>
-        <input class="vv-slider" type="range" min="0" max="0" value="0" />
+        <div class="vv-track">
+          <!-- JS will inject .vv-step buttons here -->
+        </div>
         <button class="vv-next" type="button" aria-label="Versió següent">&rarr;</button>
-        <span class="vv-counter"></span>
       </div>
-      <div class="vv-version-info">
-        <time class="vv-date"></time>
-        <span class="vv-message"></span>
-        <span class="vv-original-badge" hidden>Original</span>
+      <div class="vv-meta-row">
+        <div class="vv-version-info">
+          <span class="vv-message"></span>
+        </div>
+        <label class="vv-diff-toggle">
+          <input type="checkbox" class="vv-show-diff" checked />
+          Mostrar canvis
+        </label>
       </div>
-      <label class="vv-diff-toggle">
-        <input type="checkbox" class="vv-show-diff" checked />
-        Mostrar canvis
-      </label>
     </div>
   </div>
 
@@ -85,7 +86,8 @@ const endpoint = `/data/git-history/${slug}.json`;
     z-index: 50;
   }
 
-  .vv-nav {
+  /* Timeline */
+  .vv-timeline {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -100,6 +102,7 @@ const endpoint = `/data/git-history/${slug}.json`;
     font-size: 0.875rem;
     color: var(--foreground);
     line-height: 1;
+    flex-shrink: 0;
   }
 
   .vv-prev:hover, .vv-next:hover {
@@ -112,56 +115,138 @@ const endpoint = `/data/git-history/${slug}.json`;
     cursor: default;
   }
 
-  .vv-slider {
-    flex: 1;
-    accent-color: var(--primary);
-  }
-
-  .vv-counter {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    min-width: 3.5rem;
-    text-align: right;
-  }
-
-  .vv-version-info {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    font-size: 0.8125rem;
-  }
-
-  .vv-date {
-    font-weight: 600;
+  .vv-prev:disabled:hover, .vv-next:disabled:hover {
+    background: var(--secondary);
     color: var(--foreground);
   }
 
-  .vv-message {
-    color: var(--text-muted);
-    font-style: italic;
+  .vv-track {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    padding: 0.25rem 0.5rem;
+    gap: 0.25rem;
   }
 
-  .vv-original-badge {
-    font-size: 0.625rem;
-    padding: 0.125rem 0.5rem;
+  .vv-track::before {
+    content: '';
+    position: absolute;
+    top: calc(0.25rem + 7px);
+    left: calc(0.5rem + 7px);
+    right: calc(0.5rem + 7px);
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+
+  /* These elements are created by JS at runtime, so must use :global() */
+  .vv-track :global(.vv-step) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    background: none;
+    border: none;
+    padding: 0 0.25rem;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-width: 4rem;
+    font-family: inherit;
+  }
+
+  .vv-track :global(.vv-step .dot) {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    border: 2px solid var(--background);
+    box-shadow: 0 0 0 1px var(--border);
+    transition: background-color 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+  }
+
+  .vv-track :global(.vv-step:hover .dot) {
+    background: var(--foreground);
+  }
+
+  .vv-track :global(.vv-step.active .dot) {
+    background: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary);
+    animation: vv-pulse 2s ease-in-out infinite;
+  }
+
+  .vv-track :global(.vv-step .date-label) {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    line-height: 1.2;
+    text-align: center;
+    transition: color 0.2s;
+  }
+
+  .vv-track :global(.vv-step.active .date-label) {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+
+  .vv-track :global(.vv-step .original-tag) {
+    font-size: 0.5625rem;
+    padding: 0.0625rem 0.375rem;
+    margin-top: 0.125rem;
     background: var(--secondary);
     border-radius: 9999px;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  @keyframes vv-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 40%, transparent);
+    }
+    70% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 0%, transparent);
+    }
+    100% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 0%, transparent);
+    }
+  }
+
+  /* Meta row */
+  .vv-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .vv-version-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .vv-message {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.8125rem;
   }
 
   .vv-diff-toggle {
     display: flex;
     align-items: center;
     gap: 0.375rem;
-    margin-top: 0.5rem;
     font-size: 0.75rem;
     color: var(--text-muted);
     cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   /* Content area */
@@ -292,20 +377,21 @@ const endpoint = `/data/git-history/${slug}.json`;
   }
 
   @media (max-width: 640px) {
-    .vv-nav {
-      flex-wrap: wrap;
+    .vv-track {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .vv-slider {
-      order: 3;
-      width: 100%;
-      flex: unset;
+    .vv-track :global(.vv-step) {
+      scroll-snap-align: center;
+      min-width: 5rem;
+      flex: 0 0 auto;
     }
 
-    .vv-version-info {
+    .vv-meta-row {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.25rem;
     }
 
     .vv-rendered {
@@ -325,16 +411,12 @@ const endpoint = `/data/git-history/${slug}.json`;
       const controls = viewer.querySelector<HTMLElement>('.vv-controls')!;
       const toggle = viewer.querySelector<HTMLButtonElement>('.vv-toggle')!;
       const scrubber = viewer.querySelector<HTMLElement>('.vv-scrubber')!;
-      const slider = viewer.querySelector<HTMLInputElement>('.vv-slider')!;
+      const track = viewer.querySelector<HTMLElement>('.vv-track')!;
       const prevBtn = viewer.querySelector<HTMLButtonElement>('.vv-prev')!;
       const nextBtn = viewer.querySelector<HTMLButtonElement>('.vv-next')!;
-      const counter = viewer.querySelector<HTMLElement>('.vv-counter')!;
-      const dateEl = viewer.querySelector<HTMLElement>('.vv-date')!;
       const messageEl = viewer.querySelector<HTMLElement>('.vv-message')!;
-      const originalBadge = viewer.querySelector<HTMLElement>('.vv-original-badge')!;
       const showDiffCheck = viewer.querySelector<HTMLInputElement>('.vv-show-diff')!;
       const content = viewer.querySelector<HTMLElement>('.vv-content')!;
-      const legend = viewer.querySelector<HTMLElement>('.vv-legend')!;
       const rendered = viewer.querySelector<HTMLElement>('.vv-rendered')!;
 
       type Version = {
@@ -345,29 +427,78 @@ const endpoint = `/data/git-history/${slug}.json`;
       };
 
       let versions: Version[] = [];
+      let activeIndex = 0; // index into versions array (0 = newest)
       let active = false;
       let hiddenSiblings: { el: HTMLElement; display: string }[] = [];
 
       function formatDate(dateStr: string): string {
         const d = new Date(dateStr);
-        return new Intl.DateTimeFormat('ca-ES', {
-          day: 'numeric', month: 'short', year: 'numeric'
-        }).format(d);
+        const day = d.getDate();
+        const month = d.toLocaleDateString('ca-ES', { month: 'short' }).replace('.', '');
+        const year = d.getFullYear();
+        return `${day} ${month} ${year}`;
+      }
+
+      function buildTimeline() {
+        track.innerHTML = '';
+        // Render oldest (last in array) to newest (first in array) = left to right
+        for (let i = versions.length - 1; i >= 0; i--) {
+          const v = versions[i];
+          const step = document.createElement('button');
+          step.type = 'button';
+          step.className = 'vv-step';
+          step.dataset.index = String(i);
+          step.setAttribute('aria-label', `Versió del ${formatDate(v.commit.date)}`);
+
+          const dot = document.createElement('span');
+          dot.className = 'dot';
+          step.appendChild(dot);
+
+          const label = document.createElement('span');
+          label.className = 'date-label';
+          label.textContent = formatDate(v.commit.date);
+          step.appendChild(label);
+
+          if (v.isOriginal) {
+            const tag = document.createElement('span');
+            tag.className = 'original-tag';
+            tag.textContent = 'Original';
+            step.appendChild(tag);
+          }
+
+          step.addEventListener('click', () => {
+            activeIndex = i;
+            updateView();
+          });
+
+          track.appendChild(step);
+        }
       }
 
       function updateView() {
-        const idx = parseInt(slider.value);
-        const v = versions[idx];
+        const v = versions[activeIndex];
         if (!v) return;
 
         rendered.innerHTML = showDiffCheck.checked ? v.diffHtml : v.html;
-        dateEl.textContent = formatDate(v.commit.date);
         messageEl.textContent = v.commit.message;
-        originalBadge.hidden = !v.isOriginal;
-        counter.textContent = `${idx + 1} / ${versions.length}`;
-        prevBtn.disabled = idx === 0;
-        nextBtn.disabled = idx === versions.length - 1;
+
+        // Update prev/next: left = older (higher index), right = newer (lower index)
+        prevBtn.disabled = activeIndex >= versions.length - 1;
+        nextBtn.disabled = activeIndex <= 0;
+
         content.classList.toggle('no-diff', !showDiffCheck.checked);
+
+        // Update active step styling
+        track.querySelectorAll('.vv-step').forEach(step => {
+          const el = step as HTMLElement;
+          el.classList.toggle('active', el.dataset.index === String(activeIndex));
+        });
+
+        // On mobile, scroll active step into view
+        const activeStep = track.querySelector('.vv-step.active') as HTMLElement | null;
+        if (activeStep) {
+          activeStep.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
       }
 
       function hideSiblings() {
@@ -395,7 +526,7 @@ const endpoint = `/data/git-history/${slug}.json`;
         scrubber.hidden = false;
         content.hidden = false;
         hideSiblings();
-        slider.value = '0';
+        activeIndex = 0; // newest version
         updateView();
         viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
@@ -418,7 +549,7 @@ const endpoint = `/data/git-history/${slug}.json`;
           const data = await res.json();
           if (!data.hasHistory || !data.versions?.length) return false;
           versions = data.versions;
-          slider.max = String(versions.length - 1);
+          buildTimeline();
           loaded = true;
           return true;
         } catch {
@@ -437,14 +568,19 @@ const endpoint = `/data/git-history/${slug}.json`;
         if (ok) activate();
       });
 
-      slider.addEventListener('input', updateView);
       prevBtn.addEventListener('click', () => {
-        slider.value = String(Math.max(0, parseInt(slider.value) - 1));
-        updateView();
+        // Left arrow = older = higher array index
+        if (activeIndex < versions.length - 1) {
+          activeIndex++;
+          updateView();
+        }
       });
       nextBtn.addEventListener('click', () => {
-        slider.value = String(Math.min(versions.length - 1, parseInt(slider.value) + 1));
-        updateView();
+        // Right arrow = newer = lower array index
+        if (activeIndex > 0) {
+          activeIndex--;
+          updateView();
+        }
       });
       showDiffCheck.addEventListener('change', updateView);
 
