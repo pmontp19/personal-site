@@ -3,10 +3,17 @@ import type { GitHistoryData } from '../utils/gitHistory';
 import { formatHistoryDate } from '../utils/gitHistory';
 
 interface Props {
-  history: GitHistoryData;
+  slug: string;
 }
 
-const { history } = Astro.props;
+const { slug } = Astro.props;
+
+const historyFiles = import.meta.glob<GitHistoryData>(
+  '../data/git-history/*.json',
+  { eager: true, import: 'default' }
+);
+const history = historyFiles[`../data/git-history/${slug}.json`]
+  ?? { hasHistory: false, versions: [] };
 ---
 
 {history.hasHistory && (

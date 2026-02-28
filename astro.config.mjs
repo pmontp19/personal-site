@@ -1,11 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import mdx from '@astrojs/mdx';
 import rehypeExternalLinks from './src/plugins/rehype-external-links.ts';
 
 export default defineConfig({
   site: 'https://peremontpeo.dev',
-  integrations: [sitemap()],
+  integrations: [sitemap(), mdx()],
   markdown: {
     rehypePlugins: [rehypeExternalLinks],
   },

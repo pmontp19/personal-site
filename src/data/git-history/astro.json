@@ -1,0 +1,42 @@
+{
+  "versions": [
+    {
+      "commit": {
+        "hash": "33bc52fa0ea2522d1d90b3b269f615754f0b63d9",
+        "date": "2025-04-29",
+        "message": "Update src/content/blog/astro.md"
+      },
+      "changes": [
+        {
+          "value": "Necessitava fer una pàgina web nova, tenia temps lliure, i vaig començar amb els pensaments típics:\n\n– A la feina vaig amb Vue, doncs React\n– Per què no Nextjs i faig alguna cosa més elaborada\n– Posats a fer, vanilla javascript i a veure com de petita puc fer-la\n– Ens agraden els extrems, no javascript, HTML sense estils\n– Ben mirat, m'agradaria fer-la més bonica potser\n– El vibe coding irrompt, necessito pujar a l'onada, puc fer una cosa més elaborada amb un esforç més baix\n– Potser també vull fer un blog, miro un CMS amb un frontend\n– Encara més fàcil, volia saber com funcionava [HUGO](http://hugo.io) (resulta que no és tan fàcil) \n– De casualitat descobreixo Astro\n\nAstro és la baula perduda entre els frameworks de Javascript. No hi havia fins al moment cap framework (dels populars) realment enfocat al contingut. A més, si necessitava algun component més elaborat, és compatible amb parts de React, Vue o Svelte i SEO-friendly.\n\nSi no hi poses Javascript, no n'hi ha. Buscava una cosa que realment fos ràpida, generada al servidor, i alguns extres. \n\n[v0](http://v0.dev) em va ajudar a genrar alguna part de l'UI concreta, i amb Copilot l'he adaptada al "
+        },
+        {
+          "value": "proojecte",
+          "removed": true
+        },
+        {
+          "value": "projecte",
+          "added": true
+        },
+        {
+          "value": " d'Astro. Crec que l'únic que Copilot (Gemini 2.5) no ha pogut resoldre són les View Transitions API que amb les últimes versions d'Astro vénen de sèrie, i les imatges d'open-graph, que s'ha enredat bastant i encara no ho he arreglat.\n\nAmb no gaire esforç pots començar el teu web, landing, blog, partint d'arxius Markdown o fins i tot MDX, fins a un CMS personalitzat.\n\n[Astro docs](https://docs.astro.build/en/getting-started/)"
+        }
+      ],
+      "isOriginal": false
+    },
+    {
+      "commit": {
+        "hash": "0d89a508b94f376d20730d286fba0c5a458acfce",
+        "date": "2025-04-29",
+        "message": "feat: update dependencies and add new blog posts"
+      },
+      "changes": [
+        {
+          "value": "Necessitava fer una pàgina web nova, tenia temps lliure, i vaig començar amb els pensaments típics:\n\n– A la feina vaig amb Vue, doncs React\n– Per què no Nextjs i faig alguna cosa més elaborada\n– Posats a fer, vanilla javascript i a veure com de petita puc fer-la\n– Ens agraden els extrems, no javascript, HTML sense estils\n– Ben mirat, m'agradaria fer-la més bonica potser\n– El vibe coding irrompt, necessito pujar a l'onada, puc fer una cosa més elaborada amb un esforç més baix\n– Potser també vull fer un blog, miro un CMS amb un frontend\n– Encara més fàcil, volia saber com funcionava [HUGO](http://hugo.io) (resulta que no és tan fàcil) \n– De casualitat descobreixo Astro\n\nAstro és la baula perduda entre els frameworks de Javascript. No hi havia fins al moment cap framework (dels populars) realment enfocat al contingut. A més, si necessitava algun component més elaborat, és compatible amb parts de React, Vue o Svelte i SEO-friendly.\n\nSi no hi poses Javascript, no n'hi ha. Buscava una cosa que realment fos ràpida, generada al servidor, i alguns extres. \n\n[v0](http://v0.dev) em va ajudar a genrar alguna part de l'UI concreta, i amb Copilot l'he adaptada al proojecte d'Astro. Crec que l'únic que Copilot (Gemini 2.5) no ha pogut resoldre són les View Transitions API que amb les últimes versions d'Astro vénen de sèrie, i les imatges d'open-graph, que s'ha enredat bastant i encara no ho he arreglat.\n\nAmb no gaire esforç pots començar el teu web, landing, blog, partint d'arxius Markdown o fins i tot MDX, fins a un CMS personalitzat.\n\n[Astro docs](https://docs.astro.build/en/getting-started/)"
+        }
+      ],
+      "isOriginal": true
+    }
+  ],
+  "hasHistory": true
+}

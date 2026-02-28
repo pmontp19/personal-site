@@ -1,0 +1,32 @@
+{
+  "versions": [
+    {
+      "commit": {
+        "hash": "d0d3d99fc45aea7e2f82ccbb223101cf81c0d00e",
+        "date": "2025-04-22",
+        "message": "feat: Filter out draft blog entries in getStaticPaths for improved static path generation"
+      },
+      "changes": [
+        {
+          "value": "Per què començar un blog en ple 2025? Quan ja hem anat i tornat dels blogs, passant per les xarxes i medium i acabar a Substack. \n\nDoncs per un parell de raons ben clares: \n\n1. Aprendre\n2. Ajudar\n\nCom és ben sabut, quan ho escrius i saps explicar-ho, és que ho has entès. I això és el que vull fer justament, consolidar aprenentatge. Forçar-me a escriure allò que vull interioritzar.\n\nI si pel camí puc ajudar a algú amb la meva experiència, molt millor. Sigui a través del SEO amb una cerca a Google, o una resposta de ChatGPT, l'esforç haurà valgut la pena. \n\nA més, una tercera raó extra: generar contingut sobre tecnologia en català. Crec que la llengua en l'àmbit digital es pot beneficiar de més contingut tecnológic en català. ",
+          "added": true
+        }
+      ],
+      "isOriginal": false
+    },
+    {
+      "commit": {
+        "hash": "4c0c70ab63883c42b16a549b78fa1c3b1e478b12",
+        "date": "2025-04-07",
+        "message": "feat: Add Header and Interactive Avatar components, implement dark mode toggle, and create initial blog post"
+      },
+      "changes": [
+        {
+          "value": ""
+        }
+      ],
+      "isOriginal": true
+    }
+  ],
+  "hasHistory": true
+}
