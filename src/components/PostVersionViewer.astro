@@ -1,0 +1,463 @@
+---
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const endpoint = `/data/git-history/${slug}.json`;
+---
+
+<div class="version-viewer" data-slug={slug} data-endpoint={endpoint}>
+  <div class="vv-controls" hidden>
+    <button class="vv-toggle" type="button">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm7.25-4.25v4.5l3.25 1.9-.75 1.3L7.5 9V3.75h1.25Z"/>
+      </svg>
+      <span>Historial de versions</span>
+    </button>
+
+    <div class="vv-scrubber" hidden>
+      <div class="vv-nav">
+        <button class="vv-prev" type="button" aria-label="Versió anterior">&larr;</button>
+        <input class="vv-slider" type="range" min="0" max="0" value="0" />
+        <button class="vv-next" type="button" aria-label="Versió següent">&rarr;</button>
+        <span class="vv-counter"></span>
+      </div>
+      <div class="vv-version-info">
+        <time class="vv-date"></time>
+        <span class="vv-message"></span>
+        <span class="vv-original-badge" hidden>Original</span>
+      </div>
+      <label class="vv-diff-toggle">
+        <input type="checkbox" class="vv-show-diff" checked />
+        Mostrar canvis
+      </label>
+    </div>
+  </div>
+
+  <div class="vv-content" hidden>
+    <div class="vv-legend">
+      <span class="vv-legend-item"><span class="vv-legend-added"></span> Afegit</span>
+      <span class="vv-legend-item"><span class="vv-legend-removed"></span> Eliminat</span>
+    </div>
+    <div class="vv-rendered"></div>
+  </div>
+</div>
+
+<style>
+  .version-viewer {
+    margin-bottom: 1.5rem;
+  }
+
+  .vv-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .vv-toggle:hover {
+    color: var(--foreground);
+    border-color: var(--foreground);
+  }
+
+  .vv-toggle.active {
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .vv-scrubber {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: sticky;
+    top: 3.5rem;
+    z-index: 50;
+  }
+
+  .vv-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .vv-prev, .vv-next {
+    padding: 0.25rem 0.5rem;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--foreground);
+    line-height: 1;
+  }
+
+  .vv-prev:hover, .vv-next:hover {
+    background: var(--primary);
+    color: white;
+  }
+
+  .vv-prev:disabled, .vv-next:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .vv-slider {
+    flex: 1;
+    accent-color: var(--primary);
+  }
+
+  .vv-counter {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 3.5rem;
+    text-align: right;
+  }
+
+  .vv-version-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .vv-date {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .vv-message {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .vv-original-badge {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.5rem;
+    background: var(--secondary);
+    border-radius: 9999px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .vv-diff-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  /* Content area */
+  .vv-content {
+    margin-top: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .vv-legend {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--card);
+  }
+
+  .vv-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .vv-legend-added,
+  .vv-legend-removed {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .vv-legend-added {
+    background: rgba(46, 160, 67, 0.3);
+    border: 1px solid rgba(46, 160, 67, 0.6);
+  }
+
+  .vv-legend-removed {
+    background: rgba(248, 81, 73, 0.3);
+    border: 1px solid rgba(248, 81, 73, 0.6);
+  }
+
+  /* Rendered content — mirror .post-content typography from [slug].astro */
+  .vv-rendered {
+    padding: 1.5rem;
+    line-height: 1.7;
+    color: var(--foreground);
+    font-size: 1.125rem;
+  }
+
+  .vv-rendered :global(h2) {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .vv-rendered :global(h3) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .vv-rendered :global(p) {
+    margin-bottom: 1.25rem;
+  }
+
+  .vv-rendered :global(a) {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  .vv-rendered :global(ul),
+  .vv-rendered :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .vv-rendered :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .vv-rendered :global(blockquote) {
+    border-left: 4px solid var(--primary);
+    padding-left: 1rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+
+  .vv-rendered :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  /* Diff highlights */
+  .vv-rendered :global(ins) {
+    background: rgba(46, 160, 67, 0.2);
+    color: inherit;
+    text-decoration: none;
+    padding: 0.125rem 0.125rem;
+    border-radius: 2px;
+  }
+
+  .vv-rendered :global(del) {
+    background: rgba(248, 81, 73, 0.2);
+    text-decoration: line-through;
+    padding: 0.125rem 0.125rem;
+    border-radius: 2px;
+    opacity: 0.8;
+  }
+
+  :global(.dark) .vv-rendered :global(ins) {
+    background: rgba(46, 160, 67, 0.25);
+  }
+
+  :global(.dark) .vv-rendered :global(del) {
+    background: rgba(248, 81, 73, 0.25);
+  }
+
+  /* Hide legend when diff is off */
+  .vv-content.no-diff .vv-legend {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .vv-nav {
+      flex-wrap: wrap;
+    }
+
+    .vv-slider {
+      order: 3;
+      width: 100%;
+      flex: unset;
+    }
+
+    .vv-version-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+
+    .vv-rendered {
+      padding: 1rem;
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<script>
+  function initVersionViewer() {
+    document.querySelectorAll<HTMLElement>('.version-viewer').forEach(viewer => {
+      if (viewer.dataset.initialized) return;
+      viewer.dataset.initialized = 'true';
+
+      const endpoint = viewer.dataset.endpoint!;
+      const controls = viewer.querySelector<HTMLElement>('.vv-controls')!;
+      const toggle = viewer.querySelector<HTMLButtonElement>('.vv-toggle')!;
+      const scrubber = viewer.querySelector<HTMLElement>('.vv-scrubber')!;
+      const slider = viewer.querySelector<HTMLInputElement>('.vv-slider')!;
+      const prevBtn = viewer.querySelector<HTMLButtonElement>('.vv-prev')!;
+      const nextBtn = viewer.querySelector<HTMLButtonElement>('.vv-next')!;
+      const counter = viewer.querySelector<HTMLElement>('.vv-counter')!;
+      const dateEl = viewer.querySelector<HTMLElement>('.vv-date')!;
+      const messageEl = viewer.querySelector<HTMLElement>('.vv-message')!;
+      const originalBadge = viewer.querySelector<HTMLElement>('.vv-original-badge')!;
+      const showDiffCheck = viewer.querySelector<HTMLInputElement>('.vv-show-diff')!;
+      const content = viewer.querySelector<HTMLElement>('.vv-content')!;
+      const legend = viewer.querySelector<HTMLElement>('.vv-legend')!;
+      const rendered = viewer.querySelector<HTMLElement>('.vv-rendered')!;
+
+      type Version = {
+        commit: { hash: string; date: string; message: string };
+        html: string;
+        diffHtml: string;
+        isOriginal: boolean;
+      };
+
+      let versions: Version[] = [];
+      let active = false;
+      let hiddenSiblings: { el: HTMLElement; display: string }[] = [];
+
+      function formatDate(dateStr: string): string {
+        const d = new Date(dateStr);
+        return new Intl.DateTimeFormat('ca-ES', {
+          day: 'numeric', month: 'short', year: 'numeric'
+        }).format(d);
+      }
+
+      function updateView() {
+        const idx = parseInt(slider.value);
+        const v = versions[idx];
+        if (!v) return;
+
+        rendered.innerHTML = showDiffCheck.checked ? v.diffHtml : v.html;
+        dateEl.textContent = formatDate(v.commit.date);
+        messageEl.textContent = v.commit.message;
+        originalBadge.hidden = !v.isOriginal;
+        counter.textContent = `${idx + 1} / ${versions.length}`;
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === versions.length - 1;
+        content.classList.toggle('no-diff', !showDiffCheck.checked);
+      }
+
+      function hideSiblings() {
+        const parent = viewer.parentElement;
+        if (!parent) return;
+        hiddenSiblings = [];
+        for (const child of Array.from(parent.children)) {
+          if (child === viewer) continue;
+          const el = child as HTMLElement;
+          hiddenSiblings.push({ el, display: el.style.display });
+          el.style.display = 'none';
+        }
+      }
+
+      function restoreSiblings() {
+        for (const { el, display } of hiddenSiblings) {
+          el.style.display = display;
+        }
+        hiddenSiblings = [];
+      }
+
+      function activate() {
+        active = true;
+        toggle.classList.add('active');
+        scrubber.hidden = false;
+        content.hidden = false;
+        hideSiblings();
+        slider.value = '0';
+        updateView();
+        viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function deactivate() {
+        active = false;
+        toggle.classList.remove('active');
+        scrubber.hidden = true;
+        content.hidden = true;
+        restoreSiblings();
+      }
+
+      // Lazy-fetch data
+      let loaded = false;
+      async function loadData() {
+        if (loaded) return true;
+        try {
+          const res = await fetch(endpoint);
+          if (!res.ok) return false;
+          const data = await res.json();
+          if (!data.hasHistory || !data.versions?.length) return false;
+          versions = data.versions;
+          slider.max = String(versions.length - 1);
+          loaded = true;
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      // Initial load to decide if we show the button
+      loadData().then(ok => {
+        if (ok) controls.hidden = false;
+      });
+
+      toggle.addEventListener('click', async () => {
+        if (active) { deactivate(); return; }
+        const ok = await loadData();
+        if (ok) activate();
+      });
+
+      slider.addEventListener('input', updateView);
+      prevBtn.addEventListener('click', () => {
+        slider.value = String(Math.max(0, parseInt(slider.value) - 1));
+        updateView();
+      });
+      nextBtn.addEventListener('click', () => {
+        slider.value = String(Math.min(versions.length - 1, parseInt(slider.value) + 1));
+        updateView();
+      });
+      showDiffCheck.addEventListener('change', updateView);
+
+      // Keyboard nav
+      document.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (!active) return;
+        if (e.key === 'Escape') { deactivate(); return; }
+        if (e.key === 'ArrowLeft') { prevBtn.click(); e.preventDefault(); }
+        if (e.key === 'ArrowRight') { nextBtn.click(); e.preventDefault(); }
+      });
+    });
+  }
+
+  initVersionViewer();
+  document.addEventListener('astro:after-swap', initVersionViewer);
+</script>

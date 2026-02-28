@@ -2,6 +2,10 @@ import { execSync } from 'child_process';
 import { readdirSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import * as Diff from 'diff';
+import { marked } from 'marked';
+import htmldiffModule from 'htmldiff-js';
+// htmldiff-js has nested default exports in ESM
+const htmldiff = (htmldiffModule as any).default ?? htmldiffModule;
 
 interface CommitInfo {
   hash: string;
@@ -15,22 +19,25 @@ interface DiffChange {
   removed?: boolean;
 }
 
-interface VersionDiff {
+interface VersionView {
   commit: CommitInfo;
-  changes: DiffChange[];
+  html: string;
+  diffHtml: string;
   isOriginal: boolean;
+  changes: DiffChange[];
 }
 
-interface GitHistoryData {
-  versions: VersionDiff[];
+interface GitHistoryPayload {
+  versions: VersionView[];
   hasHistory: boolean;
 }
 
 const BLOG_DIR = 'src/content/blog';
-const OUT_DIR = 'src/data/git-history';
+const OUT_DIR = 'public/data/git-history';
+
+marked.setOptions({ gfm: true });
 
 function getCommits(filePath: string): CommitInfo[] {
-  // Try current path and alternate extension to handle .md <-> .mdx renames
   const paths = [filePath];
   if (filePath.endsWith('.mdx')) {
     paths.push(filePath.replace(/\.mdx$/, '.md'));
@@ -65,7 +72,6 @@ function getFileAtCommit(filePath: string, commitHash: string): string {
   const absolutePath = filePath.startsWith('/') ? filePath : join(process.cwd(), filePath);
   const relativePath = absolutePath.replace(repoRoot + '/', '');
 
-  // Try current path, then alternate extension (.md <-> .mdx)
   const candidates = [relativePath];
   if (relativePath.endsWith('.mdx')) {
     candidates.push(relativePath.replace(/\.mdx$/, '.md'));
@@ -91,25 +97,42 @@ function removeFrontmatter(content: string): string {
   return content.replace(/^---\n[\s\S]*?\n---\n*/, '');
 }
 
-function generateHistory(filePath: string): GitHistoryData {
+function removeImportsAndJsx(content: string): string {
+  return content
+    .replace(/^import\s+.*$/gm, '')
+    .replace(/<[A-Z]\w+[^>]*\/>/g, '')
+    .replace(/<[A-Z]\w+[^>]*>[\s\S]*?<\/[A-Z]\w+>/g, '')
+    .trim();
+}
+
+function renderMarkdown(md: string): string {
+  const clean = removeImportsAndJsx(md);
+  return marked.parse(clean, { async: false }) as string;
+}
+
+function generateHistory(filePath: string): GitHistoryPayload {
   const commits = getCommits(filePath);
 
   if (commits.length <= 1) {
     return { versions: [], hasHistory: false };
   }
 
-  const versions: VersionDiff[] = [];
+  const versions: VersionView[] = [];
 
   for (let i = 0; i < commits.length; i++) {
     const commit = commits[i];
     const currentContent = removeFrontmatter(getFileAtCommit(filePath, commit.hash));
     const isOriginal = i === commits.length - 1;
 
+    const html = renderMarkdown(currentContent);
+
     if (isOriginal) {
       versions.push({
         commit,
-        changes: [{ value: currentContent }],
+        html,
+        diffHtml: html,
         isOriginal: true,
+        changes: [{ value: currentContent }],
       });
     } else {
       const olderContent = removeFrontmatter(getFileAtCommit(filePath, commits[i + 1].hash));
@@ -120,11 +143,13 @@ function generateHistory(filePath: string): GitHistoryData {
         return change;
       });
 
-      // Skip commits with no actual content changes (e.g. frontmatter-only edits)
       const hasRealChanges = changes.some(c => c.added || c.removed);
       if (!hasRealChanges) continue;
 
-      versions.push({ commit, changes, isOriginal: false });
+      const oldHtml = renderMarkdown(olderContent);
+      const diffHtml = htmldiff.execute(oldHtml, html);
+
+      versions.push({ commit, html, diffHtml, isOriginal: false, changes });
     }
   }
 
@@ -150,4 +175,4 @@ for (const file of files) {
   }
 }
 
-console.log(`\nGenerated ${generated} history file(s).`);
+console.log(`\nGenerated ${generated} history file(s) in ${OUT_DIR}`);

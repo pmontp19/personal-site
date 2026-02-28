@@ -10,14 +10,16 @@ export interface DiffChange {
   removed?: boolean;
 }
 
-export interface VersionDiff {
+export interface VersionView {
   commit: CommitInfo;
-  changes: DiffChange[];
+  html: string;
+  diffHtml: string;
   isOriginal: boolean;
+  changes: DiffChange[];
 }
 
-export interface GitHistoryData {
-  versions: VersionDiff[];
+export interface GitHistoryPayload {
+  versions: VersionView[];
   hasHistory: boolean;
 }
 

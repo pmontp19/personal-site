@@ -2,6 +2,9 @@
 dist/
 repomix-output.xml
 
+# generated git history data
+public/data/git-history/
+
 # generated types
 .astro/
 
