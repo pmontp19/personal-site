@@ -1,3 +1,6 @@
+/** Strip file extension from legacy content collection entry.id to get URL slug */
+export const getSlug = (id: string) => id.replace(/\.[^.]+$/, '');
+
 export const formatDate = (
   date: Date,
   options: Intl.DateTimeFormatOptions = {

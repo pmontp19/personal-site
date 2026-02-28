@@ -1,5 +1,5 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
 
@@ -32,7 +32,7 @@ const buttonText: Record<string, string> = {
 
 const cv = await getEntry('cv', `cv-${lang}`);
 if (!cv) return Astro.redirect('/cv/en');
-const { Content } = await cv.render();
+const { Content } = await render(cv);
 ---
 
 <Layout title={titles[lang]} lang={lang} description={descriptions[lang]} canonicalUrl={`https://peremontpeo.dev/cv/${lang}/`}>

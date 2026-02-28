@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "tsx scripts/generate-git-history.ts && astro build",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "generate-history": "tsx scripts/generate-git-history.ts"

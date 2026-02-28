@@ -1,7 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
-import { formatDate } from "../../utils/date";
+import { formatDate, getSlug } from "../../utils/date";
 
 // Fetch all blog posts, filter out drafts, and sort by date (most recent first)
 const allPosts = (
@@ -24,15 +24,15 @@ const allPosts = (
         {
           allPosts.map((post) => (
             <li>
-              <a href={`/blog/${post.slug}/`}>
+              <a href={`/blog/${getSlug(post.id)}/`}>
                 <time
                   datetime={post.data.date.toISOString()}
                   class="post-date"
-                  transition:name={`date-${post.slug}`}
+                  transition:name={`date-${getSlug(post.id)}`}
                 >
                   {formatDate(post.data.date)}
                 </time>
-                <span class="post-title" transition:name={`title-${post.slug}`}>
+                <span class="post-title" transition:name={`title-${getSlug(post.id)}`}>
                   {post.data.title}
                 </span>
               </a>

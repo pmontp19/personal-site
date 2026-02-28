@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import MagicCard from "./MagicCard.astro";
-import { formatDate } from "../utils/date";
+import { formatDate, getSlug } from "../utils/date";
 import { calculateReadingTime } from "../utils/readingTime";
 
 const allPosts = (
@@ -27,17 +27,17 @@ const readingTime = featuredPost
     <MagicCard class="featured-post-card">
       <div class="post-content">
         <div class="post-meta text-muted">
-          <time datetime={featuredPost.data.date.toISOString()} transition:name={`date-${featuredPost.slug}`}>
+          <time datetime={featuredPost.data.date.toISOString()} transition:name={`date-${getSlug(featuredPost.id)}`}>
             {formatDate(featuredPost.data.date)}
           </time>
           <span class="reading-time">⌛ {readingTime}</span>
         </div>
-        <h3 class="post-title" transition:name={`title-${featuredPost.slug}`}>
-          <a href={`/blog/${featuredPost.slug}`}>{featuredPost.data.title}</a>
+        <h3 class="post-title" transition:name={`title-${getSlug(featuredPost.id)}`}>
+          <a href={`/blog/${getSlug(featuredPost.id)}`}>{featuredPost.data.title}</a>
         </h3>
         <p class="post-description text-muted">{featuredPost.data.description}</p>
       </div>
-      <a href={`/blog/${featuredPost.slug}`} class="read-more button-link">
+      <a href={`/blog/${getSlug(featuredPost.id)}`} class="read-more button-link">
         Llegir més →
       </a>
     </MagicCard>

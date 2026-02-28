@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import ExperienceEntry from "../components/ExperienceEntry.astro";
-import { formatDate } from "../utils/date"; // Import formatDate
+import { formatDate, getSlug } from "../utils/date";
 
 // Get all entries from the 'experience' collection
 const experiences = (await getCollection("experience")).sort(
@@ -31,12 +31,12 @@ const locale = "ca-ES";
                       <img src={exp.data.logo} alt={`${exp.data.company} logo`} class="company-logo" width="48" height="48" />
                     )}
                     <div class="experience-title-info">
-                      <h2 class="job-title" transition:name={`role-${exp.slug}`}>
+                      <h2 class="job-title" transition:name={`role-${getSlug(exp.id)}`}>
                         {exp.data.role}
                       </h2>
                       <p
                         class="company-name text-muted"
-                        transition:name={`company-${exp.slug}`}
+                        transition:name={`company-${getSlug(exp.id)}`}
                       >
                         {exp.data.company}
                       </p>

@@ -1,0 +1,134 @@
+{
+  "versions": [
+    {
+      "commit": {
+        "hash": "22e402b1ce9f8cef7aa31b2dd26fa2d7b998a631",
+        "date": "2026-02-28",
+        "message": "feat: timeline component fix"
+      },
+      "html": "<p>Escoltant <strong><a href=\"https://mossegalapoma.cat/\">Mossegalapoma</a></strong> sempre m&#39;he trobat tirant endavant i enrere per buscar les referències a llibres, películes i altres obres que surten més enllà de les propostes mossegui. Quan dius &quot;ah, doncs millor que li done un cop d&#39;ull a això&quot; i has de parar el podcast per buscar-ho, al final ho oblides. Vaig pensar: i si tingués totes aquestes recomanacions recollides en un lloc?</p>\n<p>Doncs amb els models de llenguatge actuals, es pot fer. I força bé.</p>\n<h2>Com funciona</h2>\n<p>El pipeline és automàtic:</p>\n<ol>\n<li><p><strong>RSS → Descàrrega</strong>: S&#39;escolta el feed RSS del podcast. Si hi ha un episodi nou, es descarrega l&#39;àudio.</p>\n</li>\n<li><p><strong>Compressió</strong>: L&#39;mp3 es comprimeix (mono, 16kHz, 24kbps) perquè cap en 25MB — el límit de <a href=\"https://groq.com/\">Groq</a>.</p>\n</li>\n<li><p><strong>Transcripció</strong>: <a href=\"https://console.groq.com/docs/api-reference\">Whisper de Groq</a> transcriu l&#39;àudio. Tot i que el català no és el seu fort, funciona prou bé.</p>\n</li>\n<li><p><strong>Extracció de recomanacions</strong>: Aquí ve la màgia. Amb un model de text — actualment <strong>Claude Sonnet 4.6</strong> — s&#39;analitza la transcripció i s&#39;extreuen les obres recomanades. No totes les mencions compten: el model busca recomanacions explícites, no simplement referències culturals.</p>\n</li>\n<li><p><strong>Enriquiment</strong>: Cada obra es consulta a una API externa per obtenir dades extres:</p>\n<ul>\n<li><strong>TMDB</strong>: pósters, trames i puntuacions de películas i sèries</li>\n<li><strong>Open Library</strong>: cobertes i autors de llibres</li>\n<li><strong>RAWG</strong>: imatges de videojocs</li>\n<li><strong>iTunes</strong>: podcasts</li>\n</ul>\n</li>\n<li><p><strong>Emmagatzematge</strong>: Tot es guarda a SQLite i s&#39;exporta a un fitxer JSON.</p>\n</li>\n<li><p><strong>Frontend</strong>: Un site fet amb <a href=\"https://astro.build/\">Astro</a> llegeix el JSON a build time i genera una pàgina on pots consultar totes les recomanacions per episodi.</p>\n</li>\n</ol>\n<h2>Un disseny modular</h2>\n<p>Una de les coses que m&#39;ha agradat fer és que el sistema és bastant genèric. Canviant la variable <code>RSS_URL</code>, pots processar qualsevol altre podcast. Ara mateix està configurat per Mossegalapoma, però l&#39;arquitectura ho permetria extrapolar a d&#39;altres.</p>\n<h2>Problemes trobats</h2>\n<p>No tot ha sigut fàcil:</p>\n<ul>\n<li><p><strong>Model d&#39;extracció</strong>: Opus era massa overkill (i car). Haiku donava massa falsos positius. Sonnet sembla el punt just entre rendiment i qualitat.</p>\n</li>\n<li><p><strong>Transcripció</strong>: Whisper no acaba de pillar bé el català. Moltes obres surten mal transcrites i llavors l&#39;extracció no les troba.</p>\n</li>\n<li><p><strong>Reconeixement</strong>: Tot i l&#39;enriquiment amb APIs externes, quan el títol original no coincideix amb el que diuen al podcast (o està en un altre idioma), costa de fer el match.</p>\n</li>\n</ul>\n<h2>Estat actual</h2>\n<p>De moment no crec que l&#39;acabi del tot. La base funciona, però la qualitat de les dades dependrà molt de com evolucioni la transcripció i el reconeixement d&#39;obres. De moment és una prova de concepte que funciona — i que m&#39;ha servit per aprendre algo més jugant amb els models.</p>\n<h2>Stack</h2>\n<ul>\n<li><strong>Backend</strong>: Python, <a href=\"https://console.groq.com/docs/api-reference\">Groq API</a>, SQLite</li>\n<li><strong>Frontend</strong>: <a href=\"https://astro.build/\">Astro</a>, Tailwind CSS</li>\n<li><strong>APIs externes</strong>: TMDB, Open Library, RAWG, iTunes</li>\n</ul>\n",
+      "diffHtml": "<p>Escoltant <strong><a href=\"https://mossegalapoma.cat/\">Mossegalapoma</a></strong> sempre m&#39;he trobat tirant endavant i enrere per buscar les referències a llibres, películes i altres obres que surten més enllà de les propostes mossegui. Quan dius &quot;ah, doncs millor que li done un cop d&#39;ull a això&quot; i has de parar el podcast per buscar-ho, al final ho oblides. Vaig pensar: i si tingués totes aquestes recomanacions recollides en un lloc?</p>\n<p>Doncs amb els models de llenguatge actuals, es pot fer. I força bé.</p>\n<h2>Com funciona</h2>\n<p>El pipeline és automàtic:</p>\n<ol>\n<li><p><strong>RSS → Descàrrega</strong>: S&#39;escolta el feed RSS del podcast. Si hi ha un episodi nou, es descarrega l&#39;àudio.</p>\n</li>\n<li><p><strong>Compressió</strong>: L&#39;mp3 es comprimeix (mono, 16kHz, 24kbps) perquè cap en 25MB — el límit de <a href=\"https://groq.com/\">Groq</a>.</p>\n</li>\n<li><p><strong>Transcripció</strong>: <a href=\"https://console.groq.com/docs/api-reference\">Whisper de Groq</a> transcriu l&#39;àudio. Tot i que el català no és el seu fort, funciona prou bé.</p>\n</li>\n<li><p><strong>Extracció de recomanacions</strong>: Aquí ve la màgia. Amb un model de text — actualment <strong>Claude Sonnet 4.6</strong> — s&#39;analitza la transcripció i s&#39;extreuen les obres recomanades. No totes les mencions compten: el model busca recomanacions explícites, no simplement referències culturals.</p>\n</li>\n<li><p><strong>Enriquiment</strong>: Cada obra es consulta a una API externa per obtenir dades extres:</p>\n<ul>\n<li><strong>TMDB</strong>: pósters, trames i puntuacions de películas i sèries</li>\n<li><strong>Open Library</strong>: cobertes i autors de llibres</li>\n<li><strong>RAWG</strong>: imatges de videojocs</li>\n<li><strong>iTunes</strong>: podcasts</li>\n</ul>\n</li>\n<li><p><strong>Emmagatzematge</strong>: Tot es guarda a SQLite i s&#39;exporta a un fitxer JSON.</p>\n</li>\n<li><p><strong>Frontend</strong>: Un site fet amb <ins class=\"mod\"><a href=\"https://astro.build/\">Astro</ins></a> llegeix el JSON a build time i genera una pàgina on pots consultar totes les recomanacions per episodi.</p>\n</li>\n</ol>\n<h2>Un disseny modular</h2>\n<p>Una de les coses que m&#39;ha agradat fer és que el sistema és bastant genèric. Canviant la variable <code>RSS_URL</code>, pots processar qualsevol altre podcast. Ara mateix està configurat per Mossegalapoma, però l&#39;arquitectura ho permetria extrapolar a d&#39;altres.</p>\n<h2>Problemes trobats</h2>\n<p>No tot ha sigut fàcil:</p>\n<ul>\n<li><p><strong>Model d&#39;extracció</strong>: Opus era massa overkill (i car). Haiku donava massa falsos positius. Sonnet sembla el punt just entre rendiment i qualitat.</p>\n</li>\n<li><p><strong>Transcripció</strong>: Whisper no acaba de pillar bé el català. Moltes obres surten mal transcrites i llavors l&#39;extracció no les troba.</p>\n</li>\n<li><p><strong>Reconeixement</strong>: Tot i l&#39;enriquiment amb APIs externes, quan el títol original no coincideix amb el que diuen al podcast (o està en un altre idioma), costa de fer el match.</p>\n</li>\n</ul>\n<h2>Estat actual</h2>\n<p>De moment no crec que l&#39;acabi del tot. La base funciona, però la qualitat de les dades dependrà molt de com evolucioni la transcripció i el reconeixement d&#39;obres. De moment és una prova de concepte que funciona — i que m&#39;ha servit per aprendre algo més jugant amb els models.</p>\n<h2>Stack</h2>\n<ul>\n<li><strong>Backend</strong>: Python, <a href=\"https://console.groq.com/docs/api-reference\">Groq API</a>, SQLite</li>\n<li><strong>Frontend</strong>: <a href=\"https://astro.build/\">Astro</a>, Tailwind CSS</li>\n<li><strong>APIs externes</strong>: TMDB, Open Library, RAWG, iTunes</li>\n</ul>\n",
+      "isOriginal": false,
+      "changes": [
+        {
+          "value": "Escoltant **"
+        },
+        {
+          "value": "[",
+          "added": true
+        },
+        {
+          "value": "Mossegalapoma"
+        },
+        {
+          "value": "](https://mossegalapoma.cat/)",
+          "added": true
+        },
+        {
+          "value": "** sempre m'he trobat tirant endavant i enrere per buscar les referències a llibres, películes i altres obres que surten més enllà de les propostes mossegui. Quan dius \"ah, doncs millor que li done un cop d'ull a això\" i has de parar el podcast per buscar-ho, al final ho oblides. Vaig pensar: i si tingués totes aquestes recomanacions recollides en un lloc?\n\nDoncs amb els models de llenguatge actuals, es pot fer. I força bé.\n\n## Com funciona\n\nEl pipeline és automàtic:\n\n1. **RSS → Descàrrega**: S'escolta el feed RSS del podcast. Si hi ha un episodi nou, es descarrega l'àudio.\n\n2. **Compressió**: L'mp3 es comprimeix (mono, 16kHz, 24kbps) perquè cap en 25MB — el límit de "
+        },
+        {
+          "value": "[",
+          "added": true
+        },
+        {
+          "value": "Groq"
+        },
+        {
+          "value": "](https://groq",
+          "added": true
+        },
+        {
+          "value": "."
+        },
+        {
+          "value": "com/).\n\n",
+          "added": true
+        },
+        {
+          "value": "3. **Transcripció**: "
+        },
+        {
+          "value": "[",
+          "added": true
+        },
+        {
+          "value": "Whisper de Groq"
+        },
+        {
+          "value": "](https://console.groq.com/docs/api-reference) ",
+          "added": true
+        },
+        {
+          "value": "transcriu l'àudio. Tot i que el català no és el seu fort, funciona prou bé.\n\n4. **Extracció de recomanacions**: Aquí ve la màgia. Amb un model de text — actualment **Claude Sonnet 4.6** — s'analitza la transcripció i s'extreuen les obres recomanades. No totes les mencions compten: el model busca recomanacions explícites, no simplement referències culturals.\n\n5. **Enriquiment**: Cada obra es consulta a una API externa per obtenir dades extres:\n   - **TMDB**: pósters, trames i puntuacions de películas i sèries\n   - **Open Library**: cobertes i autors de llibres\n   - **RAWG**: imatges de videojocs\n   - **iTunes**: podcasts\n\n6. **Emmagatzematge**: Tot es guarda a SQLite i s'exporta a un fitxer JSON.\n\n7. **Frontend**: Un site fet amb "
+        },
+        {
+          "value": "**",
+          "removed": true
+        },
+        {
+          "value": "[",
+          "added": true
+        },
+        {
+          "value": "Astro"
+        },
+        {
+          "value": "**",
+          "removed": true
+        },
+        {
+          "value": "](https://astro.build/)",
+          "added": true
+        },
+        {
+          "value": " llegeix el JSON a build time i genera una pàgina on pots consultar totes les recomanacions per episodi.\n\n## Un disseny modular\n\nUna de les coses que m'ha agradat fer és que el sistema és bastant genèric. Canviant la variable `RSS_URL`, pots processar qualsevol altre podcast. Ara mateix està configurat per Mossegalapoma, però l'arquitectura ho permetria extrapolar a d'altres.\n\n## Problemes trobats\n\nNo tot ha sigut fàcil:\n\n- **Model d'extracció**: Opus era massa overkill (i car). Haiku donava massa falsos positius. Sonnet sembla el punt just entre rendiment i qualitat.\n\n- **Transcripció**: Whisper no acaba de pillar bé el català. Moltes obres surten mal transcrites i llavors l'extracció no les troba.\n\n- **Reconeixement**: Tot i l'enriquiment amb APIs externes, quan el títol original no coincideix amb el que diuen al podcast (o està en un altre idioma), costa de fer el match.\n\n## Estat actual\n\nDe moment no crec que l'acabi del tot. La base funciona, però la qualitat de les dades dependrà molt de com evolucioni la transcripció i el reconeixement d'obres. De moment és una prova de concepte que funciona — i que m'ha servit per aprendre algo més jugant amb els models.\n\n## Stack\n\n- **Backend**: Python, "
+        },
+        {
+          "value": "[",
+          "added": true
+        },
+        {
+          "value": "Groq API"
+        },
+        {
+          "value": "](https://console.groq.com/docs/api-reference)",
+          "added": true
+        },
+        {
+          "value": ", SQLite\n- **Frontend**: "
+        },
+        {
+          "value": "[",
+          "added": true
+        },
+        {
+          "value": "Astro"
+        },
+        {
+          "value": "](https://astro.build/)",
+          "added": true
+        },
+        {
+          "value": ", Tailwind CSS\n- **APIs externes**: TMDB, Open Library, RAWG, iTunes\n"
+        }
+      ]
+    },
+    {
+      "commit": {
+        "hash": "5347f9ef559185b1c6f419386c4d9ab0ecb7700b",
+        "date": "2026-02-27",
+        "message": "feat: implement git history tracking for blog posts with diffs feat: add showHistory option to blog post metadata feat: include GitHistory component in blog post pages chore: update package dependencies for git history functionality"
+      },
+      "html": "<p>Escoltant <strong>Mossegalapoma</strong> sempre m&#39;he trobat tirant endavant i enrere per buscar les referències a llibres, películes i altres obres que surten més enllà de les propostes mossegui. Quan dius &quot;ah, doncs millor que li done un cop d&#39;ull a això&quot; i has de parar el podcast per buscar-ho, al final ho oblides. Vaig pensar: i si tingués totes aquestes recomanacions recollides en un lloc?</p>\n<p>Doncs amb els models de llenguatge actuals, es pot fer. I força bé.</p>\n<h2>Com funciona</h2>\n<p>El pipeline és automàtic:</p>\n<ol>\n<li><p><strong>RSS → Descàrrega</strong>: S&#39;escolta el feed RSS del podcast. Si hi ha un episodi nou, es descarrega l&#39;àudio.</p>\n</li>\n<li><p><strong>Compressió</strong>: L&#39;mp3 es comprimeix (mono, 16kHz, 24kbps) perquè cap en 25MB — el límit de Groq.</p>\n</li>\n<li><p><strong>Transcripció</strong>: Whisper de Groq transcriu l&#39;àudio. Tot i que el català no és el seu fort, funciona prou bé.</p>\n</li>\n<li><p><strong>Extracció de recomanacions</strong>: Aquí ve la màgia. Amb un model de text — actualment <strong>Claude Sonnet 4.6</strong> — s&#39;analitza la transcripció i s&#39;extreuen les obres recomanades. No totes les mencions compten: el model busca recomanacions explícites, no simplement referències culturals.</p>\n</li>\n<li><p><strong>Enriquiment</strong>: Cada obra es consulta a una API externa per obtenir dades extres:</p>\n<ul>\n<li><strong>TMDB</strong>: pósters, trames i puntuacions de películas i sèries</li>\n<li><strong>Open Library</strong>: cobertes i autors de llibres</li>\n<li><strong>RAWG</strong>: imatges de videojocs</li>\n<li><strong>iTunes</strong>: podcasts</li>\n</ul>\n</li>\n<li><p><strong>Emmagatzematge</strong>: Tot es guarda a SQLite i s&#39;exporta a un fitxer JSON.</p>\n</li>\n<li><p><strong>Frontend</strong>: Un site fet amb <strong>Astro</strong> llegeix el JSON a build time i genera una pàgina on pots consultar totes les recomanacions per episodi.</p>\n</li>\n</ol>\n<h2>Un disseny modular</h2>\n<p>Una de les coses que m&#39;ha agradat fer és que el sistema és bastant genèric. Canviant la variable <code>RSS_URL</code>, pots processar qualsevol altre podcast. Ara mateix està configurat per Mossegalapoma, però l&#39;arquitectura ho permetria extrapolar a d&#39;altres.</p>\n<h2>Problemes trobats</h2>\n<p>No tot ha sigut fàcil:</p>\n<ul>\n<li><p><strong>Model d&#39;extracció</strong>: Opus era massa overkill (i car). Haiku donava massa falsos positius. Sonnet sembla el punt just entre rendiment i qualitat.</p>\n</li>\n<li><p><strong>Transcripció</strong>: Whisper no acaba de pillar bé el català. Moltes obres surten mal transcrites i llavors l&#39;extracció no les troba.</p>\n</li>\n<li><p><strong>Reconeixement</strong>: Tot i l&#39;enriquiment amb APIs externes, quan el títol original no coincideix amb el que diuen al podcast (o està en un altre idioma), costa de fer el match.</p>\n</li>\n</ul>\n<h2>Estat actual</h2>\n<p>De moment no crec que l&#39;acabi del tot. La base funciona, però la qualitat de les dades dependrà molt de com evolucioni la transcripció i el reconeixement d&#39;obres. De moment és una prova de concepte que funciona — i que m&#39;ha servit per aprendre algo més jugant amb els models.</p>\n<h2>Stack</h2>\n<ul>\n<li><strong>Backend</strong>: Python, Groq API, SQLite</li>\n<li><strong>Frontend</strong>: Astro, Tailwind CSS</li>\n<li><strong>APIs externes</strong>: TMDB, Open Library, RAWG, iTunes</li>\n</ul>\n",
+      "diffHtml": "<p>Escoltant <strong>Mossegalapoma</strong> sempre m&#39;he trobat tirant endavant i enrere per buscar les referències a llibres, películes i altres obres que surten més enllà de les propostes mossegui. Quan dius &quot;ah, doncs millor que li done un cop d&#39;ull a això&quot; i has de parar el podcast per buscar-ho, al final ho oblides. Vaig pensar: i si tingués totes aquestes recomanacions recollides en un lloc?</p>\n<p>Doncs amb els models de llenguatge actuals, es pot fer. I força bé.</p>\n<h2>Com funciona</h2>\n<p>El pipeline és automàtic:</p>\n<ol>\n<li><p><strong>RSS → Descàrrega</strong>: S&#39;escolta el feed RSS del podcast. Si hi ha un episodi nou, es descarrega l&#39;àudio.</p>\n</li>\n<li><p><strong>Compressió</strong>: L&#39;mp3 es comprimeix (mono, 16kHz, 24kbps) perquè cap en 25MB — el límit de Groq.</p>\n</li>\n<li><p><strong>Transcripció</strong>: Whisper de Groq transcriu l&#39;àudio. Tot i que el català no és el seu fort, funciona prou bé.</p>\n</li>\n<li><p><strong>Extracció de recomanacions</strong>: Aquí ve la màgia. Amb un model de text — actualment <strong>Claude Sonnet 4.6</strong> — s&#39;analitza la transcripció i s&#39;extreuen les obres recomanades. No totes les mencions compten: el model busca recomanacions explícites, no simplement referències culturals.</p>\n</li>\n<li><p><strong>Enriquiment</strong>: Cada obra es consulta a una API externa per obtenir dades extres:</p>\n<ul>\n<li><strong>TMDB</strong>: pósters, trames i puntuacions de películas i sèries</li>\n<li><strong>Open Library</strong>: cobertes i autors de llibres</li>\n<li><strong>RAWG</strong>: imatges de videojocs</li>\n<li><strong>iTunes</strong>: podcasts</li>\n</ul>\n</li>\n<li><p><strong>Emmagatzematge</strong>: Tot es guarda a SQLite i s&#39;exporta a un fitxer JSON.</p>\n</li>\n<li><p><strong>Frontend</strong>: Un site fet amb <strong>Astro</strong> llegeix el JSON a build time i genera una pàgina on pots consultar totes les recomanacions per episodi.</p>\n</li>\n</ol>\n<h2>Un disseny modular</h2>\n<p>Una de les coses que m&#39;ha agradat fer és que el sistema és bastant genèric. Canviant la variable <code>RSS_URL</code>, pots processar qualsevol altre podcast. Ara mateix està configurat per Mossegalapoma, però l&#39;arquitectura ho permetria extrapolar a d&#39;altres.</p>\n<h2>Problemes trobats</h2>\n<p>No tot ha sigut fàcil:</p>\n<ul>\n<li><p><strong>Model d&#39;extracció</strong>: Opus era massa overkill (i car). Haiku donava massa falsos positius. Sonnet sembla el punt just entre rendiment i qualitat.</p>\n</li>\n<li><p><strong>Transcripció</strong>: Whisper no acaba de pillar bé el català. Moltes obres surten mal transcrites i llavors l&#39;extracció no les troba.</p>\n</li>\n<li><p><strong>Reconeixement</strong>: Tot i l&#39;enriquiment amb APIs externes, quan el títol original no coincideix amb el que diuen al podcast (o està en un altre idioma), costa de fer el match.</p>\n</li>\n</ul>\n<h2>Estat actual</h2>\n<p>De moment no crec que l&#39;acabi del tot. La base funciona, però la qualitat de les dades dependrà molt de com evolucioni la transcripció i el reconeixement d&#39;obres. De moment és una prova de concepte que funciona — i que m&#39;ha servit per aprendre algo més jugant amb els models.</p>\n<h2>Stack</h2>\n<ul>\n<li><strong>Backend</strong>: Python, Groq API, SQLite</li>\n<li><strong>Frontend</strong>: Astro, Tailwind CSS</li>\n<li><strong>APIs externes</strong>: TMDB, Open Library, RAWG, iTunes</li>\n</ul>\n",
+      "isOriginal": true,
+      "changes": [
+        {
+          "value": "Escoltant **Mossegalapoma** sempre m'he trobat tirant endavant i enrere per buscar les referències a llibres, películes i altres obres que surten més enllà de les propostes mossegui. Quan dius \"ah, doncs millor que li done un cop d'ull a això\" i has de parar el podcast per buscar-ho, al final ho oblides. Vaig pensar: i si tingués totes aquestes recomanacions recollides en un lloc?\n\nDoncs amb els models de llenguatge actuals, es pot fer. I força bé.\n\n## Com funciona\n\nEl pipeline és automàtic:\n\n1. **RSS → Descàrrega**: S'escolta el feed RSS del podcast. Si hi ha un episodi nou, es descarrega l'àudio.\n\n2. **Compressió**: L'mp3 es comprimeix (mono, 16kHz, 24kbps) perquè cap en 25MB — el límit de Groq.\n\n3. **Transcripció**: Whisper de Groq transcriu l'àudio. Tot i que el català no és el seu fort, funciona prou bé.\n\n4. **Extracció de recomanacions**: Aquí ve la màgia. Amb un model de text — actualment **Claude Sonnet 4.6** — s'analitza la transcripció i s'extreuen les obres recomanades. No totes les mencions compten: el model busca recomanacions explícites, no simplement referències culturals.\n\n5. **Enriquiment**: Cada obra es consulta a una API externa per obtenir dades extres:\n   - **TMDB**: pósters, trames i puntuacions de películas i sèries\n   - **Open Library**: cobertes i autors de llibres\n   - **RAWG**: imatges de videojocs\n   - **iTunes**: podcasts\n\n6. **Emmagatzematge**: Tot es guarda a SQLite i s'exporta a un fitxer JSON.\n\n7. **Frontend**: Un site fet amb **Astro** llegeix el JSON a build time i genera una pàgina on pots consultar totes les recomanacions per episodi.\n\n## Un disseny modular\n\nUna de les coses que m'ha agradat fer és que el sistema és bastant genèric. Canviant la variable `RSS_URL`, pots processar qualsevol altre podcast. Ara mateix està configurat per Mossegalapoma, però l'arquitectura ho permetria extrapolar a d'altres.\n\n## Problemes trobats\n\nNo tot ha sigut fàcil:\n\n- **Model d'extracció**: Opus era massa overkill (i car). Haiku donava massa falsos positius. Sonnet sembla el punt just entre rendiment i qualitat.\n\n- **Transcripció**: Whisper no acaba de pillar bé el català. Moltes obres surten mal transcrites i llavors l'extracció no les troba.\n\n- **Reconeixement**: Tot i l'enriquiment amb APIs externes, quan el títol original no coincideix amb el que diuen al podcast (o està en un altre idioma), costa de fer el match.\n\n## Estat actual\n\nDe moment no crec que l'acabi del tot. La base funciona, però la qualitat de les dades dependrà molt de com evolucioni la transcripció i el reconeixement d'obres. De moment és una prova de concepte que funciona — i que m'ha servit per aprendre algo més jugant amb els models.\n\n## Stack\n\n- **Backend**: Python, Groq API, SQLite\n- **Frontend**: Astro, Tailwind CSS\n- **APIs externes**: TMDB, Open Library, RAWG, iTunes\n"
+        }
+      ]
+    }
+  ],
+  "hasHistory": true
+}

@@ -1,5 +1,6 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import { getSlug } from '../utils/date';
 
 type Context = {
     site: string;
@@ -20,7 +21,7 @@ export async function GET(context: Context) {
         items: items.map(item => ({
             title: item.data.title,
             description: item.data.description,
-            link: `/blog/${item.slug}/`,
+            link: `/blog/${getSlug(item.id)}/`,
             pubDate: new Date(item.data.date),
         })),
         customData: `<language>ca</language>`,
