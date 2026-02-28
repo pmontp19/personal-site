@@ -46,6 +46,8 @@ const pageUrl = canonicalUrl || siteUrl;
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
+    <meta name="theme-color" content="hsl(0, 0%, 100%)" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="hsl(222.2, 84%, 4.9%)" media="(prefers-color-scheme: dark)" />
     <slot name="head" />
     <ClientRouter />
 
@@ -80,11 +82,12 @@ const pageUrl = canonicalUrl || siteUrl;
     </script>
   </head>
   <body>
+    <a href="#main" class="skip-link">Skip to content</a>
     <div class="page-layout">
       <header class="page-header">
         <Header />
       </header>
-      <div class="page-main container">
+      <div id="main" class="page-main container">
         <slot />
       </div>
       <footer class="page-footer">
@@ -204,6 +207,23 @@ const pageUrl = canonicalUrl || siteUrl;
 </script>
 
 <style>
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 200;
+    padding: 0.5rem 1rem;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+
   html,
   body {
     height: 100%;

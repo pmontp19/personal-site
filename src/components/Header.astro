@@ -108,8 +108,7 @@ const { pathname } = Astro.url;
     position: sticky;
     top: 0;
     z-index: 100;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    transition: padding 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
   }
 
   html.scrolled header {
@@ -182,6 +181,11 @@ const { pathname } = Astro.url;
     transition: transform 0.3s ease;
   }
 
+  .menu-toggle:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
   .menu-toggle.menu-open-icon {
     transform: rotate(90deg);
   }
@@ -232,7 +236,7 @@ const { pathname } = Astro.url;
     box-shadow:
       0 0 6px var(--primary),
       0 0 12px var(--primary);
-    transition: all 0.3s ease;
+    transition: left 0.3s ease, width 0.3s ease, transform 0.3s ease;
   }
 
   @media (max-width: 768px) {
