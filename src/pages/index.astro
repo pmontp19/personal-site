@@ -4,6 +4,7 @@ import InteractiveAvatar from "../components/InteractiveAvatar.astro";
 import BlogPosts from "../components/BlogPosts.astro";
 import ExperienceTimeline from "../components/ExperienceTimeline.astro";
 import ContactSection from "../components/ContactSection.astro";
+import HyperText from "../components/HyperText.astro";
 import { getCollection } from "astro:content";
 
 // Get experiences sorted by date
@@ -31,7 +32,7 @@ const personSchema = {
     <section id="sobre-mi" class="about section animate">
       <div class="about-grid">
         <div class="about-content">
-          <h1>Hola, soc Pere Montpeó</h1>
+          <HyperText text="Hola, soc Pere Montpeó" animateOnHover={true} startOnView={false} duration={1400} delay={300} />
           <p class="subtitle">
             Enginyer de programari especialitzat en tot i en res. Actualment,
             fent que els ordinadors facin coses sols. Si no estic programant,

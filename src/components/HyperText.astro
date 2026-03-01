@@ -1,0 +1,114 @@
+---
+interface Props {
+  text: string;
+  className?: string;
+  duration?: number;
+  delay?: number;
+  animateOnHover?: boolean;
+  startOnView?: boolean;
+  characterSet?: string;
+  as?: string;
+}
+
+const {
+  text,
+  className = "",
+  duration = 800,
+  delay = 0,
+  animateOnHover = true,
+  startOnView = false,
+  characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#!?$%&@",
+  as: Tag = "h1",
+} = Astro.props;
+
+const chars = [...text];
+---
+
+<Tag
+  class={`hyper-text ${className}`}
+  data-text={text}
+  data-duration={duration}
+  data-delay={delay}
+  data-animate-on-hover={animateOnHover ? "true" : "false"}
+  data-start-on-view={startOnView ? "true" : "false"}
+  data-char-set={characterSet}
+  aria-label={text}
+>
+  {chars.map((char, i) => (
+    <span data-char={char} data-index={i} aria-hidden="true">
+      {char}
+    </span>
+  ))}
+</Tag>
+
+<script>
+  function scramble(el: Element) {
+    const text = el.getAttribute("data-text")!;
+    const duration = parseInt(el.getAttribute("data-duration") || "800");
+    const charSet = el.getAttribute("data-char-set") || "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const spans = el.querySelectorAll<HTMLSpanElement>("span[data-char]");
+
+    const chars = [...text];
+    const start = performance.now();
+
+    function frame(now: number) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+
+      spans.forEach((span, i) => {
+        const charRevealProgress = i / chars.length;
+        if (progress >= charRevealProgress) {
+          span.textContent = chars[i];
+        } else {
+          span.textContent = charSet[Math.floor(Math.random() * charSet.length)];
+        }
+      });
+
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  function init(el: Element) {
+    const delay = parseInt(el.getAttribute("data-delay") || "0");
+    const animateOnHover = el.getAttribute("data-animate-on-hover") === "true";
+    const startOnView = el.getAttribute("data-start-on-view") === "true";
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    function trigger() {
+      if (delay > 0) {
+        setTimeout(() => scramble(el), delay);
+      } else {
+        scramble(el);
+      }
+    }
+
+    if (startOnView) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              trigger();
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+      observer.observe(el);
+    } else {
+      trigger();
+    }
+
+    if (animateOnHover) {
+      el.addEventListener("mouseenter", trigger);
+    }
+  }
+
+  document.querySelectorAll<Element>(".hyper-text").forEach(init);
+</script>
