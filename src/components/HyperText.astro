@@ -110,5 +110,10 @@ const chars = [...text];
     }
   }
 
-  document.querySelectorAll<Element>(".hyper-text").forEach(init);
+  function initAll() {
+    document.querySelectorAll<Element>(".hyper-text").forEach(init);
+  }
+
+  initAll();
+  document.addEventListener("astro:after-swap", initAll);
 </script>
