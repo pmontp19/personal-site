@@ -34,12 +34,27 @@ const chars = [...text];
   data-char-set={characterSet}
   aria-label={text}
 >
-  {chars.map((char, i) => (
-    <span data-char={char} data-index={i} aria-hidden="true">
-      {char}
-    </span>
-  ))}
+  <span class="hyper-text-ghost" aria-hidden="true">{text}</span>
+  <span class="hyper-text-scramble" aria-hidden="true">
+    {chars.map((char, i) => (
+      <span data-char={char} data-index={i}>{char}</span>
+    ))}
+  </span>
 </Tag>
+
+<style>
+  .hyper-text {
+    position: relative;
+    display: block;
+  }
+  .hyper-text-ghost {
+    visibility: hidden;
+  }
+  .hyper-text-scramble {
+    position: absolute;
+    inset: 0;
+  }
+</style>
 
 <script>
   function scramble(el: Element) {
@@ -56,9 +71,10 @@ const chars = [...text];
       const progress = Math.min(elapsed / duration, 1);
 
       spans.forEach((span, i) => {
+        const original = chars[i];
         const charRevealProgress = i / chars.length;
-        if (progress >= charRevealProgress) {
-          span.textContent = chars[i];
+        if (progress >= charRevealProgress || /\s/.test(original)) {
+          span.textContent = original;
         } else {
           span.textContent = charSet[Math.floor(Math.random() * charSet.length)];
         }
