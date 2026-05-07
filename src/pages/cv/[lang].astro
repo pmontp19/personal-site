@@ -201,11 +201,6 @@ const { Content } = await render(cv);
       display: block;
     }
 
-    /* Strip emoji glyphs from the printed CV — ATS parsers can mangle them */
-    .prose :global(.emoji) {
-      display: none !important;
-    }
-
     /* ATS-friendly typography: solid black, plain weights */
     .prose :global(h1) {
       font-size: 22pt;

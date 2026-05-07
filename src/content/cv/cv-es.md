@@ -2,7 +2,7 @@
 
 Ingeniero de software · AI Product Engineer
 
-<span class="emoji" aria-hidden="true">📍</span> Vilanova i la Geltrú, Barcelona, España · [peremontpeo.dev](https://peremontpeo.dev) · [github.com/pmontp19](https://github.com/pmontp19) · [linkedin.com/in/perem](https://linkedin.com/in/perem)
+Vilanova i la Geltrú, Barcelona, España · [peremontpeo.dev](https://peremontpeo.dev) · [github.com/pmontp19](https://github.com/pmontp19) · [linkedin.com/in/perem](https://linkedin.com/in/perem)
 
 ---
 
@@ -125,7 +125,7 @@ Pensamiento crítico, resolución de problemas, comunicación efectiva, oratoria
 
 ## Educación
 
-<span class="emoji" aria-hidden="true">🎓</span> **Universitat Politècnica de Catalunya** — Grado en Ingeniería Informática (2015 – 2019).
+**Universitat Politècnica de Catalunya** — Grado en Ingeniería Informática (2015 – 2019).
 
 ---
 
