@@ -14,20 +14,27 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 
 const titles: Record<string, string> = {
-  ca: 'CV - Pere Montpeó',
-  en: 'CV - Pere Montpeó',
-  es: 'CV - Pere Montpeó'
+  ca: 'CV - Pere Montpeó - Enginyer de software',
+  en: 'CV - Pere Montpeó - Software Engineer',
+  es: 'CV - Pere Montpeó - Ingeniero de software'
 };
 
 const descriptions: Record<string, string> = {
   ca: 'Currículum vitae de Pere Montpeó. Experiència professional, educació i habilitats.',
   en: 'Pere Montpeó\'s curriculum vitae. Professional experience, education and skills.',
-  es: 'Currículum vitae de Pere Montpeó. Experiencia profesional, educación y habilidades.' 
+  es: 'Currículum vitae de Pere Montpeó. Experiencia profesional, educación y habilidades.'
 };
 
 const buttonText: Record<string, string> = {
   ca: 'Desa com a PDF',
-  en: 'Save as PDF'
+  en: 'Save as PDF',
+  es: 'Guardar como PDF'
+};
+
+const pdfFileNames: Record<string, string> = {
+  ca: 'Pere-Montpeo-CV-Enginyer-de-software',
+  en: 'Pere-Montpeo-CV-Software-Engineer',
+  es: 'Pere-Montpeo-CV-Ingeniero-de-software'
 };
 
 const cv = await getEntry('cv', `cv-${lang}`);
@@ -39,7 +46,12 @@ const { Content } = await render(cv);
   <main class="cv-page">
     <div class="cv-actions">
       <LanguageSwitcher currentLang={lang} />
-      <button id="print-button" class="button-link pdf-button" type="button">
+      <button
+        id="print-button"
+        class="button-link pdf-button"
+        type="button"
+        data-pdf-filename={pdfFileNames[lang]}
+      >
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="6 9 6 2 18 2 18 9"></polyline>
           <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -48,9 +60,9 @@ const { Content } = await render(cv);
         {buttonText[lang]}
       </button>
     </div>
-    <div class="prose">
+    <article class="prose cv-document" lang={lang}>
       <Content />
-    </div>
+    </article>
   </main>
 </Layout>
 
@@ -89,7 +101,7 @@ const { Content } = await render(cv);
   /* Prose styles for markdown content */
   .prose :global(h1) {
     font-size: 1.75rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
   }
 
   .prose :global(h2) {
@@ -101,7 +113,7 @@ const { Content } = await render(cv);
   .prose :global(h3) {
     font-size: 1.1rem;
     margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
   }
 
   .prose :global(h4) {
@@ -146,37 +158,164 @@ const { Content } = await render(cv);
     margin: 1.5rem 0;
   }
 
-  /* Hide contact header on screen (shown in print) */
-  .prose > :global(:nth-child(1)),
-  .prose > :global(:nth-child(2)),
-  .prose > :global(:nth-child(3)),
-  .prose > :global(:nth-child(4)) {
+  /*
+    Hide the document header on screen (h1 + tagline + contact line + hr + first h2),
+    but keep it for the printed/exported PDF where ATS parsers need it.
+    Order in markdown: h1, p (tagline), p (contact), hr, h2 (Summary).
+  */
+  .prose.cv-document > :global(:nth-child(-n+5)) {
     display: none;
   }
 
-  /* Print optimization */
+  /* Print / PDF optimization tuned for ATS parsers
+     - A4 page with consistent margins
+     - System sans-serif fallback (Helvetica/Arial) so PDF text extraction is reliable
+     - Single-column, no decorative emojis, tight but readable spacing
+     - Avoid splitting an experience entry across pages */
   @media print {
+    @page {
+      size: A4;
+      margin: 1.5cm 1.4cm;
+    }
+
+    html,
+    body {
+      background: #fff !important;
+      color: #111 !important;
+    }
+
     .cv-page {
       padding: 0;
       max-width: 100%;
+      font-family: 'Helvetica', 'Arial', 'Liberation Sans', sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.4;
     }
 
     .cv-actions {
       display: none;
     }
 
-    /* Show contact header in print */
-    .prose > :global(:nth-child(1)),
-    .prose > :global(:nth-child(2)),
-    .prose > :global(:nth-child(3)),
-    .prose > :global(:nth-child(4)) {
+    /* Reveal the contact header inside the printed document */
+    .prose.cv-document > :global(:nth-child(-n+5)) {
       display: block;
+    }
+
+    /* ATS-friendly typography: solid black, plain weights */
+    .prose :global(h1) {
+      font-size: 22pt;
+      font-weight: 700;
+      margin: 0 0 2pt;
+      color: #000 !important;
+    }
+
+    .prose :global(h2) {
+      font-size: 13pt;
+      font-weight: 700;
+      margin: 14pt 0 4pt;
+      padding-bottom: 2pt;
+      border-bottom: 1px solid #999;
+      color: #000 !important;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    .prose :global(h3) {
+      font-size: 11.5pt;
+      font-weight: 700;
+      margin: 9pt 0 1pt;
+      color: #000 !important;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    .prose :global(h4) {
+      font-size: 11pt;
+      font-weight: 600;
+      margin: 6pt 0 2pt;
+      color: #000 !important;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    .prose :global(p) {
+      margin: 0 0 4pt;
+      orphans: 3;
+      widows: 3;
+    }
+
+    .prose :global(ul),
+    .prose :global(ol) {
+      margin: 2pt 0 6pt 16pt;
+      padding: 0;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .prose :global(li) {
+      margin: 0 0 2pt;
+      line-height: 1.35;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Keep each experience entry (h3 + meta paragraph + bullets) together when possible */
+    .prose :global(h3 + p),
+    .prose :global(h3 + p + ul) {
+      break-before: avoid;
+      page-break-before: avoid;
+    }
+
+    .prose :global(a) {
+      color: #000 !important;
+      text-decoration: none;
+      word-break: break-word;
+    }
+
+    .prose :global(strong) {
+      color: #000 !important;
+      font-weight: 700;
+    }
+
+    /* The horizontal rules act as visual separators on screen.
+       For ATS-extracted text the surrounding heading already delimits sections,
+       so we hide them in print to keep the parsed text clean. */
+    .prose :global(hr) {
+      display: none;
+    }
+
+    /* Tagline under the name */
+    .prose :global(h1 + p) {
+      font-size: 11pt;
+      margin: 0 0 4pt;
+      color: #222 !important;
+    }
+
+    /* Contact line (third child) */
+    .prose :global(h1 + p + p) {
+      font-size: 10pt;
+      margin: 0 0 10pt;
+      color: #222 !important;
     }
   }
 </style>
 
 <script>
   document.addEventListener("astro:page-load", () => {
-    document.getElementById("print-button")?.addEventListener("click", () => window.print());
+    const button = document.getElementById("print-button");
+    if (!button) return;
+    button.addEventListener("click", () => {
+      // Hint a descriptive PDF filename for "Save as PDF" — most browsers
+      // use document.title as the default filename suggestion.
+      const desiredName = button.getAttribute("data-pdf-filename");
+      const originalTitle = document.title;
+      if (desiredName) document.title = desiredName;
+      const restore = () => {
+        document.title = originalTitle;
+        window.removeEventListener("afterprint", restore);
+      };
+      window.addEventListener("afterprint", restore);
+      window.print();
+    });
   });
 </script>
