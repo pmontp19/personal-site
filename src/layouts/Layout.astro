@@ -140,6 +140,7 @@ const pageUrl = canonicalUrl || siteUrl;
     }
 
     // Force repaint/reflow to ensure class is applied before removing transition override
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- reading layout forces a synchronous reflow
     window.getComputedStyle(document.documentElement).opacity;
     document.head.removeChild(css);
   }

@@ -29,6 +29,10 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      # ESLint (eslint-plugin-astro + typescript-eslint) over .astro/.ts/.js.
+      - name: Lint
+        run: pnpm lint
+
       # Type-checks .astro/.ts files via astro check (tsc + the Astro language
       # server). Catches the kind of `string | undefined` and bad-prop errors
       # that a plain build does not.

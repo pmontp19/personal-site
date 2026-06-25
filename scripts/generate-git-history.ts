@@ -4,8 +4,10 @@ import { join } from "path";
 import * as Diff from "diff";
 import { marked } from "marked";
 import htmldiffModule from "htmldiff-js";
-// htmldiff-js has nested default exports in ESM
-const htmldiff = (htmldiffModule as any).default ?? htmldiffModule;
+// htmldiff-js has a nested default export under some ESM interop paths.
+const htmldiff =
+  (htmldiffModule as { default?: typeof htmldiffModule }).default ??
+  htmldiffModule;
 
 interface CommitInfo {
   hash: string;

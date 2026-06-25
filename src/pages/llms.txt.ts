@@ -26,7 +26,7 @@ const extractContent = (content: string): string => {
   return frontmatterText + "\n" + cleanedContent.trim();
 };
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async () => {
   try {
     const posts = await getCollection(
       "blog",

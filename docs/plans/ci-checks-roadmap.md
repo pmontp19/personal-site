@@ -17,12 +17,13 @@ If the build passes, the site is deployable.
 
 ## Implemented — Tier 2 (code quality)
 
-The workflow now runs two more blocking steps after the install, before the
+The workflow now runs three more blocking steps after the install, before the
 build:
 
 | Check | Command | Catches |
 | --- | --- | --- |
 | Formatting | `pnpm format:check` | Prettier formatting drift |
+| Linting | `pnpm lint` | unused vars, `no-explicit-any`, unused expressions and other ESLint findings |
 | Type checking | `pnpm check` | `string \| undefined` misuse, bad component props, missing module types — errors a plain `pnpm build` does not surface |
 
 ### Type checking — `astro check`
@@ -60,10 +61,24 @@ scripts. Build output and authored prose (`dist/`, `.astro/`, `public/`,
 `src/content/`, `*.md`, `*.mdx`) are excluded so the formatter only touches code.
 The source tree was formatted once so `format:check` is green.
 
-### Linting — ESLint (still planned, optional)
+### Linting — ESLint
 
-Not yet configured. Plan: ESLint flat config with `eslint-plugin-astro` +
-`typescript-eslint` and a `pnpm lint` step.
+Now enabled and **blocking**. A flat config (`eslint.config.js`) layers
+`@eslint/js` recommended, `typescript-eslint` recommended and
+`eslint-plugin-astro` recommended, with browser + node globals and a
+`no-unused-vars` rule that allows `_`-prefixed identifiers. `pnpm lint` runs
+`eslint .` (build output, generated types and `public/` are ignored).
+
+The 5 findings surfaced on first run were fixed:
+
+- `scripts/generate-git-history.ts` — replaced the `as any` htmldiff-js cast
+  with a typed `{ default?: ... }` cast (`no-explicit-any`).
+- `src/components/ExperienceEntry.astro` + `src/pages/experiencia.astro` —
+  dropped the unused `index` prop end to end (`no-unused-vars`).
+- `src/components/LanguageSwitcher.astro` — removed the unused `labels` map.
+- `src/pages/llms.txt.ts` — dropped the unused `params` handler argument.
+- `src/layouts/Layout.astro` — annotated the intentional reflow-forcing
+  expression with an `eslint-disable-next-line` comment (`no-unused-expressions`).
 
 ## Planned — Tier 3 (nice to have for a public blog)
 
