@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content';
-import { OGImageRoute } from 'astro-og-canvas';
+import { OGImageRoute } from '../../../lib/og-image';
 import { getSlug } from '../../../utils/date';
 
 const blogEntries = await getCollection('blog');

@@ -1,4 +1,4 @@
-import { OGImageRoute } from 'astro-og-canvas';
+import { OGImageRoute } from '../../../lib/og-image';
 
 export const { getStaticPaths, GET } = await OGImageRoute({
   param: 'default',
