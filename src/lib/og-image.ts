@@ -16,7 +16,9 @@ import type { CanvasKit as CanvasKitType, FontMgr } from 'canvaskit-wasm';
  * the bottom inline-start.
  */
 
-type RGB = [number, number, number] | [number, number, number, number];
+// A single tuple type (rather than a union) so `CanvasKit.Color(...rgb)` spreads
+// cleanly; the alpha channel is optional and defaults to opaque in CanvasKit.
+type RGB = [number, number, number, number?];
 
 export interface OGFontStyle {
   color?: RGB;
@@ -29,6 +31,11 @@ export interface OGFontStyle {
 export interface OGImageOptions {
   title: string;
   description?: string;
+  /**
+   * Accepted for call-site compatibility (and parity with astro-og-canvas), but
+   * not drawn — the rendered image only shows the logo, title and description.
+   */
+  siteName?: string;
   dir?: 'ltr' | 'rtl';
   bgGradient?: RGB[];
   border?: {
@@ -48,11 +55,14 @@ export interface OGImageOptions {
 
 const [WIDTH, HEIGHT] = [1200, 630];
 
-const edges = {
-  'block-start': [0, 0, WIDTH, 0] as const,
-  'block-end': [0, HEIGHT, WIDTH, HEIGHT] as const,
-  left: [0, 0, 0, HEIGHT] as const,
-  right: [WIDTH, 0, WIDTH, HEIGHT] as const,
+/** A line as `[x0, y0, x1, y1]`, spreadable into `canvas.drawLine`. */
+type Line = [number, number, number, number];
+
+const edges: Record<'block-start' | 'block-end' | 'left' | 'right', Line> = {
+  'block-start': [0, 0, WIDTH, 0],
+  'block-end': [0, HEIGHT, WIDTH, HEIGHT],
+  left: [0, 0, 0, HEIGHT],
+  right: [WIDTH, 0, WIDTH, HEIGHT],
 };
 
 const require = createRequire(import.meta.url);
@@ -301,6 +311,12 @@ export interface OGImageRouteOptions<P extends PageEntry = PageEntry> {
   getSlug?: (path: string, page: P, imageOptions: OGImageOptions) => string;
 }
 
+const CONTENT_TYPE: Record<NonNullable<OGImageOptions['format']>, string> = {
+  PNG: 'image/png',
+  JPEG: 'image/jpeg',
+  WEBP: 'image/webp',
+};
+
 export async function OGImageRoute<P extends PageEntry = PageEntry>(opts: OGImageRouteOptions<P>) {
   const { param, pages, getImageOptions, getSlug } = opts;
 
@@ -321,7 +337,12 @@ export async function OGImageRoute<P extends PageEntry = PageEntry>(opts: OGImag
 
   return {
     getStaticPaths: () => paths,
-    GET: async ({ props }: { props: { imageOptions: OGImageOptions } }) =>
-      new Response(await generateOgImage(props.imageOptions)),
+    GET: async ({ props }: { props: { imageOptions: OGImageOptions } }) => {
+      const { imageOptions } = props;
+      const body = await generateOgImage(imageOptions);
+      return new Response(body as BodyInit, {
+        headers: { 'Content-Type': CONTENT_TYPE[imageOptions.format ?? 'PNG'] },
+      });
+    },
   };
 }
