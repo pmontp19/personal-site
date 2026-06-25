@@ -2,15 +2,19 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
-import rehypeSlug from 'rehype-slug';
-import remarkHeadingId from 'remark-heading-id';
-import rehypeExternalLinks from './src/plugins/rehype-external-links.ts';
+import { satteri } from '@astrojs/markdown-satteri';
+import externalLinks from './src/plugins/satteri-external-links.ts';
+import headingIds from './src/plugins/satteri-heading-ids.ts';
 
 export default defineConfig({
   site: 'https://peremontpeo.dev',
   integrations: [sitemap(), mdx()],
   markdown: {
-    remarkPlugins: [remarkHeadingId],
-    rehypePlugins: [rehypeSlug, rehypeExternalLinks],
+    // Astro 7's native Sätteri processor. Heading slugs are generated natively;
+    // the headingIds plugin reproduces remark-heading-id's `## Heading {#id}`
+    // custom IDs, and externalLinks replaces the old rehype external-links plugin.
+    processor: satteri({
+      hastPlugins: [headingIds(), externalLinks()],
+    }),
   },
 });

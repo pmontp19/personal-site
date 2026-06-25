@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Build & validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Uses the version pinned in package.json's `packageManager` field.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Fails if pnpm-lock.yaml is out of sync with package.json.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Compiles .astro files and content, and generates RSS, sitemap,
+      # llms.txt and the Open Graph images.
+      - name: Build
+        run: pnpm build
