@@ -15,7 +15,7 @@ const extractContent = (content: string): string => {
   // cleanup mdx imports
   cleanedContent = cleanedContent.replace(
     /import\s+.*?from\s+['"].*?['"]\s*;\s*/g,
-    ""
+    "",
   );
   // remove mdx components
   cleanedContent = cleanedContent.replace(/<\s*\/?\s*\w+\s*\/?>/g, "");
@@ -30,7 +30,7 @@ export const GET: APIRoute = async ({ params }) => {
   try {
     const posts = await getCollection(
       "blog",
-      ({ data }) => data.draft !== true
+      ({ data }) => data.draft !== true,
     );
     const sortedPosts = posts.sort((a, b) => {
       return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
@@ -42,7 +42,7 @@ export const GET: APIRoute = async ({ params }) => {
       llmsContent += `--- title: ${post.data.title} description: ${post.data.description} date: ${post.data.date} ---\n\n`;
       llmsContent += `# ${post.data.title}\n`;
 
-      const processedContent = extractContent(post.body);
+      const processedContent = extractContent(post.body ?? "");
       llmsContent += processedContent + "\n\n";
 
       llmsContent += `---\n\n`;

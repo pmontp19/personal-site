@@ -6,7 +6,7 @@ import { formatDate, getSlug } from "../utils/date";
 
 // Get all entries from the 'experience' collection
 const experiences = (await getCollection("experience")).sort(
-  (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
+  (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf(),
 );
 
 const dateOptions: Intl.DateTimeFormatOptions = {
@@ -28,10 +28,19 @@ const locale = "ca-ES";
                 <div class="experience-content">
                   <div class="experience-header">
                     {exp.data.logo && (
-                      <img src={exp.data.logo} alt={`${exp.data.company} logo`} class="company-logo" width="48" height="48" />
+                      <img
+                        src={exp.data.logo}
+                        alt={`${exp.data.company} logo`}
+                        class="company-logo"
+                        width="48"
+                        height="48"
+                      />
                     )}
                     <div class="experience-title-info">
-                      <h2 class="job-title" transition:name={`role-${getSlug(exp.id)}`}>
+                      <h2
+                        class="job-title"
+                        transition:name={`role-${getSlug(exp.id)}`}
+                      >
                         {exp.data.role}
                       </h2>
                       <p
@@ -54,7 +63,10 @@ const locale = "ca-ES";
                     <p>{exp.data.description}</p>
                   </div>
 
-                  <div class="markdown-content" id={`markdown-content-${index}`}>
+                  <div
+                    class="markdown-content"
+                    id={`markdown-content-${index}`}
+                  >
                     <ExperienceEntry data={exp} index={index} />
                   </div>
                   {exp.body && exp.body.trim() && (
@@ -111,7 +123,9 @@ const locale = "ca-ES";
 
           const buttonTextSpan = button.querySelector("span:not(.arrow-down)");
           if (buttonTextSpan) {
-            buttonTextSpan.textContent = isExpanded ? "Veure més" : "Veure menys";
+            buttonTextSpan.textContent = isExpanded
+              ? "Veure més"
+              : "Veure menys";
           }
         }
       };

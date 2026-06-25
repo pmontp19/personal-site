@@ -14,7 +14,13 @@ interface Props {
   jsonLd?: object;
 }
 
-const { title = "Pere Montpeó", lang = "ca", description = "Lloc web i blog de Pere Montpeó. Enginyer de programari especialitzat en desenvolupament web.", canonicalUrl, jsonLd } = Astro.props as Props;
+const {
+  title = "Pere Montpeó",
+  lang = "ca",
+  description = "Lloc web i blog de Pere Montpeó. Enginyer de programari especialitzat en desenvolupament web.",
+  canonicalUrl,
+  jsonLd,
+} = Astro.props as Props;
 const siteUrl = "https://peremontpeo.dev";
 const pageUrl = canonicalUrl || siteUrl;
 ---
@@ -42,12 +48,25 @@ const pageUrl = canonicalUrl || siteUrl;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${siteUrl}/api/og-image/default.png`} />
-    {jsonLd && (
-      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    )}
-    <meta name="theme-color" content="hsl(0, 0%, 100%)" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="hsl(222.2, 84%, 4.9%)" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="twitter:image"
+      content={`${siteUrl}/api/og-image/default.png`}
+    />
+    {
+      jsonLd && (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      )
+    }
+    <meta
+      name="theme-color"
+      content="hsl(0, 0%, 100%)"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="hsl(222.2, 84%, 4.9%)"
+      media="(prefers-color-scheme: dark)"
+    />
     <slot name="head" />
     <ClientRouter />
 
@@ -73,7 +92,7 @@ const pageUrl = canonicalUrl || siteUrl;
         } else {
           // "system" or null/undefined
           applyDarkMode = window.matchMedia(
-            "(prefers-color-scheme: dark)"
+            "(prefers-color-scheme: dark)",
           ).matches;
         }
         toggleThemeClass(applyDarkMode);
@@ -109,8 +128,8 @@ const pageUrl = canonicalUrl || siteUrl;
                     -o-transition: none !important;
                     -ms-transition: none !important;
                     transition: none !important;
-                }`
-      )
+                }`,
+      ),
     );
     document.head.appendChild(css);
 
@@ -175,7 +194,9 @@ const pageUrl = canonicalUrl || siteUrl;
   }
 
   function animate() {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     requestAnimationFrame(() => {
       const animateElements = document.querySelectorAll(".animate");
       animateElements.forEach((element, index) => {
@@ -239,12 +260,20 @@ const pageUrl = canonicalUrl || siteUrl;
     background-origin: padding-box;
     background-position: 0 0;
     background-color: var(--background);
-    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.1) 1.5px, transparent 1.5px);
+    background-image: radial-gradient(
+      circle,
+      rgba(0, 0, 0, 0.1) 1.5px,
+      transparent 1.5px
+    );
     background-size: 30px 30px;
   }
 
   .dark body {
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 1.5px,
+      transparent 1.5px
+    );
   }
 
   .page-layout {
@@ -286,6 +315,5 @@ const pageUrl = canonicalUrl || siteUrl;
       min-height: auto;
       display: block;
     }
-
   }
 </style>

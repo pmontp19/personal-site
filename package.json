@@ -11,6 +11,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "generate-history": "tsx scripts/generate-git-history.ts"
   },
   "dependencies": {
@@ -29,6 +32,11 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "tsx": "^4.21.0"
+    "@astrojs/check": "^0.9.9",
+    "@types/hast": "^3.0.4",
+    "prettier": "^3.8.4",
+    "prettier-plugin-astro": "^0.14.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
   }
 }

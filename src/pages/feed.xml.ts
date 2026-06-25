@@ -1,29 +1,28 @@
-import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
-import { getSlug } from '../utils/date';
+import rss from "@astrojs/rss";
+import { getCollection } from "astro:content";
+import { getSlug } from "../utils/date";
 
 type Context = {
-    site: string;
-}
+  site: string;
+};
 
 export async function GET(context: Context) {
-    const blog = (await getCollection('blog')).filter(
-        post => !post.data.draft)
+  const blog = (await getCollection("blog")).filter((post) => !post.data.draft);
 
-    const items = [...blog].sort((a, b) => {
-        return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
-    })
+  const items = [...blog].sort((a, b) => {
+    return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+  });
 
-    return rss({
-        title: 'Apunts de Pere Montpeó',
-        description: 'My Blog',
-        site: context.site,
-        items: items.map(item => ({
-            title: item.data.title,
-            description: item.data.description,
-            link: `/blog/${getSlug(item.id)}/`,
-            pubDate: new Date(item.data.date),
-        })),
-        customData: `<language>ca</language>`,
-    })
+  return rss({
+    title: "Apunts de Pere Montpeó",
+    description: "My Blog",
+    site: context.site,
+    items: items.map((item) => ({
+      title: item.data.title,
+      description: item.data.description,
+      link: `/blog/${getSlug(item.id)}/`,
+      pubDate: new Date(item.data.date),
+    })),
+    customData: `<language>ca</language>`,
+  });
 }

@@ -15,37 +15,55 @@ PRs to `main` and on pushes to `main`.
 
 If the build passes, the site is deployable.
 
-## Planned — Tier 2 (code quality)
+## Implemented — Tier 2 (code quality)
+
+The workflow now runs two more blocking steps after the install, before the
+build:
+
+| Check | Command | Catches |
+| --- | --- | --- |
+| Formatting | `pnpm format:check` | Prettier formatting drift |
+| Type checking | `pnpm check` | `string \| undefined` misuse, bad component props, missing module types — errors a plain `pnpm build` does not surface |
 
 ### Type checking — `astro check`
 
-`astro check` is **not yet enabled** because the project currently has 6
-pre-existing type errors that predate the Astro 7 migration (they live in app
-code this work did not touch):
+Now enabled and **blocking**. `@astrojs/check` + `typescript` are dev
+dependencies and `"check": "astro check"` is a script.
 
-- `scripts/generate-git-history.ts` — `htmldiff-js` ships no type declarations
-  (`ts7016`). Fix: add a `declare module 'htmldiff-js'` ambient declaration.
-- `src/layouts/Layout.astro` — side-effect imports of `@fontsource/geist-sans`
-  and `@fontsource/geist-mono` have no type declarations (`ts2882`). Fix: ambient
-  module declarations for the font packages.
-- `src/components/BlogPosts.astro`, `src/pages/llms.txt.ts` — `string | undefined`
-  passed where `string` is required (`ts2345`). Fix: guard/narrow the value.
-- `src/pages/index.astro` — content-collection entries not assignable to the
-  local `Experience[]` type (`ts2322`). Fix: align the local type with the
-  collection schema.
+The roadmap originally counted 6 pre-existing type errors; a 7th surfaced once
+the check actually ran (a `hast` module-resolution error in the external-links
+plugin). All were fixed:
 
-Plan: add `@astrojs/check` + `typescript` as dev dependencies and a
-`"check": "astro check"` script, fix the 6 errors, then add a blocking
-`pnpm check` step to the workflow. (Until then it could be added with
-`continue-on-error: true` to surface issues without blocking merges.)
+- `scripts/generate-git-history.ts` (`ts7016`) — added a
+  `declare module 'htmldiff-js'` ambient declaration in `src/types/shims.d.ts`.
+- `src/layouts/Layout.astro` (`ts2882`) — ambient declarations for the
+  side-effect `@fontsource/geist-sans` / `@fontsource/geist-mono` imports
+  (same `src/types/shims.d.ts`).
+- `src/plugins/satteri-external-links.ts` (`ts2307`) — added the `@types/hast`
+  dev dependency for `import type { Element } from 'hast'`.
+- `src/components/BlogPosts.astro`, `src/pages/llms.txt.ts` (`ts2345`) — guarded
+  the optional `entry.body` with `?? ""`.
+- `src/pages/index.astro` / `src/components/ExperienceTimeline.astro` (`ts2322`)
+  — typed the `experiences` prop as `CollectionEntry<"experience">[]` so it
+  matches what `getCollection("experience")` returns, instead of a hand-written
+  `Experience[]` that required a non-existent `slug`.
 
-### Formatting & linting
+`astro check` still reports ~25 non-blocking **hints** (unused params, a
+deprecated Zod export). These do not fail CI — `astro check` exits non-zero only
+on errors.
 
-No formatter or linter is configured today. Plan:
+### Formatting — Prettier
 
-- **Prettier** + `prettier-plugin-astro`, with a `pnpm format:check` step.
-- Optionally **ESLint** with `eslint-plugin-astro` for lint rules, with a
-  `pnpm lint` step.
+**Prettier** + `prettier-plugin-astro` are configured (`.prettierrc.json`,
+`.prettierignore`) with `pnpm format` (write) and `pnpm format:check` (CI)
+scripts. Build output and authored prose (`dist/`, `.astro/`, `public/`,
+`src/content/`, `*.md`, `*.mdx`) are excluded so the formatter only touches code.
+The source tree was formatted once so `format:check` is green.
+
+### Linting — ESLint (still planned, optional)
+
+Not yet configured. Plan: ESLint flat config with `eslint-plugin-astro` +
+`typescript-eslint` and a `pnpm lint` step.
 
 ## Planned — Tier 3 (nice to have for a public blog)
 

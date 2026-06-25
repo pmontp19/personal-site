@@ -25,6 +25,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Fails on Prettier formatting drift.
+      - name: Check formatting
+        run: pnpm format:check
+
+      # Type-checks .astro/.ts files via astro check (tsc + the Astro language
+      # server). Catches the kind of `string | undefined` and bad-prop errors
+      # that a plain build does not.
+      - name: Type check
+        run: pnpm check
+
       # Compiles .astro files and content, and generates RSS, sitemap,
       # llms.txt and the Open Graph images.
       - name: Build

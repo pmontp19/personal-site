@@ -6,24 +6,24 @@ interface Props {
 const { currentLang } = Astro.props;
 
 const labels: Record<string, string> = {
-  ca: 'CA',
-  en: 'EN'
+  ca: "CA",
+  en: "EN",
 };
 ---
 
 <div class="language-switcher">
   <a
     href="/cv/ca"
-    class:list={['lang-link', { active: currentLang === 'ca' }]}
-    aria-current={currentLang === 'ca' ? 'page' : undefined}
+    class:list={["lang-link", { active: currentLang === "ca" }]}
+    aria-current={currentLang === "ca" ? "page" : undefined}
   >
     Català
   </a>
   <span class="separator">|</span>
   <a
     href="/cv/en"
-    class:list={['lang-link', { active: currentLang === 'en' }]}
-    aria-current={currentLang === 'en' ? 'page' : undefined}
+    class:list={["lang-link", { active: currentLang === "en" }]}
+    aria-current={currentLang === "en" ? "page" : undefined}
   >
     English
   </a>
@@ -44,7 +44,9 @@ const labels: Record<string, string> = {
     text-decoration: none;
     padding: 0.25rem 0.5rem;
     border-radius: var(--radius);
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
   }
 
   .lang-link:hover {

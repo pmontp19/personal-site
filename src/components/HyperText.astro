@@ -36,9 +36,13 @@ const chars = [...text];
 >
   <span class="hyper-text-ghost" aria-hidden="true">{text}</span>
   <span class="hyper-text-scramble" aria-hidden="true">
-    {chars.map((char, i) => (
-      <span data-char={char} data-index={i}>{char}</span>
-    ))}
+    {
+      chars.map((char, i) => (
+        <span data-char={char} data-index={i}>
+          {char}
+        </span>
+      ))
+    }
   </span>
 </Tag>
 
@@ -60,7 +64,8 @@ const chars = [...text];
   function scramble(el: Element) {
     const text = el.getAttribute("data-text")!;
     const duration = parseInt(el.getAttribute("data-duration") || "800");
-    const charSet = el.getAttribute("data-char-set") || "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const charSet =
+      el.getAttribute("data-char-set") || "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const spans = el.querySelectorAll<HTMLSpanElement>("span[data-char]");
 
     const chars = [...text];
@@ -76,7 +81,8 @@ const chars = [...text];
         if (progress >= charRevealProgress || /\s/.test(original)) {
           span.textContent = original;
         } else {
-          span.textContent = charSet[Math.floor(Math.random() * charSet.length)];
+          span.textContent =
+            charSet[Math.floor(Math.random() * charSet.length)];
         }
       });
 
@@ -93,7 +99,9 @@ const chars = [...text];
     const animateOnHover = el.getAttribute("data-animate-on-hover") === "true";
     const startOnView = el.getAttribute("data-start-on-view") === "true";
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (prefersReducedMotion) return;
 
     function trigger() {
@@ -114,7 +122,7 @@ const chars = [...text];
             }
           });
         },
-        { threshold: 0.5 }
+        { threshold: 0.5 },
       );
       observer.observe(el);
     } else {

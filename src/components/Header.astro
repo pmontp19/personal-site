@@ -6,14 +6,25 @@ const { pathname } = Astro.url;
   <div class="container">
     <div class="header-content">
       <div class="logo">
-
         <a href="/"><span class="logo-emoji">👨‍💻</span> Pere Montpeó</a>
       </div>
-      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">🍔</button>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false"
+        >🍔</button
+      >
       <nav class="main-nav">
         <ul class="nav-list">
-          <li class="nav-item"><a href="/" class=`nav-link ${pathname === '/' ? 'active' : ''}`>Inici</a></li>
-          <li class="nav-item"><a href="/blog" class=`nav-link ${pathname.startsWith('/blog') ? 'active' : ''}`>Apunts</a></li>
+          <li class="nav-item">
+            <a href="/" class=`nav-link ${pathname === '/' ? 'active' : ''}`
+              >Inici</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="/blog"
+              class=`nav-link ${pathname.startsWith('/blog') ? 'active' : ''}`
+              >Apunts</a
+            >
+          </li>
         </ul>
       </nav>
     </div>
@@ -28,76 +39,91 @@ const { pathname } = Astro.url;
     headerController = new AbortController();
     const { signal } = headerController;
 
-    const menuToggle = document.querySelector('.menu-toggle');
-    const mainNav = document.querySelector('.main-nav');
+    const menuToggle = document.querySelector(".menu-toggle");
+    const mainNav = document.querySelector(".main-nav");
     if (!menuToggle || !mainNav) return;
 
     const closeMenu = () => {
-      if (mainNav.classList.contains('menu-open')) {
-        menuToggle.setAttribute('aria-expanded', 'false');
-        mainNav.classList.remove('menu-open');
-        menuToggle.textContent = '🍔';
-        menuToggle.classList.remove('menu-open-icon');
+      if (mainNav.classList.contains("menu-open")) {
+        menuToggle.setAttribute("aria-expanded", "false");
+        mainNav.classList.remove("menu-open");
+        menuToggle.textContent = "🍔";
+        menuToggle.classList.remove("menu-open-icon");
       }
     };
 
     const toggleMenu = () => {
-      const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
       const newExpandedState = !isExpanded;
-      menuToggle.setAttribute('aria-expanded', newExpandedState.toString());
-      mainNav.classList.toggle('menu-open');
+      menuToggle.setAttribute("aria-expanded", newExpandedState.toString());
+      mainNav.classList.toggle("menu-open");
 
       if (newExpandedState) {
-        menuToggle.textContent = '❌';
-        menuToggle.classList.add('menu-open-icon');
+        menuToggle.textContent = "❌";
+        menuToggle.classList.add("menu-open-icon");
       } else {
-        menuToggle.textContent = '🍔';
-        menuToggle.classList.remove('menu-open-icon');
+        menuToggle.textContent = "🍔";
+        menuToggle.classList.remove("menu-open-icon");
       }
     };
 
-    menuToggle.addEventListener('click', toggleMenu, { signal });
+    menuToggle.addEventListener("click", toggleMenu, { signal });
 
     // Handle anchor links: smooth scroll on homepage, navigate on other pages
-    const anchorLinks = document.querySelectorAll('.anchor-link');
-    anchorLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href');
-        if (!href) return;
+    const anchorLinks = document.querySelectorAll(".anchor-link");
+    anchorLinks.forEach((link) => {
+      link.addEventListener(
+        "click",
+        (e) => {
+          const href = link.getAttribute("href");
+          if (!href) return;
 
-        // If we're on the homepage, smooth-scroll to the anchor
-        if (window.location.pathname === '/') {
-          e.preventDefault();
-          const hash = href.replace('/', '');
-          const target = document.querySelector(hash);
-          if (target) {
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-            history.pushState(null, '', hash);
+          // If we're on the homepage, smooth-scroll to the anchor
+          if (window.location.pathname === "/") {
+            e.preventDefault();
+            const hash = href.replace("/", "");
+            const target = document.querySelector(hash);
+            if (target) {
+              const prefersReducedMotion = window.matchMedia(
+                "(prefers-reduced-motion: reduce)",
+              ).matches;
+              target.scrollIntoView({
+                behavior: prefersReducedMotion ? "auto" : "smooth",
+              });
+              history.pushState(null, "", hash);
+            }
           }
-        }
-        // If on another page, let the default navigation happen (to /#section)
+          // If on another page, let the default navigation happen (to /#section)
 
-        closeMenu();
-      }, { signal });
+          closeMenu();
+        },
+        { signal },
+      );
     });
 
     // Close menu on any non-anchor nav click too
-    const navLinks = document.querySelectorAll('.nav-link:not(.anchor-link)');
-    navLinks.forEach(link => {
-      link.addEventListener('click', closeMenu, { signal });
+    const navLinks = document.querySelectorAll(".nav-link:not(.anchor-link)");
+    navLinks.forEach((link) => {
+      link.addEventListener("click", closeMenu, { signal });
     });
 
     // Click outside to close
-    document.addEventListener('click', (event: MouseEvent) => {
-      if (!mainNav.classList.contains('menu-open')) return;
-      if (!mainNav.contains(event.target as Node) && !menuToggle.contains(event.target as Node)) {
-        closeMenu();
-      }
-    }, { signal });
+    document.addEventListener(
+      "click",
+      (event: MouseEvent) => {
+        if (!mainNav.classList.contains("menu-open")) return;
+        if (
+          !mainNav.contains(event.target as Node) &&
+          !menuToggle.contains(event.target as Node)
+        ) {
+          closeMenu();
+        }
+      },
+      { signal },
+    );
   };
 
-  document.addEventListener('astro:page-load', initHeader);
+  document.addEventListener("astro:page-load", initHeader);
 </script>
 
 <style>
@@ -108,7 +134,10 @@ const { pathname } = Astro.url;
     position: sticky;
     top: 0;
     z-index: 100;
-    transition: background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      padding 0.3s ease;
   }
 
   html.scrolled header {
@@ -162,11 +191,21 @@ const { pathname } = Astro.url;
   }
 
   @keyframes tilt-n-move-shaking {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(2px, 2px) rotate(5deg); }
-    50% { transform: translate(0, 0) rotate(0deg); }
-    75% { transform: translate(-2px, 2px) rotate(-5deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+      transform: translate(2px, 2px) rotate(5deg);
+    }
+    50% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    75% {
+      transform: translate(-2px, 2px) rotate(-5deg);
+    }
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
   }
 
   .menu-toggle {
@@ -225,7 +264,7 @@ const { pathname } = Astro.url;
   }
 
   .nav-link.active::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     bottom: 10px;
@@ -236,7 +275,10 @@ const { pathname } = Astro.url;
     box-shadow:
       0 0 6px var(--primary),
       0 0 12px var(--primary);
-    transition: left 0.3s ease, width 0.3s ease, transform 0.3s ease;
+    transition:
+      left 0.3s ease,
+      width 0.3s ease,
+      transform 0.3s ease;
   }
 
   @media (max-width: 768px) {

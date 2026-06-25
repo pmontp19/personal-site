@@ -1,18 +1,9 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import { formatDate } from "../utils/date";
 
-interface Experience {
-  slug: string;
-  data: {
-    role: string;
-    company: string;
-    startDate: Date;
-    endDate?: Date;
-  };
-}
-
 interface Props {
-  experiences: Experience[];
+  experiences: CollectionEntry<"experience">[];
   limit?: number;
 }
 
@@ -27,18 +18,23 @@ const locale = "ca-ES";
 ---
 
 <div class="timeline">
-  {items.map((exp) => (
-    <div class={`timeline-item ${!exp.data.endDate ? 'current' : ''}`}>
-      <div class={`timeline-dot ${!exp.data.endDate ? 'pulsating' : ''}`}></div>
-      <div class="timeline-content">
-        <h3 class="timeline-role">{exp.data.role}</h3>
-        <p class="timeline-company text-muted">{exp.data.company}</p>
-        <p class="timeline-date text-muted">
-          {formatDate(exp.data.startDate, dateOptions, locale)} — {exp.data.endDate ? formatDate(exp.data.endDate, dateOptions, locale) : "Actual"}
-        </p>
+  {
+    items.map((exp) => (
+      <div class={`timeline-item ${!exp.data.endDate ? "current" : ""}`}>
+        <div class={`timeline-dot ${!exp.data.endDate ? "pulsating" : ""}`} />
+        <div class="timeline-content">
+          <h3 class="timeline-role">{exp.data.role}</h3>
+          <p class="timeline-company text-muted">{exp.data.company}</p>
+          <p class="timeline-date text-muted">
+            {formatDate(exp.data.startDate, dateOptions, locale)} —{" "}
+            {exp.data.endDate
+              ? formatDate(exp.data.endDate, dateOptions, locale)
+              : "Actual"}
+          </p>
+        </div>
       </div>
-    </div>
-  ))}
+    ))
+  }
 </div>
 
 <style>
@@ -48,7 +44,7 @@ const locale = "ca-ES";
   }
 
   .timeline::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 5px;
     top: 0.5rem;
