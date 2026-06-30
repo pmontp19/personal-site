@@ -12,7 +12,13 @@ interface Props {
   jsonLd?: object;
 }
 
-const { title = "Pere Montpeó", lang = "ca", description = "Lloc web i blog de Pere Montpeó. Enginyer de programari especialitzat en desenvolupament web.", canonicalUrl, jsonLd } = Astro.props as Props;
+const {
+  title = "Pere Montpeó",
+  lang = "ca",
+  description = "Lloc web i blog de Pere Montpeó. Enginyer de programari especialitzat en desenvolupament web.",
+  canonicalUrl,
+  jsonLd,
+} = Astro.props as Props;
 const siteUrl = "https://peremontpeo.dev";
 const pageUrl = canonicalUrl || siteUrl;
 ---
@@ -40,12 +46,25 @@ const pageUrl = canonicalUrl || siteUrl;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${siteUrl}/api/og-image/default.png`} />
-    {jsonLd && (
-      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    )}
-    <meta name="theme-color" content="#f7f7f8" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#070708" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="twitter:image"
+      content={`${siteUrl}/api/og-image/default.png`}
+    />
+    {
+      jsonLd && (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      )
+    }
+    <meta
+      name="theme-color"
+      content="#f7f7f8"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#070708"
+      media="(prefers-color-scheme: dark)"
+    />
     <slot name="head" />
     <ClientRouter />
 
@@ -54,11 +73,13 @@ const pageUrl = canonicalUrl || siteUrl;
       // Estats: 'light' | 'dark' | 'system'(=auto). Auto deixa actuar light-dark().
       (function () {
         try {
-          var t = localStorage.getItem("theme");
-          var root = document.documentElement;
+          const t = localStorage.getItem("theme");
+          const root = document.documentElement;
           if (t === "light" || t === "dark") root.setAttribute("data-theme", t);
           else root.removeAttribute("data-theme");
-        } catch (e) {}
+        } catch {
+          /* localStorage no disponible */
+        }
       })();
     </script>
   </head>
@@ -76,18 +97,29 @@ const pageUrl = canonicalUrl || siteUrl;
 <script>
   function applyTheme(value: "light" | "dark" | "system") {
     const root = document.documentElement;
-    if (value === "light" || value === "dark") root.setAttribute("data-theme", value);
+    if (value === "light" || value === "dark")
+      root.setAttribute("data-theme", value);
     else root.removeAttribute("data-theme");
   }
 
   function init() {
     const set = (v: "light" | "dark" | "system") => {
-      try { localStorage.setItem("theme", v); } catch (e) {}
+      try {
+        localStorage.setItem("theme", v);
+      } catch {
+        /* localStorage no disponible */
+      }
       applyTheme(v);
     };
-    document.getElementById("light-theme-button")?.addEventListener("click", () => set("light"));
-    document.getElementById("dark-theme-button")?.addEventListener("click", () => set("dark"));
-    document.getElementById("system-theme-button")?.addEventListener("click", () => set("system"));
+    document
+      .getElementById("light-theme-button")
+      ?.addEventListener("click", () => set("light"));
+    document
+      .getElementById("dark-theme-button")
+      ?.addEventListener("click", () => set("dark"));
+    document
+      .getElementById("system-theme-button")
+      ?.addEventListener("click", () => set("system"));
   }
 
   document.addEventListener("DOMContentLoaded", init);

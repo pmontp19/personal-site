@@ -10,37 +10,54 @@ const posts = (
   await getCollection("blog", ({ data }) => data.draft !== true)
 ).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 const latest = posts[0];
-const latestReadingTime = latest ? calculateReadingTime(latest.body) : "";
+const latestReadingTime = latest?.body ? calculateReadingTime(latest.body) : "";
 
-// Experiència (4 més recents)
-const experiences = (await getCollection("experience"))
+// Experiència (4 més recents) com a línies de text
+const dateOpts: Intl.DateTimeFormatOptions = {
+  month: "short",
+  year: "numeric",
+};
+const expLines = (await getCollection("experience"))
   .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf())
-  .slice(0, 4);
-
-const dateOpts: Intl.DateTimeFormatOptions = { month: "short", year: "numeric" };
-const range = (e: (typeof experiences)[number]) =>
-  formatDate(e.data.startDate, dateOpts, "ca-ES");
+  .slice(0, 4)
+  .map((e) => {
+    const start = formatDate(e.data.startDate, dateOpts, "ca-ES");
+    const end = e.data.endDate
+      ? formatDate(e.data.endDate, dateOpts, "ca-ES")
+      : "Actual";
+    return `- ${start} — ${end}: ${e.data.role} @ ${e.data.company}`;
+  })
+  .join("\n");
 
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "Pere Montpeó",
-  "url": "https://peremontpeo.dev",
-  "jobTitle": "AI Product Engineer",
-  "description": "Enginyer de programari especialitzat en desenvolupament web.",
-  "address": { "@type": "PostalAddress", "addressLocality": "Tarragona", "addressRegion": "Catalunya" },
-  "sameAs": [
+  name: "Pere Montpeó",
+  url: "https://peremontpeo.dev",
+  jobTitle: "AI Product Engineer",
+  description: "Enginyer de programari especialitzat en desenvolupament web.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Tarragona",
+    addressRegion: "Catalunya",
+  },
+  sameAs: [
     "https://github.com/pmontp19",
     "https://linkedin.com/in/perem",
-    "https://twitter.com/pmontp19"
-  ]
+    "https://twitter.com/pmontp19",
+  ],
 };
 ---
 
-<Layout jsonLd={personSchema} canonicalUrl="https://peremontpeo.dev/" description="Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols.">
+<Layout
+  jsonLd={personSchema}
+  canonicalUrl="https://peremontpeo.dev/"
+  description="Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols."
+>
   <div class="home-avatar animate"><InteractiveAvatar /></div>
 
-<pre class="doc home-doc animate"><span class="title">PERE MONTPEÓ</span> <span class="cursor" aria-hidden="true"></span>
+  <pre
+    class="doc home-doc animate"><span class="title">PERE MONTPEÓ</span> <span class="cursor" aria-hidden="true" />
 
 Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols. Si no estic programant, segurament em trobaràs sobre la bicicleta, a la cuina o llegint.
 
@@ -50,17 +67,14 @@ Enginyer de programari especialitzat en tot i en res. Actualment, fent que els o
 <span class="tilde">~~~</span>
 
 <span class="label">ÚLTIM APUNT:</span>
-{latest && (
-  <a class="mdlink" href={`/blog/${getSlug(latest.id)}/`} transition:name={`title-${getSlug(latest.id)}`}>{latest.data.title}</a>
-)}
+{latest && (<a class="mdlink" href={`/blog/${getSlug(latest.id)}/`} transition:name={`title-${getSlug(latest.id)}`}>{latest.data.title}</a>)}
 <span class="muted">{latest ? `${formatDate(latest.data.date)} · ${latestReadingTime}` : ""}</span>
 
 <span class="tilde">~~~</span>
 
 <span class="label">EXPERIÈNCIA:</span>
-{experiences.map((e) => (
-  <Fragment>- {range(e)} — {e.data.endDate ? formatDate(e.data.endDate, dateOpts, "ca-ES") : <span class="accent">Actual</span>}: {e.data.role} @ {e.data.company}{"\n"}</Fragment>
-))}<a class="mdlink" href="/experiencia">veure tot →</a>
+{expLines}
+<a class="mdlink" href="/experiencia">veure tot →</a>
 
 <span class="tilde">~~~</span>
 
@@ -73,14 +87,16 @@ Enginyer de programari especialitzat en tot i en res. Actualment, fent que els o
 
 <script is:inline>
   function initHomeEmail() {
-    var el = document.getElementById("home-email");
+    const el = document.getElementById("home-email");
     if (!el || el.dataset.initialized) return;
-    var user = el.getAttribute("data-user");
-    var domain = el.getAttribute("data-domain");
+    const user = el.getAttribute("data-user");
+    const domain = el.getAttribute("data-domain");
     if (!user || !domain) return;
-    var email = user + "@" + domain;
+    const email = user + "@" + domain;
     el.textContent = email;
-    el.addEventListener("click", function () { window.location.href = "mailto:" + email; });
+    el.addEventListener("click", function () {
+      window.location.href = "mailto:" + email;
+    });
     el.dataset.initialized = "true";
   }
   document.addEventListener("DOMContentLoaded", initHomeEmail);

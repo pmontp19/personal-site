@@ -25,9 +25,9 @@ export interface GitHistoryPayload {
 
 export function formatHistoryDate(dateStr: string): string {
   const date = new Date(dateStr);
-  return new Intl.DateTimeFormat('ca-ES', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
+  return new Intl.DateTimeFormat("ca-ES", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   }).format(date);
 }

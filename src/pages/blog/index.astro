@@ -10,7 +10,11 @@ const allPosts = (
 ).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Layout title="Apunts - Pere Montpeó" description="Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de programari i altres coses que em semblen interessants." canonicalUrl="https://peremontpeo.dev/blog/">
+<Layout
+  title="Apunts - Pere Montpeó"
+  description="Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de programari i altres coses que em semblen interessants."
+  canonicalUrl="https://peremontpeo.dev/blog/"
+>
   <h1 class="title page-title">APUNTS</h1>
   <p class="muted intro">
     Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de
@@ -20,25 +24,27 @@ const allPosts = (
   <p class="tilde" aria-hidden="true">~~~</p>
 
   <ul class="term-list">
-    {allPosts.map((post) => (
-      <li class="term-row">
-        <span class="dash muted">-</span>
-        <time
-          datetime={post.data.date.toISOString()}
-          class="row-date muted"
-          transition:name={`date-${getSlug(post.id)}`}
-        >
-          {formatDate(post.data.date)}
-        </time>
-        <a
-          class="mdlink row-title"
-          href={`/blog/${getSlug(post.id)}/`}
-          transition:name={`title-${getSlug(post.id)}`}
-        >
-          {post.data.title}
-        </a>
-      </li>
-    ))}
+    {
+      allPosts.map((post) => (
+        <li class="term-row">
+          <span class="dash muted">-</span>
+          <time
+            datetime={post.data.date.toISOString()}
+            class="row-date muted"
+            transition:name={`date-${getSlug(post.id)}`}
+          >
+            {formatDate(post.data.date)}
+          </time>
+          <a
+            class="mdlink row-title"
+            href={`/blog/${getSlug(post.id)}/`}
+            transition:name={`title-${getSlug(post.id)}`}
+          >
+            {post.data.title}
+          </a>
+        </li>
+      ))
+    }
   </ul>
 </Layout>
 

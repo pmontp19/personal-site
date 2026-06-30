@@ -13,7 +13,7 @@ const allPosts = (
 const featuredPost = allPosts[0];
 
 const readingTime = featuredPost
-  ? calculateReadingTime(featuredPost.body)
+  ? calculateReadingTime(featuredPost.body ?? "")
   : "";
 ---
 
@@ -23,25 +23,40 @@ const readingTime = featuredPost
     <a href="/blog" class="view-all-link-text button-link">Veure tots →</a>
   </div>
 
-  {featuredPost && (
-    <MagicCard class="featured-post-card">
-      <div class="post-content">
-        <div class="post-meta text-muted">
-          <time datetime={featuredPost.data.date.toISOString()} transition:name={`date-${getSlug(featuredPost.id)}`}>
-            {formatDate(featuredPost.data.date)}
-          </time>
-          <span class="reading-time">⌛ {readingTime}</span>
+  {
+    featuredPost && (
+      <MagicCard class="featured-post-card">
+        <div class="post-content">
+          <div class="post-meta text-muted">
+            <time
+              datetime={featuredPost.data.date.toISOString()}
+              transition:name={`date-${getSlug(featuredPost.id)}`}
+            >
+              {formatDate(featuredPost.data.date)}
+            </time>
+            <span class="reading-time">⌛ {readingTime}</span>
+          </div>
+          <h3
+            class="post-title"
+            transition:name={`title-${getSlug(featuredPost.id)}`}
+          >
+            <a href={`/blog/${getSlug(featuredPost.id)}`}>
+              {featuredPost.data.title}
+            </a>
+          </h3>
+          <p class="post-description text-muted">
+            {featuredPost.data.description}
+          </p>
         </div>
-        <h3 class="post-title" transition:name={`title-${getSlug(featuredPost.id)}`}>
-          <a href={`/blog/${getSlug(featuredPost.id)}`}>{featuredPost.data.title}</a>
-        </h3>
-        <p class="post-description text-muted">{featuredPost.data.description}</p>
-      </div>
-      <a href={`/blog/${getSlug(featuredPost.id)}`} class="read-more button-link">
-        Llegir més →
-      </a>
-    </MagicCard>
-  )}
+        <a
+          href={`/blog/${getSlug(featuredPost.id)}`}
+          class="read-more button-link"
+        >
+          Llegir més →
+        </a>
+      </MagicCard>
+    )
+  }
 </section>
 
 <style>

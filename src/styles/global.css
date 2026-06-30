@@ -26,8 +26,9 @@
   --eye-pupil: #111827;
 
   /* --- tipografia --- */
-  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco,
-    "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --mono:
+    ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, "Cascadia Mono",
+    Consolas, "Liberation Mono", monospace;
   --sans: "Geist Sans", system-ui, -apple-system, sans-serif;
 
   /* --- àlies de compatibilitat (pàgines/components heretats) --- */

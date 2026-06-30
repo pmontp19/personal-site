@@ -10,17 +10,36 @@ const isCv = pathname.startsWith("/cv");
   <p class="tilde" aria-hidden="true">~~~</p>
   <nav class="foot-line" aria-label="Navegació">
     <span class="muted">© {year} Pere Montpeó · </span>
-    <a class="mdlink" href="/" aria-current={isHome ? "page" : undefined}>inici</a>
-    <a class="mdlink" href="/blog" aria-current={isBlog ? "page" : undefined}>apunts</a>
+    <a class="mdlink" href="/" aria-current={isHome ? "page" : undefined}
+      >inici</a
+    >
+    <a class="mdlink" href="/blog" aria-current={isBlog ? "page" : undefined}
+      >apunts</a
+    >
     <a class="mdlink" href="/cv" aria-current={isCv ? "page" : undefined}>cv</a>
   </nav>
   <p class="foot-line">
     <span class="label">TEMA:</span>
-    <button id="light-theme-button" class="theme-opt" type="button" aria-label="Tema clar">clar</button>
+    <button
+      id="light-theme-button"
+      class="theme-opt"
+      type="button"
+      aria-label="Tema clar">clar</button
+    >
     <span class="muted">/</span>
-    <button id="dark-theme-button" class="theme-opt" type="button" aria-label="Tema fosc">fosc</button>
+    <button
+      id="dark-theme-button"
+      class="theme-opt"
+      type="button"
+      aria-label="Tema fosc">fosc</button
+    >
     <span class="muted">/</span>
-    <button id="system-theme-button" class="theme-opt" type="button" aria-label="Tema del sistema">auto</button>
+    <button
+      id="system-theme-button"
+      class="theme-opt"
+      type="button"
+      aria-label="Tema del sistema">auto</button
+    >
   </p>
 </footer>
 

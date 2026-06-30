@@ -5,52 +5,71 @@ import ExperienceEntry from "../components/ExperienceEntry.astro";
 import { formatDate, getSlug } from "../utils/date";
 
 const experiences = (await getCollection("experience")).sort(
-  (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
+  (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf(),
 );
 
-const dateOptions: Intl.DateTimeFormatOptions = { month: "long", year: "numeric" };
+const dateOptions: Intl.DateTimeFormatOptions = {
+  month: "long",
+  year: "numeric",
+};
 const locale = "ca-ES";
 ---
 
-<Layout title="Experiència | Pere Montpeó" description="Trajectòria professional de Pere Montpeó, enginyer de programari." canonicalUrl="https://peremontpeo.dev/experiencia/">
+<Layout
+  title="Experiència | Pere Montpeó"
+  description="Trajectòria professional de Pere Montpeó, enginyer de programari."
+  canonicalUrl="https://peremontpeo.dev/experiencia/"
+>
   <h1 class="title page-title">EXPERIÈNCIA</h1>
   <a class="mdlink" href="/cv">veure el CV clàssic →</a>
 
   <p class="tilde" aria-hidden="true">~~~</p>
 
-  {experiences.map((exp, index) => (
-    <article class="exp-entry">
-      <p class="exp-head">
-        <span class="title" transition:name={`role-${getSlug(exp.id)}`}>{exp.data.role}</span>
-        <span class="muted"> @ </span>
-        <span class="accent" transition:name={`company-${getSlug(exp.id)}`}>{exp.data.company}</span>
-      </p>
-      <p class="exp-date muted">
-        {formatDate(exp.data.startDate, dateOptions, locale)} — {exp.data.endDate ? formatDate(exp.data.endDate, dateOptions, locale) : "Actual"}
-      </p>
+  {
+    experiences.map((exp, index) => (
+      <article class="exp-entry">
+        <p class="exp-head">
+          <span class="title" transition:name={`role-${getSlug(exp.id)}`}>
+            {exp.data.role}
+          </span>
+          <span class="muted"> @ </span>
+          <span class="accent" transition:name={`company-${getSlug(exp.id)}`}>
+            {exp.data.company}
+          </span>
+        </p>
+        <p class="exp-date muted">
+          {formatDate(exp.data.startDate, dateOptions, locale)} —{" "}
+          {exp.data.endDate
+            ? formatDate(exp.data.endDate, dateOptions, locale)
+            : "Actual"}
+        </p>
 
-      {exp.data.description && <p class="exp-desc">{exp.data.description}</p>}
+        {exp.data.description && <p class="exp-desc">{exp.data.description}</p>}
 
-      <div class="markdown-content prose" id={`markdown-content-${index}`}>
-        <ExperienceEntry data={exp} index={index} />
-      </div>
-      {exp.body && exp.body.trim() && (
-        <button
-          class="show-more-button button-link"
-          aria-expanded="false"
-          aria-controls={`markdown-content-${index}`}
-        >
-          <span>veure més</span><span class="arrow-down"> ▼</span>
-        </button>
-      )}
+        <div class="markdown-content prose" id={`markdown-content-${index}`}>
+          <ExperienceEntry data={exp} />
+        </div>
+        {exp.body && exp.body.trim() && (
+          <button
+            class="show-more-button button-link"
+            aria-expanded="false"
+            aria-controls={`markdown-content-${index}`}
+          >
+            <span>veure més</span>
+            <span class="arrow-down"> ▼</span>
+          </button>
+        )}
 
-      {exp.data.tags && exp.data.tags.length > 0 && (
-        <p class="exp-tags muted">{exp.data.tags.join(" · ")}</p>
-      )}
+        {exp.data.tags && exp.data.tags.length > 0 && (
+          <p class="exp-tags muted">{exp.data.tags.join(" · ")}</p>
+        )}
 
-      <p class="tilde" aria-hidden="true">~~~</p>
-    </article>
-  ))}
+        <p class="tilde" aria-hidden="true">
+          ~~~
+        </p>
+      </article>
+    ))
+  }
 </Layout>
 
 <script>

@@ -3,9 +3,21 @@ const emailUser = "pere";
 const emailDomain = "montpeo.com";
 
 const socialLinks = [
-  { name: "github.com/pmontp19", url: "https://github.com/pmontp19", label: "GITHUB" },
-  { name: "linkedin.com/in/perem", url: "https://linkedin.com/in/perem", label: "LINKEDIN" },
-  { name: "twitter.com/pmontp19", url: "https://twitter.com/pmontp19", label: "TWITTER" },
+  {
+    name: "github.com/pmontp19",
+    url: "https://github.com/pmontp19",
+    label: "GITHUB",
+  },
+  {
+    name: "linkedin.com/in/perem",
+    url: "https://linkedin.com/in/perem",
+    label: "LINKEDIN",
+  },
+  {
+    name: "twitter.com/pmontp19",
+    url: "https://twitter.com/pmontp19",
+    label: "TWITTER",
+  },
 ];
 ---
 
@@ -18,16 +30,25 @@ const socialLinks = [
       class="mdlink email-link"
       type="button"
       data-user={emailUser}
-      data-domain={emailDomain}
-    >correu</button>
+      data-domain={emailDomain}>correu</button
+    >
   </li>
-  {socialLinks.map((link) => (
-    <li class="contact-row">
-      <span class="dash muted">-</span>
-      <span class="ck label">{link.label}</span>
-      <a class="mdlink" href={link.url} target="_blank" rel="noopener noreferrer">{link.name}</a>
-    </li>
-  ))}
+  {
+    socialLinks.map((link) => (
+      <li class="contact-row">
+        <span class="dash muted">-</span>
+        <span class="ck label">{link.label}</span>
+        <a
+          class="mdlink"
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link.name}
+        </a>
+      </li>
+    ))
+  }
 </ul>
 
 <script is:inline>
@@ -39,7 +60,9 @@ const socialLinks = [
     if (!user || !domain) return;
     const email = `${user}@${domain}`;
     el.textContent = email;
-    el.addEventListener("click", () => { window.location.href = `mailto:${email}`; });
+    el.addEventListener("click", () => {
+      window.location.href = `mailto:${email}`;
+    });
     el.dataset.initialized = "true";
   }
   document.addEventListener("DOMContentLoaded", initContactEmail);
