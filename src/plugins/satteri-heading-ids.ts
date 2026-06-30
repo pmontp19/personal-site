@@ -1,6 +1,6 @@
-import { defineHastPlugin } from 'satteri';
+import { defineHastPlugin } from "satteri";
 
-const HEADING_TAGS = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+const HEADING_TAGS = new Set(["h1", "h2", "h3", "h4", "h5", "h6"]);
 // Matches a trailing `{#custom-id}` at the end of a heading's text.
 const CUSTOM_ID_RE = /^(.*?)[ \t]*\{#([A-Za-z0-9_-]+)\}[ \t]*$/;
 
@@ -14,16 +14,21 @@ const CUSTOM_ID_RE = /^(.*?)[ \t]*\{#([A-Za-z0-9_-]+)\}[ \t]*$/;
  */
 export default function headingIds() {
   return defineHastPlugin({
-    name: 'custom-heading-ids',
+    name: "custom-heading-ids",
     text(node, ctx) {
       const parent = ctx.parent(node);
-      if (!parent || parent.type !== 'element' || !HEADING_TAGS.has(parent.tagName)) return;
+      if (
+        !parent ||
+        parent.type !== "element" ||
+        !HEADING_TAGS.has(parent.tagName)
+      )
+        return;
 
       const match = CUSTOM_ID_RE.exec(node.value);
       if (!match) return;
 
-      ctx.setProperty(parent, 'id', match[2]);
-      ctx.setProperty(node, 'value', match[1]);
+      ctx.setProperty(parent, "id", match[2]);
+      ctx.setProperty(node, "value", match[1]);
     },
   });
 }

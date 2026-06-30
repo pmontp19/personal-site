@@ -4,325 +4,364 @@ import avatarImage from "../assets/avatar.png";
 ---
 
 <div id="avatarContainer" transition:name="avatar-transition">
-    <div class="face-container">
-        <Image
-            src={avatarImage}
-            alt="Pere Montpeó"
-            class="avatar-image"
-            loading="eager"
-            widths={[192, 224, 256]}
-            sizes="(max-width: 639px) 192px, (max-width: 767px) 224px, 256px"
-        />
+  <div class="face-container">
+    <Image
+      src={avatarImage}
+      alt="Pere Montpeó"
+      class="avatar-image"
+      loading="eager"
+      widths={[192, 224, 256]}
+      sizes="(max-width: 639px) 192px, (max-width: 767px) 224px, 256px"
+    />
 
-        <div class="eyes-overlay">
-            <svg
-                viewBox="0 0 200 200"
-                xmlns="http://www.w3.org/2000/svg"
-                class="eyes-svg"
-            >
-                <g class="eye">
-                    <circle cx="74" cy="71" r="6" fill="#fdf4e4"></circle>
-                    <ellipse
-                        id="leftPupil"
-                        cx="74"
-                        cy="71"
-                        rx="3.5"
-                        ry="5"
-                        fill="#111827"></ellipse>
-                </g>
+    <div class="eyes-overlay">
+      <svg
+        viewBox="0 0 200 200"
+        xmlns="http://www.w3.org/2000/svg"
+        class="eyes-svg"
+      >
+        <g class="eye">
+          <circle cx="74" cy="71" r="6" fill="#fdf4e4"></circle>
+          <ellipse id="leftPupil" cx="74" cy="71" rx="3.5" ry="5" fill="#111827"
+          ></ellipse>
+        </g>
 
-                <g id="rightEye" class="eye">
-                    <circle cx="106" cy="71" r="6" fill="#fdf4e4"></circle>
-                    <ellipse
-                        id="rightPupil"
-                        cx="106"
-                        cy="71"
-                        rx="3.5"
-                        ry="5"
-                        fill="#111827"></ellipse>
-                </g>
+        <g id="rightEye" class="eye">
+          <circle cx="106" cy="71" r="6" fill="#fdf4e4"></circle>
+          <ellipse
+            id="rightPupil"
+            cx="106"
+            cy="71"
+            rx="3.5"
+            ry="5"
+            fill="#111827"></ellipse>
+        </g>
 
-                <g class="eye-wink hidden">
-                    <rect
-                        id="winkRect"
-                        x="102"
-                        y="70"
-                        width="10"
-                        height="3"
-                        rx="1.5"
-                        fill="#111827"
-                        class="wink"></rect>
-                </g>
-                
-                <g class="eye-blink hidden">
-                    <rect
-                        id="leftBlinkRect"
-                        x="70"
-                        y="70"
-                        width="10"
-                        height="3"
-                        rx="1.5"
-                        fill="#111827"
-                        class="blink"></rect>
-                    <rect
-                        id="rightBlinkRect"
-                        x="102"
-                        y="70"
-                        width="10"
-                        height="3"
-                        rx="1.5"
-                        fill="#111827"
-                        class="blink"></rect>
-                </g>
-            </svg>
-        </div>
+        <g class="eye-wink hidden">
+          <rect
+            id="winkRect"
+            x="102"
+            y="70"
+            width="10"
+            height="3"
+            rx="1.5"
+            fill="#111827"
+            class="wink"></rect>
+        </g>
+
+        <g class="eye-blink hidden">
+          <rect
+            id="leftBlinkRect"
+            x="70"
+            y="70"
+            width="10"
+            height="3"
+            rx="1.5"
+            fill="#111827"
+            class="blink"></rect>
+          <rect
+            id="rightBlinkRect"
+            x="102"
+            y="70"
+            width="10"
+            height="3"
+            rx="1.5"
+            fill="#111827"
+            class="blink"></rect>
+        </g>
+      </svg>
     </div>
+  </div>
 </div>
 
 <script>
-    const LEFT_PUPIL = { x: 74, y: 71 };
-    const RIGHT_PUPIL = { x: 106, y: 71 };
-    const WINK_RECT = { x: 102, y: 70 };
-    const LEFT_BLINK = { x: 70, y: 70 };
-    const RIGHT_BLINK = { x: 102, y: 70 };
-    const MAX_PUPIL_DISTANCE = 4;
+  const LEFT_PUPIL = { x: 74, y: 71 };
+  const RIGHT_PUPIL = { x: 106, y: 71 };
+  const WINK_RECT = { x: 102, y: 70 };
+  const LEFT_BLINK = { x: 70, y: 70 };
+  const RIGHT_BLINK = { x: 102, y: 70 };
+  const MAX_PUPIL_DISTANCE = 4;
 
-    let isWinking = false;
-    let isBlinking = false;
-    let isInitialized = false;
-    let blinkIntervalId: ReturnType<typeof setInterval> | null = null;
+  let isWinking = false;
+  let isBlinking = false;
+  let isInitialized = false;
+  let blinkIntervalId: ReturnType<typeof setInterval> | null = null;
 
-    let avatarContainer: HTMLElement | null = null;
-    let leftPupil: SVGElement | null = null;
-    let rightPupil: SVGElement | null = null;
-    let winkElement: SVGGElement | null = null;
-    let winkRect: SVGRectElement | null = null;
-    let blinkElement: SVGGElement | null = null;
-    let leftBlinkRect: SVGRectElement | null = null;
-    let rightBlinkRect: SVGRectElement | null = null;
+  let avatarContainer: HTMLElement | null = null;
+  let leftPupil: SVGElement | null = null;
+  let rightPupil: SVGElement | null = null;
+  let winkElement: SVGGElement | null = null;
+  let winkRect: SVGRectElement | null = null;
+  let blinkElement: SVGGElement | null = null;
+  let leftBlinkRect: SVGRectElement | null = null;
+  let rightBlinkRect: SVGRectElement | null = null;
 
-    function updateElementPosition(
-        element: SVGElement | null,
-        baseX: number,
-        baseY: number,
-        offsetX: number,
-        offsetY: number,
-    ) {
-        if (!element) return;
+  function updateElementPosition(
+    element: SVGElement | null,
+    baseX: number,
+    baseY: number,
+    offsetX: number,
+    offsetY: number,
+  ) {
+    if (!element) return;
 
-        const newX = (baseX + offsetX).toString();
-        const newY = (baseY + offsetY).toString();
+    const newX = (baseX + offsetX).toString();
+    const newY = (baseY + offsetY).toString();
 
-        if (element.tagName.toLowerCase() === "ellipse") {
-            element.setAttribute("cx", newX);
-            element.setAttribute("cy", newY);
-        } else if (element.tagName.toLowerCase() === "rect") {
-            element.setAttribute("x", newX);
-            element.setAttribute("y", newY);
-        }
+    if (element.tagName.toLowerCase() === "ellipse") {
+      element.setAttribute("cx", newX);
+      element.setAttribute("cy", newY);
+    } else if (element.tagName.toLowerCase() === "rect") {
+      element.setAttribute("x", newX);
+      element.setAttribute("y", newY);
     }
+  }
 
-    function isAvatarVisible(): boolean {
-        if (!avatarContainer) return false;
-        const rect = avatarContainer.getBoundingClientRect();
-        return rect.bottom > 0 && rect.top < window.innerHeight;
-    }
+  function isAvatarVisible(): boolean {
+    if (!avatarContainer) return false;
+    const rect = avatarContainer.getBoundingClientRect();
+    return rect.bottom > 0 && rect.top < window.innerHeight;
+  }
 
-    function handlePointerMove(event: MouseEvent | TouchEvent) {
-        if (!avatarContainer || !isAvatarVisible()) return;
+  function handlePointerMove(event: MouseEvent | TouchEvent) {
+    if (!avatarContainer || !isAvatarVisible()) return;
 
-        let clientX: number;
-        let clientY: number;
+    let clientX: number;
+    let clientY: number;
 
-        if (event instanceof MouseEvent) {
-            clientX = event.clientX;
-            clientY = event.clientY;
-        } else {
-            clientX = event.touches[0].clientX;
-            clientY = event.touches[0].clientY;
-        }
-
-        const avatarRect = avatarContainer.getBoundingClientRect();
-        const avatarCenterX = avatarRect.left + (avatarRect.width * 90) / 200;
-        const avatarCenterY = avatarRect.top + (avatarRect.height * 64) / 200;
-
-        const deltaX = clientX - avatarCenterX;
-        const deltaY = clientY - avatarCenterY;
-
-        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        const clampedDistance = Math.min(distance, MAX_PUPIL_DISTANCE);
-
-        const normalizedX = distance === 0 ? 0 : (deltaX / distance) * clampedDistance;
-        const normalizedY = distance === 0 ? 0 : (deltaY / distance) * clampedDistance;
-
-        updateElementPosition(leftPupil, LEFT_PUPIL.x, LEFT_PUPIL.y, normalizedX, normalizedY);
-        updateElementPosition(rightPupil, RIGHT_PUPIL.x, RIGHT_PUPIL.y, normalizedX, normalizedY);
-        updateElementPosition(winkRect, WINK_RECT.x, WINK_RECT.y, normalizedX, normalizedY);
-        updateElementPosition(leftBlinkRect, LEFT_BLINK.x, LEFT_BLINK.y, normalizedX, normalizedY);
-        updateElementPosition(rightBlinkRect, RIGHT_BLINK.x, RIGHT_BLINK.y, normalizedX, normalizedY);
-    }
-
-    function triggerWink() {
-        if (!isWinking && !isBlinking && rightPupil && winkElement) {
-            isWinking = true;
-
-            rightPupil.classList.add("hidden");
-            winkElement.classList.remove("hidden");
-
-            setTimeout(() => {
-                if (rightPupil) rightPupil.classList.remove("hidden");
-                if (winkElement) winkElement.classList.add("hidden");
-                isWinking = false;
-            }, 300);
-        }
-    }
-
-    function triggerBlink() {
-        if (!isBlinking && !isWinking && leftPupil && rightPupil && blinkElement) {
-            isBlinking = true;
-
-            leftPupil.classList.add("hidden");
-            rightPupil.classList.add("hidden");
-            blinkElement.classList.remove("hidden");
-
-            setTimeout(() => {
-                if (leftPupil) leftPupil.classList.remove("hidden");
-                if (rightPupil) rightPupil.classList.remove("hidden");
-                if (blinkElement) blinkElement.classList.add("hidden");
-                isBlinking = false;
-            }, 200);
-        }
-    }
-
-    function initializeAvatar() {
-        if (isInitialized) return;
-        
-        avatarContainer = document.getElementById("avatarContainer");
-        leftPupil = document.getElementById("leftPupil") as SVGElement | null;
-        rightPupil = document.getElementById("rightPupil") as SVGElement | null;
-        winkElement = document.querySelector(".eye-wink") as SVGGElement | null;
-        winkRect = document.getElementById("winkRect") as SVGRectElement | null;
-        blinkElement = document.querySelector(".eye-blink") as SVGGElement | null;
-        leftBlinkRect = document.getElementById("leftBlinkRect") as SVGRectElement | null;
-        rightBlinkRect = document.getElementById("rightBlinkRect") as SVGRectElement | null;
-
-        if (!avatarContainer) {
-            console.error("Avatar container not found!");
-            return;
-        }
-
-        isInitialized = true;
-
-        const handleMouseMove = (e: MouseEvent) => handlePointerMove(e);
-        const handleTouchMove = (e: TouchEvent) => {
-            if (e.touches.length > 0) {
-                handlePointerMove(e);
-            }
-        };
-        const handleAvatarClick = () => triggerWink();
-        const handleAvatarTouchStart = () => triggerWink();
-
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("touchmove", handleTouchMove, { passive: true });
-        avatarContainer.addEventListener("click", handleAvatarClick);
-        avatarContainer.addEventListener("touchstart", handleAvatarTouchStart, { passive: true });
-
-        if (blinkIntervalId) {
-            clearInterval(blinkIntervalId);
-        }
-        blinkIntervalId = setInterval(() => {
-            triggerBlink();
-        }, 5000 + Math.random() * 2000);
-
-        const cleanup = () => {
-            isInitialized = false;
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("touchmove", handleTouchMove);
-            const currentAvatarContainer = document.getElementById("avatarContainer");
-            if (currentAvatarContainer) {
-                currentAvatarContainer.removeEventListener("click", handleAvatarClick);
-                currentAvatarContainer.removeEventListener("touchstart", handleAvatarTouchStart);
-            }
-            if (blinkIntervalId) {
-                clearInterval(blinkIntervalId);
-                blinkIntervalId = null;
-            }
-            document.removeEventListener("astro:before-swap", cleanup);
-        };
-
-        document.addEventListener("astro:before-swap", cleanup, { once: true });
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initializeAvatar);
+    if (event instanceof MouseEvent) {
+      clientX = event.clientX;
+      clientY = event.clientY;
     } else {
-        initializeAvatar();
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
     }
 
-    document.addEventListener("astro:page-load", initializeAvatar);
+    const avatarRect = avatarContainer.getBoundingClientRect();
+    const avatarCenterX = avatarRect.left + (avatarRect.width * 90) / 200;
+    const avatarCenterY = avatarRect.top + (avatarRect.height * 64) / 200;
+
+    const deltaX = clientX - avatarCenterX;
+    const deltaY = clientY - avatarCenterY;
+
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const clampedDistance = Math.min(distance, MAX_PUPIL_DISTANCE);
+
+    const normalizedX =
+      distance === 0 ? 0 : (deltaX / distance) * clampedDistance;
+    const normalizedY =
+      distance === 0 ? 0 : (deltaY / distance) * clampedDistance;
+
+    updateElementPosition(
+      leftPupil,
+      LEFT_PUPIL.x,
+      LEFT_PUPIL.y,
+      normalizedX,
+      normalizedY,
+    );
+    updateElementPosition(
+      rightPupil,
+      RIGHT_PUPIL.x,
+      RIGHT_PUPIL.y,
+      normalizedX,
+      normalizedY,
+    );
+    updateElementPosition(
+      winkRect,
+      WINK_RECT.x,
+      WINK_RECT.y,
+      normalizedX,
+      normalizedY,
+    );
+    updateElementPosition(
+      leftBlinkRect,
+      LEFT_BLINK.x,
+      LEFT_BLINK.y,
+      normalizedX,
+      normalizedY,
+    );
+    updateElementPosition(
+      rightBlinkRect,
+      RIGHT_BLINK.x,
+      RIGHT_BLINK.y,
+      normalizedX,
+      normalizedY,
+    );
+  }
+
+  function triggerWink() {
+    if (!isWinking && !isBlinking && rightPupil && winkElement) {
+      isWinking = true;
+
+      rightPupil.classList.add("hidden");
+      winkElement.classList.remove("hidden");
+
+      setTimeout(() => {
+        if (rightPupil) rightPupil.classList.remove("hidden");
+        if (winkElement) winkElement.classList.add("hidden");
+        isWinking = false;
+      }, 300);
+    }
+  }
+
+  function triggerBlink() {
+    if (!isBlinking && !isWinking && leftPupil && rightPupil && blinkElement) {
+      isBlinking = true;
+
+      leftPupil.classList.add("hidden");
+      rightPupil.classList.add("hidden");
+      blinkElement.classList.remove("hidden");
+
+      setTimeout(() => {
+        if (leftPupil) leftPupil.classList.remove("hidden");
+        if (rightPupil) rightPupil.classList.remove("hidden");
+        if (blinkElement) blinkElement.classList.add("hidden");
+        isBlinking = false;
+      }, 200);
+    }
+  }
+
+  function initializeAvatar() {
+    if (isInitialized) return;
+
+    avatarContainer = document.getElementById("avatarContainer");
+    leftPupil = document.getElementById("leftPupil") as SVGElement | null;
+    rightPupil = document.getElementById("rightPupil") as SVGElement | null;
+    winkElement = document.querySelector(".eye-wink") as SVGGElement | null;
+    winkRect = document.getElementById("winkRect") as SVGRectElement | null;
+    blinkElement = document.querySelector(".eye-blink") as SVGGElement | null;
+    leftBlinkRect = document.getElementById(
+      "leftBlinkRect",
+    ) as SVGRectElement | null;
+    rightBlinkRect = document.getElementById(
+      "rightBlinkRect",
+    ) as SVGRectElement | null;
+
+    if (!avatarContainer) {
+      console.error("Avatar container not found!");
+      return;
+    }
+
+    isInitialized = true;
+
+    const handleMouseMove = (e: MouseEvent) => handlePointerMove(e);
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        handlePointerMove(e);
+      }
+    };
+    const handleAvatarClick = () => triggerWink();
+    const handleAvatarTouchStart = () => triggerWink();
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    avatarContainer.addEventListener("click", handleAvatarClick);
+    avatarContainer.addEventListener("touchstart", handleAvatarTouchStart, {
+      passive: true,
+    });
+
+    if (blinkIntervalId) {
+      clearInterval(blinkIntervalId);
+    }
+    blinkIntervalId = setInterval(
+      () => {
+        triggerBlink();
+      },
+      5000 + Math.random() * 2000,
+    );
+
+    const cleanup = () => {
+      isInitialized = false;
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+      const currentAvatarContainer = document.getElementById("avatarContainer");
+      if (currentAvatarContainer) {
+        currentAvatarContainer.removeEventListener("click", handleAvatarClick);
+        currentAvatarContainer.removeEventListener(
+          "touchstart",
+          handleAvatarTouchStart,
+        );
+      }
+      if (blinkIntervalId) {
+        clearInterval(blinkIntervalId);
+        blinkIntervalId = null;
+      }
+      document.removeEventListener("astro:before-swap", cleanup);
+    };
+
+    document.addEventListener("astro:before-swap", cleanup, { once: true });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeAvatar);
+  } else {
+    initializeAvatar();
+  }
+
+  document.addEventListener("astro:page-load", initializeAvatar);
 </script>
 
 <style>
+  #avatarContainer {
+    position: relative;
+    height: 12rem;
+    width: 12rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background-color: #1f2937;
+  }
+
+  @media (min-width: 640px) {
     #avatarContainer {
-        position: relative;
-        height: 12rem;
-        width: 12rem;
-        overflow: hidden;
-        border-radius: 9999px;
-        background-color: #1f2937;
+      height: 14rem;
+      width: 14rem;
     }
+  }
 
-    @media (min-width: 640px) {
-        #avatarContainer {
-            height: 14rem;
-            width: 14rem;
-        }
+  @media (min-width: 768px) {
+    #avatarContainer {
+      height: 16rem;
+      width: 16rem;
     }
+  }
 
-    @media (min-width: 768px) {
-        #avatarContainer {
-            height: 16rem;
-            width: 16rem;
-        }
-    }
+  .face-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
 
-    .face-container {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-    }
+  .avatar-image {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
 
-    .avatar-image {
-        position: absolute;
-        inset: 0;
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        z-index: 1;
-    }
+  .eyes-overlay {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
 
-    .eyes-overlay {
-        position: absolute;
-        inset: 0;
-        height: 100%;
-        width: 100%;
-        z-index: 2;
-        pointer-events: none;
-    }
+  .hidden {
+    display: none !important;
+  }
 
-    .hidden {
-        display: none !important;
-    }
-
-    #leftPupil,
-    #rightPupil,
-    #winkRect,
-    #leftBlinkRect,
-    #rightBlinkRect {
-        transition:
-            cx 0.1s ease-out,
-            cy 0.1s ease-out,
-            x 0.1s ease-out,
-            y 0.1s ease-out;
-    }
+  #leftPupil,
+  #rightPupil,
+  #winkRect,
+  #leftBlinkRect,
+  #rightBlinkRect {
+    transition:
+      cx 0.1s ease-out,
+      cy 0.1s ease-out,
+      x 0.1s ease-out,
+      y 0.1s ease-out;
+  }
 </style>

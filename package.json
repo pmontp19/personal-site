@@ -11,6 +11,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "astro check",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "generate-history": "tsx scripts/generate-git-history.ts"
   },
   "dependencies": {
@@ -29,6 +33,16 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "tsx": "^4.21.0"
+    "@astrojs/check": "^0.9.9",
+    "@eslint/js": "^10.0.1",
+    "@types/hast": "^3.0.4",
+    "eslint": "^10.5.0",
+    "eslint-plugin-astro": "^2.1.1",
+    "globals": "^17.7.0",
+    "prettier": "^3.8.4",
+    "prettier-plugin-astro": "^0.14.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0"
   }
 }

@@ -1,0 +1,13 @@
+# Build output & generated files
+dist/
+.astro/
+public/
+
+# Dependencies & lockfile
+node_modules/
+pnpm-lock.yaml
+
+# Authored content and docs — Prettier shouldn't reflow prose
+src/content/
+*.md
+*.mdx

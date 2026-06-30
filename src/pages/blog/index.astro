@@ -11,7 +11,11 @@ const allPosts = (
 ).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Layout title="Blog - Pere Montpeó" description="Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de programari i altres coses que em semblen interessants." canonicalUrl="https://peremontpeo.dev/blog/">
+<Layout
+  title="Blog - Pere Montpeó"
+  description="Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de programari i altres coses que em semblen interessants."
+  canonicalUrl="https://peremontpeo.dev/blog/"
+>
   <main>
     <section class="section blog-index-section animate">
       <h1>Apunts</h1>
@@ -32,7 +36,10 @@ const allPosts = (
                 >
                   {formatDate(post.data.date)}
                 </time>
-                <span class="post-title" transition:name={`title-${getSlug(post.id)}`}>
+                <span
+                  class="post-title"
+                  transition:name={`title-${getSlug(post.id)}`}
+                >
                   {post.data.title}
                 </span>
               </a>
@@ -82,7 +89,7 @@ const allPosts = (
     font-size: 0.9rem;
     color: var(--text-muted);
     white-space: nowrap;
-    font-family: 'Geist Mono', monospace;
+    font-family: "Geist Mono", monospace;
   }
 
   .post-title {

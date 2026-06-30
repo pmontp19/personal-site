@@ -9,30 +9,41 @@ import { getCollection } from "astro:content";
 
 // Get experiences sorted by date
 const allExperiences = (await getCollection("experience")).sort(
-  (a, b) => new Date(b.data.startDate).getTime() - new Date(a.data.startDate).getTime()
+  (a, b) =>
+    new Date(b.data.startDate).getTime() - new Date(a.data.startDate).getTime(),
 );
 
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "Pere Montpeó",
-  "url": "https://peremontpeo.dev",
-  "jobTitle": "Software Engineer",
-  "description": "Enginyer de programari especialitzat en desenvolupament web.",
-  "sameAs": [
+  name: "Pere Montpeó",
+  url: "https://peremontpeo.dev",
+  jobTitle: "Software Engineer",
+  description: "Enginyer de programari especialitzat en desenvolupament web.",
+  sameAs: [
     "https://github.com/peremontpeo",
-    "https://linkedin.com/in/peremontpeo"
-  ]
+    "https://linkedin.com/in/peremontpeo",
+  ],
 };
 ---
 
-<Layout jsonLd={personSchema} canonicalUrl="https://peremontpeo.dev/" description="Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols.">
+<Layout
+  jsonLd={personSchema}
+  canonicalUrl="https://peremontpeo.dev/"
+  description="Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols."
+>
   <main>
     <!-- About Me -->
     <section id="sobre-mi" class="about section animate">
       <div class="about-grid">
         <div class="about-content">
-          <HyperText text="Hola, soc Pere Montpeó" animateOnHover={true} startOnView={false} duration={1400} delay={300} />
+          <HyperText
+            text="Hola, soc Pere Montpeó"
+            animateOnHover={true}
+            startOnView={false}
+            duration={1400}
+            delay={300}
+          />
           <p class="subtitle">
             Enginyer de programari especialitzat en tot i en res. Actualment,
             fent que els ordinadors facin coses sols. Si no estic programant,
@@ -52,7 +63,9 @@ const personSchema = {
     <section id="experiencia" class="section animate">
       <div class="section-header">
         <h2>Experiència</h2>
-        <a href="/experiencia" class="view-all-link-text button-link">Veure tot →</a>
+        <a href="/experiencia" class="view-all-link-text button-link"
+          >Veure tot →</a
+        >
       </div>
 
       <ExperienceTimeline experiences={allExperiences} limit={4} />

@@ -10,19 +10,31 @@ const endpoint = `/data/git-history/${slug}.json`;
 <div class="version-viewer" data-slug={slug} data-endpoint={endpoint}>
   <div class="vv-controls" hidden>
     <button class="vv-toggle" type="button">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-        <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm7.25-4.25v4.5l3.25 1.9-.75 1.3L7.5 9V3.75h1.25Z"/>
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm7.25-4.25v4.5l3.25 1.9-.75 1.3L7.5 9V3.75h1.25Z"
+        ></path>
       </svg>
       <span>Historial de versions</span>
     </button>
 
     <div class="vv-scrubber" hidden>
       <div class="vv-timeline">
-        <button class="vv-prev" type="button" aria-label="Versió anterior">&larr;</button>
+        <button class="vv-prev" type="button" aria-label="Versió anterior"
+          >&larr;</button
+        >
         <div class="vv-track">
           <!-- JS will inject .vv-step buttons here -->
         </div>
-        <button class="vv-next" type="button" aria-label="Versió següent">&rarr;</button>
+        <button class="vv-next" type="button" aria-label="Versió següent"
+          >&rarr;</button
+        >
       </div>
       <div class="vv-meta-row">
         <div class="vv-version-info">
@@ -38,8 +50,12 @@ const endpoint = `/data/git-history/${slug}.json`;
 
   <div class="vv-content" hidden>
     <div class="vv-legend">
-      <span class="vv-legend-item"><span class="vv-legend-added"></span> Afegit</span>
-      <span class="vv-legend-item"><span class="vv-legend-removed"></span> Eliminat</span>
+      <span class="vv-legend-item"
+        ><span class="vv-legend-added"></span> Afegit</span
+      >
+      <span class="vv-legend-item"
+        ><span class="vv-legend-removed"></span> Eliminat</span
+      >
     </div>
     <div class="vv-rendered"></div>
   </div>
@@ -62,7 +78,9 @@ const endpoint = `/data/git-history/${slug}.json`;
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--text-muted);
-    transition: color 0.2s, border-color 0.2s;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
   }
 
   .vv-toggle:hover {
@@ -93,7 +111,8 @@ const endpoint = `/data/git-history/${slug}.json`;
     gap: 0.5rem;
   }
 
-  .vv-prev, .vv-next {
+  .vv-prev,
+  .vv-next {
     padding: 0.25rem 0.5rem;
     background: var(--secondary);
     border: 1px solid var(--border);
@@ -105,17 +124,20 @@ const endpoint = `/data/git-history/${slug}.json`;
     flex-shrink: 0;
   }
 
-  .vv-prev:hover, .vv-next:hover {
+  .vv-prev:hover,
+  .vv-next:hover {
     background: var(--primary);
     color: white;
   }
 
-  .vv-prev:disabled, .vv-next:disabled {
+  .vv-prev:disabled,
+  .vv-next:disabled {
     opacity: 0.3;
     cursor: default;
   }
 
-  .vv-prev:disabled:hover, .vv-next:disabled:hover {
+  .vv-prev:disabled:hover,
+  .vv-next:disabled:hover {
     background: var(--secondary);
     color: var(--foreground);
   }
@@ -132,7 +154,7 @@ const endpoint = `/data/git-history/${slug}.json`;
   }
 
   .vv-track::before {
-    content: '';
+    content: "";
     position: absolute;
     top: calc(0.25rem + 7px);
     left: calc(0.5rem + 7px);
@@ -166,7 +188,9 @@ const endpoint = `/data/git-history/${slug}.json`;
     background: var(--text-muted);
     border: 2px solid var(--background);
     box-shadow: 0 0 0 1px var(--border);
-    transition: background-color 0.2s, box-shadow 0.2s;
+    transition:
+      background-color 0.2s,
+      box-shadow 0.2s;
     flex-shrink: 0;
   }
 
@@ -377,7 +401,8 @@ const endpoint = `/data/git-history/${slug}.json`;
   }
 
   @media (max-width: 640px) {
-    .vv-prev, .vv-next {
+    .vv-prev,
+    .vv-next {
       display: none;
     }
 
@@ -428,197 +453,226 @@ const endpoint = `/data/git-history/${slug}.json`;
 
 <script>
   function initVersionViewer() {
-    document.querySelectorAll<HTMLElement>('.version-viewer').forEach(viewer => {
-      if (viewer.dataset.initialized) return;
-      viewer.dataset.initialized = 'true';
+    document
+      .querySelectorAll<HTMLElement>(".version-viewer")
+      .forEach((viewer) => {
+        if (viewer.dataset.initialized) return;
+        viewer.dataset.initialized = "true";
 
-      const endpoint = viewer.dataset.endpoint!;
-      const controls = viewer.querySelector<HTMLElement>('.vv-controls')!;
-      const toggle = viewer.querySelector<HTMLButtonElement>('.vv-toggle')!;
-      const scrubber = viewer.querySelector<HTMLElement>('.vv-scrubber')!;
-      const track = viewer.querySelector<HTMLElement>('.vv-track')!;
-      const prevBtn = viewer.querySelector<HTMLButtonElement>('.vv-prev')!;
-      const nextBtn = viewer.querySelector<HTMLButtonElement>('.vv-next')!;
-      const messageEl = viewer.querySelector<HTMLElement>('.vv-message')!;
-      const showDiffCheck = viewer.querySelector<HTMLInputElement>('.vv-show-diff')!;
-      const content = viewer.querySelector<HTMLElement>('.vv-content')!;
-      const rendered = viewer.querySelector<HTMLElement>('.vv-rendered')!;
+        const endpoint = viewer.dataset.endpoint!;
+        const controls = viewer.querySelector<HTMLElement>(".vv-controls")!;
+        const toggle = viewer.querySelector<HTMLButtonElement>(".vv-toggle")!;
+        const scrubber = viewer.querySelector<HTMLElement>(".vv-scrubber")!;
+        const track = viewer.querySelector<HTMLElement>(".vv-track")!;
+        const prevBtn = viewer.querySelector<HTMLButtonElement>(".vv-prev")!;
+        const nextBtn = viewer.querySelector<HTMLButtonElement>(".vv-next")!;
+        const messageEl = viewer.querySelector<HTMLElement>(".vv-message")!;
+        const showDiffCheck =
+          viewer.querySelector<HTMLInputElement>(".vv-show-diff")!;
+        const content = viewer.querySelector<HTMLElement>(".vv-content")!;
+        const rendered = viewer.querySelector<HTMLElement>(".vv-rendered")!;
 
-      type Version = {
-        commit: { hash: string; date: string; message: string };
-        html: string;
-        diffHtml: string;
-        isOriginal: boolean;
-      };
+        type Version = {
+          commit: { hash: string; date: string; message: string };
+          html: string;
+          diffHtml: string;
+          isOriginal: boolean;
+        };
 
-      let versions: Version[] = [];
-      let activeIndex = 0; // index into versions array (0 = newest)
-      let active = false;
-      let hiddenSiblings: { el: HTMLElement; display: string }[] = [];
+        let versions: Version[] = [];
+        let activeIndex = 0; // index into versions array (0 = newest)
+        let active = false;
+        let hiddenSiblings: { el: HTMLElement; display: string }[] = [];
 
-      function formatDate(dateStr: string): string {
-        const d = new Date(dateStr);
-        const day = d.getDate();
-        const month = d.toLocaleDateString('ca-ES', { month: 'short' }).replace('.', '');
-        const year = d.getFullYear();
-        return `${day} ${month} ${year}`;
-      }
+        function formatDate(dateStr: string): string {
+          const d = new Date(dateStr);
+          const day = d.getDate();
+          const month = d
+            .toLocaleDateString("ca-ES", { month: "short" })
+            .replace(".", "");
+          const year = d.getFullYear();
+          return `${day} ${month} ${year}`;
+        }
 
-      function buildTimeline() {
-        track.innerHTML = '';
-        // Render newest (first in array) to oldest (last in array) = left to right
-        for (let i = 0; i < versions.length; i++) {
-          const v = versions[i];
-          const step = document.createElement('button');
-          step.type = 'button';
-          step.className = 'vv-step';
-          step.dataset.index = String(i);
-          step.setAttribute('aria-label', `Versió del ${formatDate(v.commit.date)}`);
+        function buildTimeline() {
+          track.innerHTML = "";
+          // Render newest (first in array) to oldest (last in array) = left to right
+          for (let i = 0; i < versions.length; i++) {
+            const v = versions[i];
+            const step = document.createElement("button");
+            step.type = "button";
+            step.className = "vv-step";
+            step.dataset.index = String(i);
+            step.setAttribute(
+              "aria-label",
+              `Versió del ${formatDate(v.commit.date)}`,
+            );
 
-          const dot = document.createElement('span');
-          dot.className = 'dot';
-          step.appendChild(dot);
+            const dot = document.createElement("span");
+            dot.className = "dot";
+            step.appendChild(dot);
 
-          const label = document.createElement('span');
-          label.className = 'date-label';
-          label.textContent = formatDate(v.commit.date);
-          step.appendChild(label);
+            const label = document.createElement("span");
+            label.className = "date-label";
+            label.textContent = formatDate(v.commit.date);
+            step.appendChild(label);
 
-          if (v.isOriginal) {
-            const tag = document.createElement('span');
-            tag.className = 'original-tag';
-            tag.textContent = 'Original';
-            step.appendChild(tag);
+            if (v.isOriginal) {
+              const tag = document.createElement("span");
+              tag.className = "original-tag";
+              tag.textContent = "Original";
+              step.appendChild(tag);
+            }
+
+            step.addEventListener("click", () => {
+              activeIndex = i;
+              updateView();
+            });
+
+            track.appendChild(step);
           }
+        }
 
-          step.addEventListener('click', () => {
-            activeIndex = i;
-            updateView();
+        function updateView() {
+          const v = versions[activeIndex];
+          if (!v) return;
+
+          rendered.innerHTML = showDiffCheck.checked ? v.diffHtml : v.html;
+          messageEl.textContent = v.commit.message;
+
+          // Update prev/next: left = older (higher index), right = newer (lower index)
+          prevBtn.disabled = activeIndex >= versions.length - 1;
+          nextBtn.disabled = activeIndex <= 0;
+
+          content.classList.toggle("no-diff", !showDiffCheck.checked);
+
+          // Update active step styling
+          track.querySelectorAll(".vv-step").forEach((step) => {
+            const el = step as HTMLElement;
+            el.classList.toggle(
+              "active",
+              el.dataset.index === String(activeIndex),
+            );
           });
 
-          track.appendChild(step);
+          // On mobile, scroll active step into view
+          const activeStep = track.querySelector(
+            ".vv-step.active",
+          ) as HTMLElement | null;
+          if (activeStep) {
+            activeStep.scrollIntoView({
+              behavior: "smooth",
+              block: "nearest",
+              inline: "center",
+            });
+          }
         }
-      }
 
-      function updateView() {
-        const v = versions[activeIndex];
-        if (!v) return;
+        function hideSiblings() {
+          const parent = viewer.parentElement;
+          if (!parent) return;
+          hiddenSiblings = [];
+          for (const child of Array.from(parent.children)) {
+            if (child === viewer) continue;
+            const el = child as HTMLElement;
+            hiddenSiblings.push({ el, display: el.style.display });
+            el.style.display = "none";
+          }
+        }
 
-        rendered.innerHTML = showDiffCheck.checked ? v.diffHtml : v.html;
-        messageEl.textContent = v.commit.message;
+        function restoreSiblings() {
+          for (const { el, display } of hiddenSiblings) {
+            el.style.display = display;
+          }
+          hiddenSiblings = [];
+        }
 
-        // Update prev/next: left = older (higher index), right = newer (lower index)
-        prevBtn.disabled = activeIndex >= versions.length - 1;
-        nextBtn.disabled = activeIndex <= 0;
+        function activate() {
+          active = true;
+          toggle.classList.add("active");
+          scrubber.hidden = false;
+          content.hidden = false;
+          hideSiblings();
+          activeIndex = 0; // newest version
+          updateView();
+          viewer.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
 
-        content.classList.toggle('no-diff', !showDiffCheck.checked);
+        function deactivate() {
+          active = false;
+          toggle.classList.remove("active");
+          scrubber.hidden = true;
+          content.hidden = true;
+          restoreSiblings();
+        }
 
-        // Update active step styling
-        track.querySelectorAll('.vv-step').forEach(step => {
-          const el = step as HTMLElement;
-          el.classList.toggle('active', el.dataset.index === String(activeIndex));
+        // Lazy-fetch data
+        let loaded = false;
+        async function loadData() {
+          if (loaded) return true;
+          try {
+            const res = await fetch(endpoint);
+            if (!res.ok) return false;
+            const data = await res.json();
+            if (!data.hasHistory || !data.versions?.length) return false;
+            versions = data.versions;
+            buildTimeline();
+            loaded = true;
+            return true;
+          } catch {
+            return false;
+          }
+        }
+
+        // Initial load to decide if we show the button
+        loadData().then((ok) => {
+          if (ok) controls.hidden = false;
         });
 
-        // On mobile, scroll active step into view
-        const activeStep = track.querySelector('.vv-step.active') as HTMLElement | null;
-        if (activeStep) {
-          activeStep.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-      }
+        toggle.addEventListener("click", async () => {
+          if (active) {
+            deactivate();
+            return;
+          }
+          const ok = await loadData();
+          if (ok) activate();
+        });
 
-      function hideSiblings() {
-        const parent = viewer.parentElement;
-        if (!parent) return;
-        hiddenSiblings = [];
-        for (const child of Array.from(parent.children)) {
-          if (child === viewer) continue;
-          const el = child as HTMLElement;
-          hiddenSiblings.push({ el, display: el.style.display });
-          el.style.display = 'none';
-        }
-      }
+        prevBtn.addEventListener("click", () => {
+          // Left arrow = older = higher array index
+          if (activeIndex < versions.length - 1) {
+            activeIndex++;
+            updateView();
+          }
+        });
+        nextBtn.addEventListener("click", () => {
+          // Right arrow = newer = lower array index
+          if (activeIndex > 0) {
+            activeIndex--;
+            updateView();
+          }
+        });
+        showDiffCheck.addEventListener("change", updateView);
 
-      function restoreSiblings() {
-        for (const { el, display } of hiddenSiblings) {
-          el.style.display = display;
-        }
-        hiddenSiblings = [];
-      }
-
-      function activate() {
-        active = true;
-        toggle.classList.add('active');
-        scrubber.hidden = false;
-        content.hidden = false;
-        hideSiblings();
-        activeIndex = 0; // newest version
-        updateView();
-        viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
-      function deactivate() {
-        active = false;
-        toggle.classList.remove('active');
-        scrubber.hidden = true;
-        content.hidden = true;
-        restoreSiblings();
-      }
-
-      // Lazy-fetch data
-      let loaded = false;
-      async function loadData() {
-        if (loaded) return true;
-        try {
-          const res = await fetch(endpoint);
-          if (!res.ok) return false;
-          const data = await res.json();
-          if (!data.hasHistory || !data.versions?.length) return false;
-          versions = data.versions;
-          buildTimeline();
-          loaded = true;
-          return true;
-        } catch {
-          return false;
-        }
-      }
-
-      // Initial load to decide if we show the button
-      loadData().then(ok => {
-        if (ok) controls.hidden = false;
+        // Keyboard nav
+        document.addEventListener("keydown", (e: KeyboardEvent) => {
+          if (!active) return;
+          if (e.key === "Escape") {
+            deactivate();
+            return;
+          }
+          if (e.key === "ArrowLeft") {
+            prevBtn.click();
+            e.preventDefault();
+          }
+          if (e.key === "ArrowRight") {
+            nextBtn.click();
+            e.preventDefault();
+          }
+        });
       });
-
-      toggle.addEventListener('click', async () => {
-        if (active) { deactivate(); return; }
-        const ok = await loadData();
-        if (ok) activate();
-      });
-
-      prevBtn.addEventListener('click', () => {
-        // Left arrow = older = higher array index
-        if (activeIndex < versions.length - 1) {
-          activeIndex++;
-          updateView();
-        }
-      });
-      nextBtn.addEventListener('click', () => {
-        // Right arrow = newer = lower array index
-        if (activeIndex > 0) {
-          activeIndex--;
-          updateView();
-        }
-      });
-      showDiffCheck.addEventListener('change', updateView);
-
-      // Keyboard nav
-      document.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (!active) return;
-        if (e.key === 'Escape') { deactivate(); return; }
-        if (e.key === 'ArrowLeft') { prevBtn.click(); e.preventDefault(); }
-        if (e.key === 'ArrowRight') { nextBtn.click(); e.preventDefault(); }
-      });
-    });
   }
 
   initVersionViewer();
-  document.addEventListener('astro:after-swap', initVersionViewer);
+  document.addEventListener("astro:after-swap", initVersionViewer);
 </script>

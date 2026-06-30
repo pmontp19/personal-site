@@ -4,10 +4,9 @@ import { render } from "astro:content";
 
 interface Props {
   data: CollectionEntry<"experience">;
-  index: number;
 }
 
-const { data, index } = Astro.props;
+const { data } = Astro.props;
 const { Content } = await render(data);
 ---
 

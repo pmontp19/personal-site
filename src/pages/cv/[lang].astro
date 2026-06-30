@@ -1,48 +1,53 @@
 ---
-import { getEntry, render } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
+import { getEntry, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
 
 export async function getStaticPaths() {
   return [
-    { params: { lang: 'ca' } },
-    { params: { lang: 'en' } },
-    { params: { lang: 'es' } }
+    { params: { lang: "ca" } },
+    { params: { lang: "en" } },
+    { params: { lang: "es" } },
   ];
 }
 
 const { lang } = Astro.params;
 
 const titles: Record<string, string> = {
-  ca: 'CV - Pere Montpeó - Enginyer de software',
-  en: 'CV - Pere Montpeó - Software Engineer',
-  es: 'CV - Pere Montpeó - Ingeniero de software'
+  ca: "CV - Pere Montpeó - Enginyer de software",
+  en: "CV - Pere Montpeó - Software Engineer",
+  es: "CV - Pere Montpeó - Ingeniero de software",
 };
 
 const descriptions: Record<string, string> = {
-  ca: 'Currículum vitae de Pere Montpeó. Experiència professional, educació i habilitats.',
-  en: 'Pere Montpeó\'s curriculum vitae. Professional experience, education and skills.',
-  es: 'Currículum vitae de Pere Montpeó. Experiencia profesional, educación y habilidades.'
+  ca: "Currículum vitae de Pere Montpeó. Experiència professional, educació i habilitats.",
+  en: "Pere Montpeó's curriculum vitae. Professional experience, education and skills.",
+  es: "Currículum vitae de Pere Montpeó. Experiencia profesional, educación y habilidades.",
 };
 
 const buttonText: Record<string, string> = {
-  ca: 'Desa com a PDF',
-  en: 'Save as PDF',
-  es: 'Guardar como PDF'
+  ca: "Desa com a PDF",
+  en: "Save as PDF",
+  es: "Guardar como PDF",
 };
 
 const pdfFileNames: Record<string, string> = {
-  ca: 'Pere-Montpeo-CV-Enginyer-de-software',
-  en: 'Pere-Montpeo-CV-Software-Engineer',
-  es: 'Pere-Montpeo-CV-Ingeniero-de-software'
+  ca: "Pere-Montpeo-CV-Enginyer-de-software",
+  en: "Pere-Montpeo-CV-Software-Engineer",
+  es: "Pere-Montpeo-CV-Ingeniero-de-software",
 };
 
-const cv = await getEntry('cv', `cv-${lang}`);
-if (!cv) return Astro.redirect('/cv/en');
+const cv = await getEntry("cv", `cv-${lang}`);
+if (!cv) return Astro.redirect("/cv/en");
 const { Content } = await render(cv);
 ---
 
-<Layout title={titles[lang]} lang={lang} description={descriptions[lang]} canonicalUrl={`https://peremontpeo.dev/cv/${lang}/`}>
+<Layout
+  title={titles[lang]}
+  lang={lang}
+  description={descriptions[lang]}
+  canonicalUrl={`https://peremontpeo.dev/cv/${lang}/`}
+>
   <main class="cv-page">
     <div class="cv-actions">
       <LanguageSwitcher currentLang={lang} />
@@ -52,9 +57,22 @@ const { Content } = await render(cv);
         type="button"
         data-pdf-filename={pdfFileNames[lang]}
       >
-        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <polyline points="6 9 6 2 18 2 18 9"></polyline>
-          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <path
+            d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+          ></path>
           <rect x="6" y="14" width="12" height="8"></rect>
         </svg>
         {buttonText[lang]}
@@ -163,7 +181,7 @@ const { Content } = await render(cv);
     but keep it for the printed/exported PDF where ATS parsers need it.
     Order in markdown: h1, p (tagline), p (contact), hr, h2 (Summary).
   */
-  .prose.cv-document > :global(:nth-child(-n+5)) {
+  .prose.cv-document > :global(:nth-child(-n + 5)) {
     display: none;
   }
 
@@ -187,7 +205,7 @@ const { Content } = await render(cv);
     .cv-page {
       padding: 0;
       max-width: 100%;
-      font-family: 'Helvetica', 'Arial', 'Liberation Sans', sans-serif;
+      font-family: "Helvetica", "Arial", "Liberation Sans", sans-serif;
       font-size: 10.5pt;
       line-height: 1.4;
     }
@@ -197,7 +215,7 @@ const { Content } = await render(cv);
     }
 
     /* Reveal the contact header inside the printed document */
-    .prose.cv-document > :global(:nth-child(-n+5)) {
+    .prose.cv-document > :global(:nth-child(-n + 5)) {
       display: block;
     }
 
