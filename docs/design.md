@@ -67,32 +67,26 @@ decisió que afegeixi «decoració» va en contra de la direcció.
    Amplada de línia màxima de lectura: `max-width: 46rem` centrat.
 7. Tema: `light-dark()` + `prefers-color-scheme` (auto), amb toggle manual mínim.
 
-## Avatar dithered (divergència acordada respecte l'spec)
+## Avatar interactiu (divergència acordada respecte l'spec)
 
 L'spec original deia «no imatges». Mantenim **un únic element gràfic**: l'avatar
-interactiu existent, tractat com a **textura de terminal** mitjançant dithering, de
-manera que no trenca l'estètica de text pla.
+interactiu existent (`InteractiveAvatar.astro`), tal com és ara — **foto normal amb
+la capa SVG d'ulls** que segueixen el cursor, parpellegen i fan wink.
 
-Algoritme (client, sobre `<canvas>`):
+> **Descartat:** es va provar un tractament *dithered* (Bayer 4×4 duotò) per donar-li
+> aire de terminal, però els ulls SVG nítids per sobre de la cara ditherada xocaven.
+> Decisió final: **avatar sense dither**.
 
-- Dibuixa `avatar.png` en un canvas de baixa resolució (**~106×106**) i escala'l a
-  la mida final amb `image-rendering: pixelated` (píxels grossos, retro).
-- Converteix a luminància (`0.299 R + 0.587 G + 0.114 B`), aplica
-  `contrast ≈ 1.32` i `bright ≈ 6`.
-- **Dither Bayer ordenat 4×4**:
-  `[0,8,2,10, 12,4,14,6, 3,11,1,9, 15,7,13,5]`, llindar `= (m + 0.5) / 16 * 255`.
-- **Duotò derivat dels tokens**: píxel «fosc» → `--fg`, píxel «clar» → `--bg`.
-  En mode fosc el retrat queda en positiu invertit (efecte fòsfor CRT).
-- Es **recalcula en canviar de tema** (toggle i canvi de sistema en mode AUTO).
-  Resoldre el color via `<canvas>` (`fillStyle`) per obtenir RGB reals, **mai
-  parsejant la cadena `oklch(...)`** de `getComputedStyle` (donaria colors erronis).
-- La capa SVG d'ulls (pupil·les que segueixen el cursor, parpelleig, wink) es manté
-  **intacta i per sobre** del canvas. Pupil·les fosques, escleròtica clara.
-- Mida: ~132px. Marc fi (`--muted`/transparent), cantonades rectes (no cercle).
+- Foto: `src/assets/avatar.png`, `object-fit: cover`.
+- Mida: ~132px. Cantonades rectes (no cercle), sense vora ni ombra.
+- La capa SVG d'ulls es manté intacta: pupil·les fosques (`--eye-pupil`),
+  escleròtica clara (`--eye-sclera`), seguiment del cursor + parpelleig/wink.
+- `prefers-reduced-motion`: atura el parpelleig automàtic (el seguiment del cursor
+  es manté, és benigne).
 
-Alternativa de build: precalcular el dither amb `sharp` per servir un PNG lleuger.
-Es descarta per ara perquè fixa un sol tema; el càlcul al client permet el duotò per
-tema i és prou barat a aquesta resolució.
+Opció oberta (no decidida): passar la foto a **escala de grisos** (`filter:
+grayscale(1)` o pre-procés amb `sharp`) per integrar-la millor amb el to monocrom de
+la pàgina, mantenint l'avatar reconeixible. Per defecte es deixa **en color**.
 
 ## Nav (divergència acordada)
 
@@ -171,7 +165,7 @@ CONTACTE:
 | `src/layouts/Layout.astro` | Treure header sticky / footer pesat / fons de punts; `padding` 30/40px; conservar el script de tema (ampliar a AUTO/CLAR/FOSC) i les view transitions. |
 | `src/components/Header.astro` | Reduir a nav en text (o moure-la al peu); eliminar emoji 🍔 / 👨‍💻 i menú hamburguesa. |
 | `src/components/Footer.astro` | Línia única en text amb `[inici] [apunts]` i el toggle de tema mínim. |
-| `src/components/InteractiveAvatar.astro` | Afegir capa `<canvas>` amb el dither (algoritme de dalt); mantenir la capa SVG d'ulls; re-render en canvi de tema. |
+| `src/components/InteractiveAvatar.astro` | Conservar pràcticament tal qual (foto + ulls interactius); només adaptar el marc al nou layout (cantonades rectes, sense cercle/ombra), tokens d'ulls via OKLch. |
 | `src/pages/index.astro` | Reescriure la home com a `<pre>` segons l'esquema. |
 | `src/components/BlogPosts.astro`, `ExperienceTimeline.astro`, `ExperienceEntry.astro`, `ContactSection.astro` | Adaptar a sortida de text dins `<pre>` (llistes amb `-`, labels ALL CAPS, enllaços `[markdown]`). |
 | `src/pages/blog/index.astro`, `blog/[slug].astro` | Llistat i article en l'estil terminal; cos de l'article en Geist Sans (excepció). |
@@ -192,7 +186,8 @@ CONTACTE:
 
 ## Notes / decisions obertes
 
-- **Gra del dither:** ~106px (gros/retro). Ajustable si es vol més detall facial.
+- **Avatar en color vs escala de grisos:** per defecte en color; obert a provar
+  `grayscale` si destorba el to monocrom.
 - **Amplada de columna:** 46rem; revisar amb contingut real.
 - Fidelitat 100% a l'spec = treure l'avatar i deixar text pur. Decisió actual:
-  **mantenir l'avatar ditherat** com a segell personal.
+  **mantenir l'avatar interactiu** (foto + ulls) com a segell personal, sense dither.
