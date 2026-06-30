@@ -36,11 +36,6 @@ const personSchema = {
   url: "https://peremontpeo.dev",
   jobTitle: "AI Product Engineer",
   description: "Enginyer de programari especialitzat en desenvolupament web.",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Tarragona",
-    addressRegion: "Catalunya",
-  },
   sameAs: [
     "https://github.com/pmontp19",
     "https://linkedin.com/in/perem",
@@ -62,13 +57,13 @@ const personSchema = {
 Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols. Si no estic programant, segurament em trobaràs sobre la bicicleta, a la cuina o llegint.
 
 <span class="label">STATUS:</span> AI Product Engineer @ Goil <span class="accent">· Actual</span>
-<span class="label">LLOC:</span>   Tarragona, Catalunya
 
 <span class="tilde">~~~</span>
 
 <span class="label">ÚLTIM APUNT:</span>
 {latest && (<a class="mdlink" href={`/blog/${getSlug(latest.id)}/`} transition:name={`title-${getSlug(latest.id)}`}>{latest.data.title}</a>)}
 <span class="muted">{latest ? `${formatDate(latest.data.date)} · ${latestReadingTime}` : ""}</span>
+<a class="mdlink" href="/blog">veure'ls tots →</a>
 
 <span class="tilde">~~~</span>
 

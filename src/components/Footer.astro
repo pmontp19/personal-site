@@ -3,7 +3,7 @@ const year = new Date().getFullYear();
 const { pathname } = Astro.url;
 const isHome = pathname === "/";
 const isBlog = pathname.startsWith("/blog");
-const isCv = pathname.startsWith("/cv");
+const isExp = pathname.startsWith("/experiencia");
 ---
 
 <footer class="site-footer">
@@ -16,7 +16,11 @@ const isCv = pathname.startsWith("/cv");
     <a class="mdlink" href="/blog" aria-current={isBlog ? "page" : undefined}
       >apunts</a
     >
-    <a class="mdlink" href="/cv" aria-current={isCv ? "page" : undefined}>cv</a>
+    <a
+      class="mdlink"
+      href="/experiencia"
+      aria-current={isExp ? "page" : undefined}>experiència</a
+    >
   </nav>
   <p class="foot-line">
     <span class="label">TEMA:</span>
