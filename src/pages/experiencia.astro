@@ -46,7 +46,7 @@ const locale = "ca-ES";
 
         {exp.data.description && <p class="exp-desc">{exp.data.description}</p>}
 
-        <div class="markdown-content prose" id={`markdown-content-${index}`}>
+        <div class="markdown-content" id={`markdown-content-${index}`}>
           <ExperienceEntry data={exp} />
         </div>
         {exp.body && exp.body.trim() && (
