@@ -4,7 +4,6 @@ import Layout from "../layouts/Layout.astro";
 import ExperienceEntry from "../components/ExperienceEntry.astro";
 import { formatDate, getSlug } from "../utils/date";
 
-// Get all entries from the 'experience' collection
 const experiences = (await getCollection("experience")).sort(
   (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf(),
 );
@@ -16,300 +15,165 @@ const dateOptions: Intl.DateTimeFormatOptions = {
 const locale = "ca-ES";
 ---
 
-<Layout title="Experiència | Pere Montpeó">
-  <main>
-    <section class="experience-section section">
-      <div class="experiences">
-        <a href="/cv" class="cv-link">Veure el CV clàssic →</a>
-        <div class="experiences">
-          {
-            experiences.map((exp, index) => (
-              <div class="card">
-                <div class="experience-content">
-                  <div class="experience-header">
-                    {exp.data.logo && (
-                      <img
-                        src={exp.data.logo}
-                        alt={`${exp.data.company} logo`}
-                        class="company-logo"
-                        width="48"
-                        height="48"
-                      />
-                    )}
-                    <div class="experience-title-info">
-                      <h2
-                        class="job-title"
-                        transition:name={`role-${getSlug(exp.id)}`}
-                      >
-                        {exp.data.role}
-                      </h2>
-                      <p
-                        class="company-name text-muted"
-                        transition:name={`company-${getSlug(exp.id)}`}
-                      >
-                        {exp.data.company}
-                      </p>
-                    </div>
-                  </div>
+<Layout
+  title="Experiència | Pere Montpeó"
+  description="Trajectòria professional de Pere Montpeó, enginyer de programari."
+  canonicalUrl="https://peremontpeo.dev/experiencia/"
+>
+  <h1 class="title page-title">EXPERIÈNCIA</h1>
+  <a class="mdlink" href="/cv">veure el CV clàssic →</a>
 
-                  <p class="date-range text-muted">
-                    {formatDate(exp.data.startDate, dateOptions, locale)} -
-                    {exp.data.endDate
-                      ? formatDate(exp.data.endDate, dateOptions, locale)
-                      : "Actual"}
-                  </p>
+  <p class="tilde" aria-hidden="true">~~~</p>
 
-                  <div class="description">
-                    <p>{exp.data.description}</p>
-                  </div>
+  {
+    experiences.map((exp, index) => (
+      <article class="exp-entry">
+        <p class="exp-head">
+          <span class="title" transition:name={`role-${getSlug(exp.id)}`}>
+            {exp.data.role}
+          </span>
+          <span class="muted"> @ </span>
+          <span class="accent" transition:name={`company-${getSlug(exp.id)}`}>
+            {exp.data.company}
+          </span>
+        </p>
+        <p class="exp-date muted">
+          {formatDate(exp.data.startDate, dateOptions, locale)} —{" "}
+          {exp.data.endDate
+            ? formatDate(exp.data.endDate, dateOptions, locale)
+            : "Actual"}
+        </p>
 
-                  <div
-                    class="markdown-content"
-                    id={`markdown-content-${index}`}
-                  >
-                    <ExperienceEntry data={exp} />
-                  </div>
-                  {exp.body && exp.body.trim() && (
-                    <div class="show-more-container">
-                      <button
-                        class="show-more-button button-link"
-                        aria-expanded="false"
-                        aria-controls={`markdown-content-${index}`}
-                      >
-                        <span>Veure més</span>
-                        <span class="arrow-down">▼</span>
-                      </button>
-                    </div>
-                  )}
+        {exp.data.description && <p class="exp-desc">{exp.data.description}</p>}
 
-                  {exp.data.tags && exp.data.tags.length > 0 && (
-                    <div class="skills-section">
-                      <h3>Habilitats i tecnologies</h3>
-                      <div class="tags">
-                        {exp.data.tags.map((tag) => (
-                          <span class="tag">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
-          }
+        <div class="markdown-content" id={`markdown-content-${index}`}>
+          <div class="md-inner">
+            <ExperienceEntry data={exp} />
+          </div>
         </div>
-      </div>
-    </section>
-  </main>
+        {exp.body && exp.body.trim() && (
+          <button
+            class="show-more-button button-link"
+            aria-expanded="false"
+            aria-controls={`markdown-content-${index}`}
+          >
+            <span>veure més</span>
+            <span class="arrow-down"> ▼</span>
+          </button>
+        )}
+
+        {exp.data.tags && exp.data.tags.length > 0 && (
+          <p class="exp-tags muted">{exp.data.tags.join(" · ")}</p>
+        )}
+
+        <p class="tilde" aria-hidden="true">
+          ~~~
+        </p>
+      </article>
+    ))
+  }
 </Layout>
 
 <script>
   function initializeShowMore() {
-    const showMoreButtons = document.querySelectorAll(".show-more-button");
+    const buttons = document.querySelectorAll(".show-more-button");
+    const cleanups: Array<() => void> = [];
 
-    // Store listeners to remove them later
-    const listeners = new Map();
-
-    showMoreButtons.forEach((button) => {
-      const clickHandler = () => {
-        const contentId = button.getAttribute("aria-controls");
-        const contentElement = contentId
-          ? document.getElementById(contentId)
-          : null;
-        const isExpanded = button.getAttribute("aria-expanded") === "true";
-
-        if (contentElement) {
-          button.setAttribute("aria-expanded", String(!isExpanded));
-          contentElement.classList.toggle("expanded");
-
-          const buttonTextSpan = button.querySelector("span:not(.arrow-down)");
-          if (buttonTextSpan) {
-            buttonTextSpan.textContent = isExpanded
-              ? "Veure més"
-              : "Veure menys";
-          }
-        }
+    buttons.forEach((button) => {
+      const handler = () => {
+        const id = button.getAttribute("aria-controls");
+        const content = id ? document.getElementById(id) : null;
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        if (!content) return;
+        button.setAttribute("aria-expanded", String(!expanded));
+        content.classList.toggle("expanded");
+        const label = button.querySelector("span:not(.arrow-down)");
+        if (label) label.textContent = expanded ? "veure més" : "veure menys";
       };
-
-      button.addEventListener("click", clickHandler);
-      // Store the handler to remove it later
-      listeners.set(button, clickHandler);
+      button.addEventListener("click", handler);
+      cleanups.push(() => button.removeEventListener("click", handler));
     });
 
-    // Cleanup function to remove listeners before swap
     const cleanup = () => {
-      showMoreButtons.forEach((button) => {
-        const handler = listeners.get(button);
-        if (handler) {
-          button.removeEventListener("click", handler);
-        }
-      });
-      // Remove the cleanup listener itself
+      cleanups.forEach((fn) => fn());
       document.removeEventListener("astro:before-swap", cleanup);
     };
-
-    // Add cleanup listener for Astro transitions
     document.addEventListener("astro:before-swap", cleanup, { once: true });
   }
 
-  // Initialize after Astro navigations (and initial load)
   document.addEventListener("astro:page-load", initializeShowMore);
 </script>
 
 <style>
-  .experiences {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto;
+  .page-title {
+    font-size: 1.4rem;
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
   }
 
-  /* Styles specific to content *inside* the .card */
-  .card .job-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    border-bottom: none;
-    padding-bottom: 0;
-    margin-top: 0;
+  .exp-entry {
+    margin: 0;
+  }
+  .exp-head {
+    margin: 0;
+  }
+  .exp-date {
+    margin: 0 0 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .exp-desc {
+    margin: 0 0 0.5rem;
+    max-width: 64ch;
+  }
+  .exp-tags {
+    margin: 0.5rem 0 0;
   }
 
-  .card .company-name {
-    font-size: 1.125rem;
-    margin-bottom: 0.5rem;
-    margin-top: 0;
+  .show-more-button {
+    margin-top: 0.25rem;
+  }
+  .arrow-down {
+    font-size: 0.7em;
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+  .show-more-button[aria-expanded="true"] .arrow-down {
+    transform: rotate(180deg);
   }
 
-  .experience-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .experience-header .company-logo {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    border-radius: 10px;
-    flex-shrink: 0;
-  }
-
-  .experience-title-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .card .date-range {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-
-  .card .description p {
-    margin-bottom: 1rem;
-    line-height: 1.5;
-  }
-
-  .card .skills-section {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .card .skills-section h3 {
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .card .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  /* Styles for the initially hidden markdown content */
+  /* desplegable: anima grid-template-rows 0fr→1fr (alçada exacta, sense salt) */
   .markdown-content {
-    max-height: 0;
-    overflow: hidden;
-    transition:
-      max-height 0.4s ease-out,
-      margin-top 0.4s ease-out;
-    margin-top: 0;
-    line-height: 1.6;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
   }
-
   .markdown-content.expanded {
-    max-height: 1000px; /* Adjust as needed */
-    margin-top: 1rem;
-    transition:
-      max-height 0.4s ease-in,
-      margin-top 0.4s ease-in;
+    grid-template-rows: 1fr;
   }
-
-  /* Global markdown content styling (can move to global.css if used elsewhere) */
+  .md-inner {
+    min-height: 0;
+    overflow: hidden;
+    padding-top: 0.75rem;
+  }
   .markdown-content :global(p),
   .markdown-content :global(ul),
   .markdown-content :global(ol) {
-    margin-bottom: 1em;
+    margin-bottom: 0.75rem;
   }
   .markdown-content :global(ul),
   .markdown-content :global(ol) {
     margin-left: 1.5rem;
   }
   .markdown-content :global(li) {
-    margin-bottom: 0.5em;
-  }
-  .markdown-content :global(a) {
-    /* Inherit global link styles */
+    margin-bottom: 0.35rem;
   }
   .markdown-content :global(strong) {
     font-weight: 600;
   }
   .markdown-content :global(code) {
-    font-family: "Geist Mono", monospace;
-    background-color: var(--secondary);
+    font-family: var(--mono);
+    background-color: var(--surface);
     padding: 0.1em 0.3em;
-    border-radius: 4px;
     font-size: 0.9em;
-  }
-  .markdown-content :global(pre) {
-    background-color: var(--secondary);
-    padding: 1em;
-    border-radius: var(--radius);
-    overflow-x: auto;
-    margin-bottom: 1em;
-  }
-  .markdown-content :global(pre code) {
-    background-color: transparent;
-    padding: 0;
-    border-radius: 0;
-    font-size: 0.85em;
-  }
-
-  /* Veure més button specific styles */
-  .show-more-container {
-    display: flex;
-    justify-content: center;
-    margin: 1rem 0 0;
-  }
-
-  .arrow-down {
-    font-size: 0.7rem;
-    transition: transform 0.3s ease;
-    margin-left: 0.25rem;
-  }
-
-  /* Rotation handled by JS adding/removing class or direct style */
-  .show-more-button[aria-expanded="true"] .arrow-down {
-    transform: rotate(180deg);
-  }
-
-  @media (min-width: 768px) {
-    .card {
-      padding: 2rem;
-    }
-    .card .job-title {
-      font-size: 1.75rem;
-    }
   }
 </style>

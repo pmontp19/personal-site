@@ -3,7 +3,6 @@ import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { formatDate, getSlug } from "../../utils/date";
 
-// Fetch all blog posts, filter out drafts, and sort by date (most recent first)
 const allPosts = (
   await getCollection("blog", ({ data }) => {
     return data.draft !== true;
@@ -12,94 +11,83 @@ const allPosts = (
 ---
 
 <Layout
-  title="Blog - Pere Montpeó"
+  title="Apunts - Pere Montpeó"
   description="Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de programari i altres coses que em semblen interessants."
   canonicalUrl="https://peremontpeo.dev/blog/"
 >
-  <main>
-    <section class="section blog-index-section animate">
-      <h1>Apunts</h1>
-      <p class="subtitle">
-        Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de
-        programari i altres coses que em semblen interessants.
-      </p>
+  <h1 class="title page-title">APUNTS</h1>
+  <p class="muted intro">
+    Apunts, reflexions i tutorials sobre tecnologia, desenvolupament de
+    programari i altres coses que em semblen interessants.
+  </p>
 
-      <ul class="posts-list">
-        {
-          allPosts.map((post) => (
-            <li>
-              <a href={`/blog/${getSlug(post.id)}/`}>
-                <time
-                  datetime={post.data.date.toISOString()}
-                  class="post-date"
-                  transition:name={`date-${getSlug(post.id)}`}
-                >
-                  {formatDate(post.data.date)}
-                </time>
-                <span
-                  class="post-title"
-                  transition:name={`title-${getSlug(post.id)}`}
-                >
-                  {post.data.title}
-                </span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
-  </main>
+  <p class="tilde" aria-hidden="true">~~~</p>
+
+  <ul class="term-list">
+    {
+      allPosts.map((post) => (
+        <li class="term-row">
+          <span class="dash muted">-</span>
+          <time
+            datetime={post.data.date.toISOString()}
+            class="row-date muted"
+            transition:name={`date-${getSlug(post.id)}`}
+          >
+            {formatDate(post.data.date)}
+          </time>
+          <a
+            class="mdlink row-title"
+            href={`/blog/${getSlug(post.id)}/`}
+            transition:name={`title-${getSlug(post.id)}`}
+          >
+            {post.data.title}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
 </Layout>
 
 <style>
-  .posts-list {
-    list-style: none;
-    padding: 0;
+  .page-title {
+    font-size: 1.4rem;
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
+  }
+  .intro {
     margin: 0;
-    max-width: 700px;
+    max-width: 60ch;
   }
 
-  .posts-list li {
-    margin-bottom: 0.75rem;
+  .term-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
-
-  .posts-list a {
-    display: flex;
+  .term-row {
+    display: grid;
+    grid-template-columns: 1.1rem 6.5rem 1fr;
+    gap: 0 0.5rem;
     align-items: baseline;
-    gap: 0.75rem;
-    text-decoration: none;
-    color: var(--foreground);
-    transition: color 0.2s ease;
-    padding: 0.25rem 0;
+    padding: 2px 0;
   }
-
-  .posts-list a:hover,
-  .posts-list a:focus {
-    color: var(--primary);
-    text-decoration: none; /* Keep underline off on hover/focus for this style */
-  }
-
-  .posts-list a:focus {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
-    border-radius: 2px;
-  }
-
-  .post-date {
-    font-size: 0.9rem;
-    color: var(--text-muted);
+  .row-date {
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    font-family: "Geist Mono", monospace;
+  }
+  .row-title {
+    overflow-wrap: anywhere;
   }
 
-  .post-title {
-    font-weight: 500;
-    line-height: 1.4;
-  }
-
-  /* Add subtle underline on hover for the title span only */
-  .posts-list a:hover .post-title,
-  .posts-list a:focus .post-title {
-    text-decoration: underline;
+  @media (max-width: 30rem) {
+    .term-row {
+      grid-template-columns: 1.1rem 1fr;
+    }
+    .row-date {
+      grid-column: 2;
+    }
+    .row-title {
+      grid-column: 2;
+    }
   }
 </style>

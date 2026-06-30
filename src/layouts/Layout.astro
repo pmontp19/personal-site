@@ -1,8 +1,6 @@
 ---
 import "../styles/global.css";
-import "@fontsource/geist-mono";
 import "@fontsource/geist-sans";
-import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { ClientRouter } from "astro:transitions";
 
@@ -59,260 +57,117 @@ const pageUrl = canonicalUrl || siteUrl;
     }
     <meta
       name="theme-color"
-      content="hsl(0, 0%, 100%)"
+      content="#f7f7f8"
       media="(prefers-color-scheme: light)"
     />
     <meta
       name="theme-color"
-      content="hsl(222.2, 84%, 4.9%)"
+      content="#070708"
       media="(prefers-color-scheme: dark)"
     />
     <slot name="head" />
     <ClientRouter />
 
     <script is:inline>
-      // Keep preloadTheme exactly as it was - prevents FOUC on initial load
-      function toggleThemeClass(dark) {
-        // Simplified function just for adding/removing class in head script
-        if (dark) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
+      // Evita FOUC: aplica el tema desat abans de pintar.
+      // Estats: 'light' | 'dark' | 'system'(=auto). Auto deixa actuar light-dark().
+      (function () {
+        try {
+          const t = localStorage.getItem("theme");
+          const root = document.documentElement;
+          if (t === "light" || t === "dark") root.setAttribute("data-theme", t);
+          else root.removeAttribute("data-theme");
+        } catch {
+          /* localStorage no disponible */
         }
-      }
-
-      function preloadTheme() {
-        const userTheme = localStorage.getItem("theme"); // Use getItem for safety
-        let applyDarkMode;
-
-        if (userTheme === "dark") {
-          applyDarkMode = true;
-        } else if (userTheme === "light") {
-          applyDarkMode = false;
-        } else {
-          // "system" or null/undefined
-          applyDarkMode = window.matchMedia(
-            "(prefers-color-scheme: dark)",
-          ).matches;
-        }
-        toggleThemeClass(applyDarkMode);
-      }
-      preloadTheme();
+      })();
     </script>
   </head>
   <body>
-    <a href="#main" class="skip-link">Skip to content</a>
-    <div class="page-layout">
-      <header class="page-header">
-        <Header />
-      </header>
-      <div id="main" class="page-main container">
+    <a href="#main" class="skip-link">Vés al contingut</a>
+    <div class="frame">
+      <main id="main">
         <slot />
-      </div>
-      <footer class="page-footer">
-        <Footer />
-      </footer>
+      </main>
+      <Footer />
     </div>
   </body>
 </html>
 
 <script>
-  // This function handles applying the theme AND disabling transitions temporarily
-  function toggleTheme(dark: boolean) {
-    const css = document.createElement("style");
-    css.appendChild(
-      document.createTextNode(
-        `* {
-                    -webkit-transition: none !important;
-                    -moz-transition: none !important;
-                    -o-transition: none !important;
-                    -ms-transition: none !important;
-                    transition: none !important;
-                }`,
-      ),
-    );
-    document.head.appendChild(css);
-
-    if (dark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
-    // Force repaint/reflow to ensure class is applied before removing transition override
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- reading layout forces a synchronous reflow
-    window.getComputedStyle(document.documentElement).opacity;
-    document.head.removeChild(css);
+  function applyTheme(value: "light" | "dark" | "system") {
+    const root = document.documentElement;
+    if (value === "light" || value === "dark")
+      root.setAttribute("data-theme", value);
+    else root.removeAttribute("data-theme");
   }
 
   function init() {
-    const userTheme = localStorage.getItem("theme") || "system"; // Default to system
-    let applyDarkMode;
-
-    if (userTheme === "dark") {
-      applyDarkMode = true;
-    } else if (userTheme === "light") {
-      applyDarkMode = false;
-    } else {
-      // "system"
-      applyDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    // Use the main toggleTheme function which handles transition disabling
-    toggleTheme(applyDarkMode);
-
-    onScroll();
-    animate();
-
-    const lightThemeButton = document.getElementById("light-theme-button");
-    lightThemeButton?.addEventListener("click", () => {
-      localStorage.setItem("theme", "light");
-      toggleTheme(false);
-    });
-
-    const darkThemeButton = document.getElementById("dark-theme-button");
-    darkThemeButton?.addEventListener("click", () => {
-      localStorage.setItem("theme", "dark");
-      toggleTheme(true);
-    });
-
-    const systemThemeButton = document.getElementById("system-theme-button");
-    systemThemeButton?.addEventListener("click", () => {
-      // Set to system and immediately apply the current system theme
-      localStorage.setItem("theme", "system");
-      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
-    });
-
-    // Listener for OS theme changes (only applies if theme is 'system')
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", (event) => {
-        if (localStorage.getItem("theme") === "system") {
-          toggleTheme(event.matches);
-        }
-      });
-
-    document.addEventListener("scroll", onScroll);
-  }
-
-  function animate() {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    requestAnimationFrame(() => {
-      const animateElements = document.querySelectorAll(".animate");
-      animateElements.forEach((element, index) => {
-        element.classList.remove("show");
-        const delay = prefersReducedMotion ? 0 : index * 150 + 50;
-        setTimeout(() => {
-          element.classList.add("show");
-        }, delay);
-      });
-    });
-  }
-
-  function onScroll() {
-    if (window.scrollY > 0) {
-      document.documentElement.classList.add("scrolled");
-    } else {
-      document.documentElement.classList.remove("scrolled");
-    }
+    const set = (v: "light" | "dark" | "system") => {
+      try {
+        localStorage.setItem("theme", v);
+      } catch {
+        /* localStorage no disponible */
+      }
+      applyTheme(v);
+    };
+    document
+      .getElementById("light-theme-button")
+      ?.addEventListener("click", () => set("light"));
+    document
+      .getElementById("dark-theme-button")
+      ?.addEventListener("click", () => set("dark"));
+    document
+      .getElementById("system-theme-button")
+      ?.addEventListener("click", () => set("system"));
   }
 
   document.addEventListener("DOMContentLoaded", init);
-
   document.addEventListener("astro:after-swap", init);
-
-  // Cleanup scroll listener on navigate away (optional but good practice)
-  document.addEventListener("astro:before-swap", () => {
-    document.removeEventListener("scroll", onScroll);
-  });
 </script>
 
 <style>
-  .skip-link {
-    position: absolute;
-    top: -100%;
-    left: 1rem;
-    z-index: 200;
-    padding: 0.5rem 1rem;
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-radius: var(--radius);
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .skip-link:focus {
-    top: 1rem;
-  }
-
   html,
   body {
-    height: 100%;
     margin: 0;
     padding: 0;
   }
 
   body {
-    background-size: auto;
-    background-repeat: repeat;
-    background-attachment: fixed;
-    background-clip: border-box;
-    background-origin: padding-box;
-    background-position: 0 0;
-    background-color: var(--background);
-    background-image: radial-gradient(
-      circle,
-      rgba(0, 0, 0, 0.1) 1.5px,
-      transparent 1.5px
-    );
-    background-size: 30px 30px;
+    padding: 30px;
+    min-height: 100vh;
   }
 
-  .dark body {
-    background-image: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.1) 1.5px,
-      transparent 1.5px
-    );
+  @media (min-width: 640px) {
+    body {
+      padding: 40px;
+    }
   }
 
-  .page-layout {
+  .frame {
+    max-width: 46rem;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    position: relative;
+    min-height: calc(100vh - 60px);
   }
 
-  .page-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  @media (min-width: 640px) {
+    .frame {
+      min-height: calc(100vh - 80px);
+    }
   }
 
-  .page-main {
-    flex-grow: 1;
-  }
-
-  .page-footer {
-    margin-top: auto;
+  main {
+    flex: 1 0 auto;
   }
 
   @media print {
     body {
-      background-image: none;
-      background-color: white;
-      color: #111;
-    }
-    .page-header,
-    .page-footer {
-      display: none;
-    }
-    .page-main {
-      margin: 0;
       padding: 0;
     }
-    .page-layout {
+    .frame {
+      max-width: 100%;
       min-height: auto;
       display: block;
     }

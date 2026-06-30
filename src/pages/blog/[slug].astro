@@ -7,7 +7,6 @@ import { getSlug } from "../../utils/date";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
-  // Filter out drafts
   return blogEntries
     .filter((entry) => entry.data.draft !== true)
     .map((entry) => ({
@@ -34,20 +33,9 @@ const articleSchema = {
   datePublished: entry.data.date.toISOString(),
   dateModified:
     entry.data.lastUpdated?.toISOString() ?? entry.data.date.toISOString(),
-  author: {
-    "@type": "Person",
-    name: "Pere Montpeó",
-    url: siteUrl,
-  },
-  publisher: {
-    "@type": "Person",
-    name: "Pere Montpeó",
-    url: siteUrl,
-  },
-  mainEntityOfPage: {
-    "@type": "WebPage",
-    "@id": pageUrl,
-  },
+  author: { "@type": "Person", name: "Pere Montpeó", url: siteUrl },
+  publisher: { "@type": "Person", name: "Pere Montpeó", url: siteUrl },
+  mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
   image: entry.data.image
     ? `${siteUrl}${entry.data.image.src}`
     : `${siteUrl}/api/og-image/${slug}.png`,
@@ -95,346 +83,183 @@ function formatDate(date: Date): string {
       content={`${siteUrl}/api/og-image/${slug}.png`}
     />
   </head>
-  <main>
-    <article class="post">
-      <div class="post-header">
-        <a href="/blog" class="back-link">← Tornar a tots els articles</a>
-        <h1 transition:name={`title-${slug}`}>{entry.data.title}</h1>
-        <div class="post-meta">
-          <time
-            datetime={entry.data.date.toISOString()}
-            transition:name={`date-${slug}`}>{formatDate(entry.data.date)}</time
-          >
-          {
-            entry.data.lastUpdated && (
-              <span class="last-updated">
-                Actualitzat: {formatDate(entry.data.lastUpdated)}
-              </span>
-            )
-          }
-          <span class="reading-time">{readingTime}</span>
-        </div>
-      </div>
 
+  <article class="post">
+    <a href="/blog" class="mdlink back">← tornar als apunts</a>
+    <h1 class="post-title title" transition:name={`title-${slug}`}>
+      {entry.data.title}
+    </h1>
+    <p class="post-meta muted">
+      <time
+        datetime={entry.data.date.toISOString()}
+        transition:name={`date-${slug}`}>{formatDate(entry.data.date)}</time
+      >
       {
-        entry.data.image && (
-          <div class="hero-image">
-            <Image
-              src={entry.data.image}
-              alt={entry.data.imageAlt || entry.data.title}
-              widths={[400, 800, 1200]}
-              sizes="(max-width: 65ch) 100vw, 65ch"
-            />
-          </div>
+        entry.data.lastUpdated && (
+          <span> · actualitzat {formatDate(entry.data.lastUpdated)}</span>
         )
       }
+      <span> · {readingTime}</span>
+    </p>
 
-      <div class="post-content">
-        <Content />
-      </div>
+    {
+      entry.data.image && (
+        <div class="hero-image">
+          <Image
+            src={entry.data.image}
+            alt={entry.data.imageAlt || entry.data.title}
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 46rem) 100vw, 46rem"
+          />
+        </div>
+      )
+    }
 
-      <div class="post-footer">
-        <div class="post-navigation">
-          <a href="/blog" class="back-button">← Tots els articles</a>
-        </div>
-        <div class="share-section">
-          <p>Compartir:</p>
-          <div class="share-buttons">
-            <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(entry.data.title)}&url=${encodeURIComponent(`https://peremontpeo.com/blog/${slug}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="share-button"
-            >
-              <svg
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M13.795 10.533 20.68 2h-3.073l-5.255 6.517L7.69 2H1l7.806 10.91L1.47 22h3.074l5.705-7.07L15.31 22H22l-8.205-11.467Zm-2.38 2.95L9.97 11.464 4.36 3.627h2.31l4.528 6.317 1.443 2.02 6.018 8.409h-2.31l-4.934-6.89Z"
-                ></path>
-              </svg>
-              <span class="sr-only">Twitter</span>
-            </a>
-            <a
-              href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://peremontpeo.com/blog/${slug}`)}&title=${encodeURIComponent(entry.data.title)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="share-button"
-            >
-              <svg
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M12.51 8.796v1.697a3.738 3.738 0 0 1 3.288-1.684c3.455 0 4.202 2.16 4.202 4.97V19.5h-3.2v-5.072c0-1.21-.244-2.766-2.128-2.766-1.827 0-2.139 1.317-2.139 2.676V19.5h-3.19V8.796h3.168ZM7.2 6.106a1.61 1.61 0 0 1-.988 1.483 1.595 1.595 0 0 1-1.743-.348A1.607 1.607 0 0 1 5.6 4.5a1.601 1.601 0 0 1 1.6 1.606Z"
-                  clip-rule="evenodd"></path>
-                <path d="M7.2 8.809H4V19.5h3.2V8.809Z"></path>
-              </svg>
-              <span class="sr-only">LinkedIn</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </article>
-  </main>
+    <p class="tilde" aria-hidden="true">~~~</p>
+
+    <div class="post-content prose">
+      <Content />
+    </div>
+
+    <p class="tilde" aria-hidden="true">~~~</p>
+
+    <footer class="post-footer">
+      <a href="/blog" class="mdlink">← tots els apunts</a>
+      <span class="muted share">
+        compartir:
+        <a
+          class="mdlink"
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(entry.data.title)}&url=${encodeURIComponent(pageUrl)}`}
+          target="_blank"
+          rel="noopener noreferrer">twitter</a
+        >
+        <a
+          class="mdlink"
+          href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(entry.data.title)}`}
+          target="_blank"
+          rel="noopener noreferrer">linkedin</a
+        >
+      </span>
+    </footer>
+  </article>
 </Layout>
 
 <style>
   .post {
-    max-width: 65ch;
     margin: 0 auto;
-    padding: 2rem 0 4rem;
   }
 
-  .post-header {
-    margin-bottom: 2rem;
-  }
-
-  .back-link {
+  .back {
     display: inline-block;
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-  }
-
-  .back-link:hover {
-    color: var(--primary);
-    text-decoration: underline;
-  }
-
-  h1 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
-  }
-
-  .post-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-bottom: 1.5rem;
   }
 
-  time,
-  .reading-time,
-  .last-updated {
-    font-size: 0.875rem;
-    color: var(--text-muted);
+  .post-title {
+    font-size: 1.6rem;
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
   }
 
-  .last-updated,
-  .reading-time {
-    position: relative;
-    padding-left: 1rem;
-  }
-
-  .last-updated::before,
-  .reading-time::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: var(--text-muted);
+  .post-meta {
+    font-variant-numeric: tabular-nums;
+    margin: 0;
   }
 
   .hero-image {
-    margin-bottom: 2rem;
+    margin: 1.5rem 0 0;
   }
-
   .hero-image :global(img) {
     width: 100%;
     height: auto;
-    border-radius: var(--radius);
   }
 
+  /* --- cos de l'article: Geist Sans (excepció de prosa) --- */
   .post-content {
-    line-height: 1.7;
-    color: var(--foreground);
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
   }
-
   .post-content :global(h2) {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin: 2rem 0 0.75rem;
   }
-
   .post-content :global(h3) {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 600;
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+    margin: 1.5rem 0 0.5rem;
   }
-
   .post-content :global(p) {
-    margin-bottom: 1.25rem;
+    margin: 0 0 1.15rem;
   }
-
   .post-content :global(a) {
-    color: var(--primary);
+    color: var(--accent);
     text-decoration: underline;
   }
-
-  .post-content :global(.external-link) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25em;
-  }
-
-  .post-content :global(.external-link-icon-wrapper) {
-    display: inline-flex;
-    flex-shrink: 0;
-  }
-
-  .post-content :global(.external-link-icon) {
-    width: 0.85em;
-    height: 0.85em;
-  }
-
   .post-content :global(ul),
   .post-content :global(ol) {
-    margin-bottom: 1.25rem;
+    margin: 0 0 1.15rem;
     padding-left: 1.5rem;
   }
-
   .post-content :global(li) {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
-
   .post-content :global(pre) {
-    border-radius: 0.375rem;
-    background-color: var(--secondary);
+    background-color: var(--surface);
     padding: 1rem;
     margin: 1.5rem 0;
     overflow-x: auto;
+    border: 1px solid var(--line);
   }
-
   .post-content :global(code) {
-    font-family:
-      "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-      "Liberation Mono", "Courier New", monospace;
-    font-size: 0.875rem;
+    font-family: var(--mono);
+    font-size: 0.85em;
   }
-
+  .post-content :global(:not(pre) > code) {
+    background-color: var(--surface);
+    padding: 0.1em 0.35em;
+  }
   .post-content :global(blockquote) {
-    border-left: 4px solid var(--primary);
+    border-left: 2px solid var(--accent);
     padding-left: 1rem;
-    color: var(--text-muted);
-    font-style: italic;
+    color: var(--muted);
     margin: 1.5rem 0;
   }
-
   .post-content :global(img) {
     max-width: 100%;
     height: auto;
-    border-radius: 0.375rem;
     margin: 1.5rem 0;
   }
-
   .post-content :global(table) {
     width: 100%;
     border-collapse: collapse;
     margin: 1.5rem 0;
   }
-
   .post-content :global(table th),
   .post-content :global(table td) {
     padding: 0.5rem;
-    border: 1px solid var(--border);
+    border: 1px solid var(--line);
     text-align: left;
+  }
+  .post-content :global(.external-link) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+  }
+  .post-content :global(.external-link-icon) {
+    width: 0.85em;
+    height: 0.85em;
   }
 
   .post-footer {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border-muted);
-  }
-
-  .post-navigation {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
   }
-
-  .back-button {
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-
-  .back-button:hover {
-    color: var(--primary);
-    text-decoration: underline;
-  }
-
-  .share-section {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .share-section p {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-  }
-
-  .share-buttons {
-    display: flex;
-    gap: 0.75rem;
-  }
-
-  .share-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 9999px;
-    background-color: var(--card);
-    color: var(--foreground);
-    transition: background-color 0.2s;
-  }
-
-  .share-button:hover {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-  }
-
-  .share-button:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-
-  @media (min-width: 768px) {
-    h1 {
-      font-size: 2.25rem;
-    }
+  .share {
+    display: inline-flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
   }
 </style>

@@ -9,37 +9,29 @@ import ContactSection from "../components/ContactSection.astro";
   description="Contacta amb Pere Montpeó. Formes de contacte per col·laboracions, preguntes o projectes."
   canonicalUrl="https://peremontpeo.dev/contact/"
 >
-  <main class="section">
-    <div class="contact-header">
-      <InteractiveAvatar />
-      <p class="subtitle animate" style="animation-delay: 0.1s;">
-        Tens alguna pregunta o vols col·laborar? Aquí tens com pots
-        contactar-me.
-      </p>
-    </div>
+  <div class="home-avatar animate"><InteractiveAvatar /></div>
 
-    <div class="contact-content animate" style="animation-delay: 0.2s;">
-      <ContactSection />
-    </div>
-  </main>
+  <h1 class="title page-title">CONTACTE</h1>
+  <p class="muted intro">
+    Tens alguna pregunta o vols col·laborar? Aquí tens com pots contactar-me.
+  </p>
+
+  <p class="tilde" aria-hidden="true">~~~</p>
+
+  <ContactSection />
 </Layout>
 
 <style>
-  .contact-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  .home-avatar {
+    margin-bottom: 24px;
   }
-
-  .subtitle {
-    font-size: 1.25rem;
-    margin-top: 1rem;
-    color: var(--text-muted);
+  .page-title {
+    font-size: 1.4rem;
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
   }
-
-  .contact-content {
-    max-width: 600px;
-    margin: 2rem auto 0;
+  .intro {
+    margin: 0;
+    max-width: 60ch;
   }
 </style>

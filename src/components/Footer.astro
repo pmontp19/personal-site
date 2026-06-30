@@ -1,120 +1,90 @@
 ---
-// Footer component for the site
 const year = new Date().getFullYear();
+const { pathname } = Astro.url;
+const isHome = pathname === "/";
+const isBlog = pathname.startsWith("/blog");
+const isExp = pathname.startsWith("/experiencia");
 ---
 
-<footer class="footer animate">
-  <div class="container">
-    <div class="footer-wrapper">
-      <div class="copyright">
-        &copy; {year} Pere Montpeó. Tots els drets reservats.
-      </div>
-      <div class="theme-toggle-container">
-        <button
-          id="light-theme-button"
-          aria-label="Light theme"
-          class="theme-toggle-button"
-        >
-          <svg
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-        </button>
-        <button
-          id="dark-theme-button"
-          aria-label="Dark theme"
-          class="theme-toggle-button"
-        >
-          <svg
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
-        <button
-          id="system-theme-button"
-          aria-label="System theme"
-          class="theme-toggle-button"
-        >
-          <svg
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
+<footer class="site-footer">
+  <p class="tilde" aria-hidden="true">~~~</p>
+  <nav class="foot-line" aria-label="Navegació">
+    <span class="muted">© {year} Pere Montpeó · </span>
+    <a class="mdlink" href="/" aria-current={isHome ? "page" : undefined}
+      >inici</a
+    >
+    <a class="mdlink" href="/blog" aria-current={isBlog ? "page" : undefined}
+      >apunts</a
+    >
+    <a
+      class="mdlink"
+      href="/experiencia"
+      aria-current={isExp ? "page" : undefined}>experiència</a
+    >
+  </nav>
+  <p class="foot-line">
+    <span class="label">TEMA:</span>
+    <button
+      id="light-theme-button"
+      class="theme-opt"
+      type="button"
+      aria-label="Tema clar">clar</button
+    >
+    <span class="muted">/</span>
+    <button
+      id="dark-theme-button"
+      class="theme-opt"
+      type="button"
+      aria-label="Tema fosc">fosc</button
+    >
+    <span class="muted">/</span>
+    <button
+      id="system-theme-button"
+      class="theme-opt"
+      type="button"
+      aria-label="Tema del sistema">auto</button
+    >
+  </p>
 </footer>
 
 <style>
-  .footer {
-    background-color: var(--card);
-    color: var(--card-foreground);
-    padding: 1rem;
-    border-top: 1px solid var(--border);
+  .site-footer {
+    flex-shrink: 0;
+    margin-top: 40px;
   }
 
-  .container {
-    max-width: 80rem;
-    margin: 0 auto;
-    padding: 0 1rem;
+  .foot-line {
+    margin: 0 0 4px;
   }
 
-  .footer-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+  [aria-current="page"].mdlink {
+    color: var(--fg);
+  }
+  [aria-current="page"].mdlink::before,
+  [aria-current="page"].mdlink::after {
+    color: var(--accent);
   }
 
-  .copyright {
-    font-size: 0.875rem;
+  .theme-opt {
+    font: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .theme-opt:hover,
+  .theme-opt:focus-visible {
+    text-decoration: underline;
+  }
+  .theme-opt:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 2px;
   }
 
-  .theme-toggle-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    align-items: center;
+  @media print {
+    .site-footer {
+      display: none;
+    }
   }
 </style>
