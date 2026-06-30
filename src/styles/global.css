@@ -1,11 +1,7 @@
-/* Geist Pixel font */
-@font-face {
-  font-family: 'Geist Pixel';
-  src: url('/fonts/GeistPixel-Square.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+/* ============================================================
+   Pere Montpeó — sistema de disseny (terminal / brutalist)
+   Vegeu docs/design.md. Referència: pierre.computer
+   ============================================================ */
 
 /* Box-sizing reset */
 *,
@@ -14,65 +10,57 @@
   box-sizing: border-box;
 }
 
-/* Global CSS Variables */
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(222.2, 84%, 4.9%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(222.2, 84%, 4.9%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(222.2, 84%, 4.9%);
-  --primary: hsl(40, 100%, 30%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(210, 40%, 96.1%);
-  --secondary-foreground: hsl(222.2, 47.4%, 11.2%);
-  --muted: hsl(210, 40%, 96.1%);
-  --muted-foreground: hsl(215.4, 16.3%, 46.9%);
-  --accent: hsl(210, 40%, 96.1%);
-  --accent-foreground: hsl(222.2, 47.4%, 11.2%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(210, 40%, 98%);
-  --border: hsl(214.3, 31.8%, 91.4%);
-  --input: hsl(214.3, 31.8%, 91.4%);
-  --ring: hsl(40, 100%, 30%);
-  --radius: 0.5rem;
-  --text-muted: hsl(215.4, 16.3%, 46.9%);
-  --border-muted: hsl(222.2, 47.4%, 11.2%);
+  color-scheme: light dark;
 
-  color-scheme: light;
+  /* --- tokens base (OKLch) --- */
+  --bg: light-dark(oklch(97% 0.003 250), oklch(7% 0.005 260));
+  --fg: light-dark(oklch(20% 0.004 250), oklch(97% 0.003 250));
+  --muted: light-dark(oklch(52% 0.004 250), oklch(55% 0.004 250));
+  --accent: oklch(68% 0.14 65); /* ambre CRT, hereu de hsl(40,100%,30%) */
+  --line: light-dark(oklch(88% 0.004 250), oklch(24% 0.006 260));
+  --surface: light-dark(oklch(94% 0.004 250), oklch(15% 0.006 260));
+
+  /* ulls de l'avatar: fixos, van sobre la foto (no depenen del tema) */
+  --eye-sclera: #fdf4e4;
+  --eye-pupil: #111827;
+
+  /* --- tipografia --- */
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco,
+    "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --sans: "Geist Sans", system-ui, -apple-system, sans-serif;
+
+  /* --- àlies de compatibilitat (pàgines/components heretats) --- */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--bg);
+  --card-foreground: var(--fg);
+  --popover: var(--bg);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: var(--bg);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--fg);
+  --muted-foreground: var(--muted);
+  --text-muted: var(--muted);
+  --border: var(--line);
+  --border-muted: var(--line);
+  --input: var(--line);
+  --ring: var(--accent);
+  --destructive: oklch(58% 0.18 25);
+  --destructive-foreground: var(--bg);
+  --radius: 0;
 }
 
-/* Dark mode variables */
-.dark {
-  --background: hsl(222.2, 84%, 4.9%);
-  --foreground: hsl(210, 40%, 98%);
-  --card: hsl(221, 39%, 11%);
-  --card-foreground: hsl(210, 40%, 98%);
-  --popover: hsl(222.2, 84%, 4.9%);
-  --popover-foreground: hsl(210, 40%, 98%);
-  --primary: hsl(38, 92%, 50%);
-  --primary-foreground: hsl(222.2, 84%, 4.9%);
-  --secondary: hsl(217.2, 32.6%, 17.5%);
-  --secondary-foreground: hsl(210, 40%, 98%);
-  --muted: hsl(217.2, 32.6%, 17.5%);
-  --muted-foreground: hsl(215, 20.2%, 65.1%);
-  --accent: hsl(217.2, 32.6%, 17.5%);
-  --accent-foreground: hsl(210, 40%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(210, 40%, 98%);
-  --border: hsl(217.2, 32.6%, 17.5%);
-  --input: hsl(217.2, 32.6%, 17.5%);
-  --ring: hsl(38, 92%, 50%);
-  --text-muted: hsl(215, 20.2%, 65.1%);
-  --border-muted: hsl(217.2, 32.6%, 17.5%);
-
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
   color-scheme: dark;
 }
 
-/* Base Typography & Layout */
+/* Base */
 html {
-  overflow-y: scroll;
-  scroll-padding-top: 5rem; /* Offset for sticky header */
   scroll-behavior: smooth;
 }
 
@@ -80,7 +68,6 @@ html {
   html {
     scroll-behavior: auto;
   }
-
   *,
   *::before,
   *::after {
@@ -88,7 +75,6 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
@@ -96,203 +82,125 @@ html {
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: 'Geist Sans', sans-serif;
-  line-height: 1.6;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
-/* Headings */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Geist Pixel', 'Geist Mono', monospace;
-  font-weight: 600;
-  line-height: 1.3;
-  margin-bottom: 1rem;
-  margin-top: 0;
-  letter-spacing: 0.01em;
-}
-
-h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-
-h2 {
-  font-size: 1.5rem;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-p {
-  margin-bottom: 1rem;
-}
-
-/* Lists */
-ul,
-ol {
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-li {
-  margin-bottom: 0.5rem;
-}
-
-/* Container utility */
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  max-width: 80rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-/* Link styles */
+/* Enllaços */
 a {
-  color: var(--primary);
+  color: var(--accent);
   text-decoration: none;
-  transition: text-decoration 0.2s ease;
 }
-
 a:hover,
 a:focus {
   text-decoration: underline;
 }
-
-a:focus {
-  outline: 2px solid var(--ring);
+a:focus-visible {
+  outline: 1px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 
-/* Utility Classes */
-.section {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+/* ============================================================
+   Primitives del «document de terminal»
+   ============================================================ */
+
+pre.doc,
+.doc {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
 }
 
-@media (min-width: 768px) {
-  .section {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-  }
-  h2 {
-    font-size: 1.75rem;
-  }
-  h3 {
-    font-size: 1.375rem;
-  }
+.title {
+  font-weight: 700;
 }
 
-.subtitle {
-  font-size: 1.125rem;
-  color: var(--text-muted);
-  margin-top: -0.5rem;
-  margin-bottom: 2rem;
-  max-width: 65ch;
+.label {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.text-muted {
-  color: var(--text-muted);
+.muted {
+  color: var(--muted);
 }
 
-.card {
-  background-color: var(--card);
-  color: var(--card-foreground);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 1px 2px rgba(0, 0, 0, 0.1);
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    border-style 0.2s ease;
+.accent {
+  color: var(--accent);
 }
 
-.card:hover {
-  border-color: var(--primary);
-  border-style: dashed;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+/* Separador ondulat ~~~ */
+.tilde {
+  color: var(--muted);
+  user-select: none;
+  margin: 20px 0;
 }
 
-.tag {
+/* Enllaç estil markdown: [text] amb claudàtors muted */
+.mdlink {
+  color: var(--accent);
+}
+.mdlink::before {
+  content: "[";
+  color: var(--muted);
+}
+.mdlink::after {
+  content: "]";
+  color: var(--muted);
+}
+
+/* Cursor de bloc */
+.cursor {
   display: inline-block;
-  background-color: var(--secondary);
-  color: var(--secondary-foreground);
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  white-space: nowrap;
+  width: 0.6em;
+  height: 1em;
+  background: var(--accent);
+  transform: translateY(0.12em);
+  animation: blink 1.15s step-end infinite;
+}
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
 }
 
-.button-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--primary);
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius);
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-  text-decoration: none;
+/* ============================================================
+   Prosa (cos d'articles del blog i CV) — excepció en Geist Sans
+   ============================================================ */
+.prose {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--fg);
+}
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-family: var(--sans);
+  line-height: 1.25;
+  text-wrap: balance;
 }
 
-.button-link:hover,
-.button-link:focus {
-  background-color: var(--secondary);
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.button-link:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-/* Accessibility utility */
+/* ============================================================
+   Utilitats
+   ============================================================ */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -305,126 +213,89 @@ a:focus {
   border-width: 0;
 }
 
-/* Animation for elements */
-.animate {
-  opacity: 0;
-  transform: translateY(0.75rem);
-  transition:
-    opacity 0.7s ease-out,
-    transform 0.7s ease-out;
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 200;
+  padding: 0.4rem 0.8rem;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+}
+.skip-link:focus {
+  top: 1rem;
 }
 
-.animate.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Theme toggle buttons styles */
-.theme-toggle-button {
-  display: flex;
+/* Botó-enllaç genèric (heretat per CV/contacte) */
+.button-link {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
+  gap: 0.4rem;
+  font: inherit;
+  background: none;
   border: none;
-  background: transparent;
-  color: var(--foreground);
+  color: var(--accent);
   cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+  padding: 0;
+  text-decoration: none;
 }
-
-.theme-toggle-button:hover {
-  background-color: var(--secondary);
-  color: var(--primary);
+.button-link:hover,
+.button-link:focus {
+  text-decoration: underline;
 }
-
-.theme-toggle-button:focus-visible {
-  outline: 2px solid var(--ring);
+.button-link:focus-visible {
+  outline: 1px solid var(--accent);
   outline-offset: 2px;
 }
 
-.theme-toggle-button svg {
-  width: 1.125rem;
-  height: 1.125rem;
-  stroke: currentColor;
-  stroke-width: 1.5;
+/* Animació d'entrada (subtil) — només CSS, mai amaga el contingut sense JS */
+.animate {
+  animation: fade-in 0.6s ease-out both;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate {
+    animation: none;
+  }
 }
 
-/* Horizontal rule styles */
+/* Regla horitzontal (prosa) */
 hr {
   border: none;
-  border-top: 1.5px solid var(--border);
-  margin: 2.5rem 0;
-
-  /* Print: reduce vertical margin */
-  @media print {
-    margin: 1rem 0;
-  }
-  width: 100%;
-  opacity: 0.7;
+  border-top: 1px solid var(--line);
+  margin: 1.5rem 0;
 }
 
-.dark hr {
-  border-top-color: var(--border-muted);
-  opacity: 0.5;
-}
-
-/* Print styles: force dark text on white background */
+/* ============================================================
+   Print (CV/articles): text negre sobre blanc
+   ============================================================ */
 @media print {
-  :root,
-  .dark {
-    --background: white;
-    --foreground: #111;
-    --card: white;
-    --card-foreground: #111;
-    --muted-foreground: #444;
-    --text-muted: #444;
-    --secondary-foreground: #222;
-    --primary: #111;
-    --primary-foreground: white;
-    --border: #ccc;
-    --border-muted: #ccc;
+  :root {
     color-scheme: light;
+    --bg: #fff;
+    --fg: #111;
+    --muted: #444;
+    --accent: #111;
+    --line: #ccc;
+    --surface: #eee;
   }
-
   body {
-    background: white !important;
+    background: #fff !important;
     color: #111 !important;
+    font-family: var(--sans);
   }
-
   a {
     color: #111 !important;
     text-decoration: underline;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: #111 !important;
-  }
-
-  .text-muted,
-  .subtitle {
-    color: #444 !important;
-  }
-
-  .tag {
-    background-color: #eee;
-    color: #222;
-  }
-
-  hr {
-    border-top-color: #ccc;
-    opacity: 1;
-  }
-  .external-link-icon-wrapper,
-  .external-link-icon {
-    display: none !important;
   }
 }

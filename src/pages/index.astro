@@ -1,118 +1,102 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import InteractiveAvatar from "../components/InteractiveAvatar.astro";
-import BlogPosts from "../components/BlogPosts.astro";
-import ExperienceTimeline from "../components/ExperienceTimeline.astro";
-import ContactSection from "../components/ContactSection.astro";
-import HyperText from "../components/HyperText.astro";
 import { getCollection } from "astro:content";
+import { formatDate, getSlug } from "../utils/date";
+import { calculateReadingTime } from "../utils/readingTime";
 
-// Get experiences sorted by date
-const allExperiences = (await getCollection("experience")).sort(
-  (a, b) => new Date(b.data.startDate).getTime() - new Date(a.data.startDate).getTime()
-);
+// Últim apunt publicat
+const posts = (
+  await getCollection("blog", ({ data }) => data.draft !== true)
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const latest = posts[0];
+const latestReadingTime = latest ? calculateReadingTime(latest.body) : "";
+
+// Experiència (4 més recents)
+const experiences = (await getCollection("experience"))
+  .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf())
+  .slice(0, 4);
+
+const dateOpts: Intl.DateTimeFormatOptions = { month: "short", year: "numeric" };
+const range = (e: (typeof experiences)[number]) =>
+  formatDate(e.data.startDate, dateOpts, "ca-ES");
 
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Pere Montpeó",
   "url": "https://peremontpeo.dev",
-  "jobTitle": "Software Engineer",
+  "jobTitle": "AI Product Engineer",
   "description": "Enginyer de programari especialitzat en desenvolupament web.",
+  "address": { "@type": "PostalAddress", "addressLocality": "Tarragona", "addressRegion": "Catalunya" },
   "sameAs": [
-    "https://github.com/peremontpeo",
-    "https://linkedin.com/in/peremontpeo"
+    "https://github.com/pmontp19",
+    "https://linkedin.com/in/perem",
+    "https://twitter.com/pmontp19"
   ]
 };
 ---
 
 <Layout jsonLd={personSchema} canonicalUrl="https://peremontpeo.dev/" description="Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols.">
-  <main>
-    <!-- About Me -->
-    <section id="sobre-mi" class="about section animate">
-      <div class="about-grid">
-        <div class="about-content">
-          <HyperText text="Hola, soc Pere Montpeó" animateOnHover={true} startOnView={false} duration={1400} delay={300} />
-          <p class="subtitle">
-            Enginyer de programari especialitzat en tot i en res. Actualment,
-            fent que els ordinadors facin coses sols. Si no estic programant,
-            segurament em trobaràs sobre la bicicleta, a la cuina o llegint.
-          </p>
-        </div>
-        <div class="profile-image">
-          <InteractiveAvatar />
-        </div>
-      </div>
-    </section>
+  <div class="home-avatar animate"><InteractiveAvatar /></div>
 
-    <!-- Blog (featured post) -->
-    <BlogPosts />
+<pre class="doc home-doc animate"><span class="title">PERE MONTPEÓ</span> <span class="cursor" aria-hidden="true"></span>
 
-    <!-- Experience -->
-    <section id="experiencia" class="section animate">
-      <div class="section-header">
-        <h2>Experiència</h2>
-        <a href="/experiencia" class="view-all-link-text button-link">Veure tot →</a>
-      </div>
+Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols. Si no estic programant, segurament em trobaràs sobre la bicicleta, a la cuina o llegint.
 
-      <ExperienceTimeline experiences={allExperiences} limit={4} />
-    </section>
+<span class="label">STATUS:</span> AI Product Engineer @ Goil <span class="accent">· Actual</span>
+<span class="label">LLOC:</span>   Tarragona, Catalunya
 
-    <!-- Contact -->
-    <section id="contacte" class="section animate">
-      <h2>Contacte</h2>
-      <ContactSection />
-    </section>
-  </main>
+<span class="tilde">~~~</span>
+
+<span class="label">ÚLTIM APUNT:</span>
+{latest && (
+  <a class="mdlink" href={`/blog/${getSlug(latest.id)}/`} transition:name={`title-${getSlug(latest.id)}`}>{latest.data.title}</a>
+)}
+<span class="muted">{latest ? `${formatDate(latest.data.date)} · ${latestReadingTime}` : ""}</span>
+
+<span class="tilde">~~~</span>
+
+<span class="label">EXPERIÈNCIA:</span>
+{experiences.map((e) => (
+  <Fragment>- {range(e)} — {e.data.endDate ? formatDate(e.data.endDate, dateOpts, "ca-ES") : <span class="accent">Actual</span>}: {e.data.role} @ {e.data.company}{"\n"}</Fragment>
+))}<a class="mdlink" href="/experiencia">veure tot →</a>
+
+<span class="tilde">~~~</span>
+
+<span class="label">CONTACTE:</span>
+- CORREU    <button id="home-email" class="mdlink email-link" type="button" data-user="pere" data-domain="montpeo.com">correu</button>
+- GITHUB    <a class="mdlink" href="https://github.com/pmontp19" target="_blank" rel="noopener noreferrer">github.com/pmontp19</a>
+- LINKEDIN  <a class="mdlink" href="https://linkedin.com/in/perem" target="_blank" rel="noopener noreferrer">linkedin.com/in/perem</a>
+- TWITTER   <a class="mdlink" href="https://twitter.com/pmontp19" target="_blank" rel="noopener noreferrer">twitter.com/pmontp19</a></pre>
 </Layout>
 
+<script is:inline>
+  function initHomeEmail() {
+    var el = document.getElementById("home-email");
+    if (!el || el.dataset.initialized) return;
+    var user = el.getAttribute("data-user");
+    var domain = el.getAttribute("data-domain");
+    if (!user || !domain) return;
+    var email = user + "@" + domain;
+    el.textContent = email;
+    el.addEventListener("click", function () { window.location.href = "mailto:" + email; });
+    el.dataset.initialized = "true";
+  }
+  document.addEventListener("DOMContentLoaded", initHomeEmail);
+  document.addEventListener("astro:page-load", initHomeEmail);
+</script>
+
 <style>
-  /* About Section */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    align-items: center;
+  .home-avatar {
+    margin-bottom: 24px;
   }
 
-  @media (min-width: 768px) {
-    .about-grid {
-      grid-template-columns: 2fr 1fr;
-      gap: 3rem;
-    }
-  }
-
-  .about-content h1 {
-    margin-bottom: 1rem;
-  }
-
-  .profile-image {
-    display: flex;
-    justify-content: center;
-    order: 1;
-  }
-
-  @media (min-width: 768px) {
-    .about-content {
-      order: 1;
-    }
-    .profile-image {
-      justify-content: flex-end;
-      order: 2;
-    }
-  }
-
-  /* Section Header */
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-header h2 {
-    margin-bottom: 0;
-    border-bottom: none;
-    padding-bottom: 0;
+  .email-link {
+    font: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
   }
 </style>
