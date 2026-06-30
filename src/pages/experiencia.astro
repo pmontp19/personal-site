@@ -47,7 +47,9 @@ const locale = "ca-ES";
         {exp.data.description && <p class="exp-desc">{exp.data.description}</p>}
 
         <div class="markdown-content" id={`markdown-content-${index}`}>
-          <ExperienceEntry data={exp} />
+          <div class="md-inner">
+            <ExperienceEntry data={exp} />
+          </div>
         </div>
         {exp.body && exp.body.trim() && (
           <button
@@ -139,21 +141,19 @@ const locale = "ca-ES";
     transform: rotate(180deg);
   }
 
-  /* desplegable: cos en prosa (Geist Sans) */
+  /* desplegable: anima grid-template-rows 0fr→1fr (alçada exacta, sense salt) */
   .markdown-content {
-    max-height: 0;
-    overflow: hidden;
-    margin-top: 0;
-    transition:
-      max-height 0.4s ease-out,
-      margin-top 0.4s ease-out;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
   }
   .markdown-content.expanded {
-    max-height: 1500px;
-    margin-top: 0.75rem;
-    transition:
-      max-height 0.4s ease-in,
-      margin-top 0.4s ease-in;
+    grid-template-rows: 1fr;
+  }
+  .md-inner {
+    min-height: 0;
+    overflow: hidden;
+    padding-top: 0.75rem;
   }
   .markdown-content :global(p),
   .markdown-content :global(ul),
