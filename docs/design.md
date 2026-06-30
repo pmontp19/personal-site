@@ -79,8 +79,11 @@ la capa SVG d'ulls** que segueixen el cursor, parpellegen i fan wink.
 
 - Foto: `src/assets/avatar.png`, `object-fit: cover`.
 - Mida: ~132px. Cantonades rectes (no cercle), sense vora ni ombra.
-- La capa SVG d'ulls es manté intacta: pupil·les fosques (`--eye-pupil`),
-  escleròtica clara (`--eye-sclera`), seguiment del cursor + parpelleig/wink.
+- La capa SVG d'ulls es manté intacta: pupil·les fosques (`--eye-pupil: #111827`),
+  escleròtica color crema (`--eye-sclera: #fdf4e4`), seguiment del cursor +
+  parpelleig/wink. **Aquests dos colors són fixos**, no depenen del tema: van per
+  sobre de la foto (que no canvia amb el tema), i el crema ha de casar amb el fons
+  crema de `avatar.png` (no blanc pur).
 - `prefers-reduced-motion`: atura el parpelleig automàtic (el seguiment del cursor
   es manté, és benigne).
 
