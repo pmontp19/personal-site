@@ -1,6 +1,6 @@
 # Pere Montpeó
 
-Ingeniero de software · AI Product Engineer
+Ingeniero de software · AI Lead Engineer
 
 Vilanova i la Geltrú, Barcelona, España · [peremontpeo.dev](https://peremontpeo.dev) · [github.com/pmontp19](https://github.com/pmontp19) · [linkedin.com/in/perem](https://linkedin.com/in/perem)
 
@@ -8,23 +8,23 @@ Vilanova i la Geltrú, Barcelona, España · [peremontpeo.dev](https://peremontp
 
 ## Resumen profesional
 
-Ingeniero de software especializado en soluciones cloud y plataformas digitales de IA. Me apasiona construir sistemas escalables y de alta calidad que resuelvan problemas reales. Defiendo las buenas prácticas, los estándares de código rigurosos y la optimización del rendimiento. Con experiencia en conectar la estrategia de negocio con infraestructuras escalables, he liderado proyectos de innovación y desarrollo de producto en entornos corporativos. Actualmente lidero el desarrollo de la plataforma de IA en Goil, impulsando la transformación digital de las pymes mediante soluciones basadas en agentes.
+Ingeniero de software especializado en soluciones cloud y plataformas digitales de IA. Me apasiona construir sistemas escalables y de alta calidad que resuelvan problemas reales. Defiendo las buenas prácticas, los estándares de código rigurosos y la optimización del rendimiento. Con experiencia en conectar la estrategia de negocio con infraestructuras escalables, he liderado proyectos de innovación y desarrollo de producto en entornos corporativos. Actualmente lidero la arquitectura y el desarrollo de la plataforma de IA en Goil, con responsabilidad técnica end-to-end sobre el stack, los estándares y la fiabilidad en producción, impulsando la transformación digital de las pymes mediante soluciones basadas en agentes.
 
 ---
 
 ## Experiencia profesional
 
-### AI Product Engineer
+### AI Lead Engineer
 
 **Goil** · Agosto 2025 – Actualidad · España
 
-- Liderazgo del desarrollo de la plataforma de IA en todo el ecosistema de Goil.
+- Liderazgo técnico de la arquitectura de la plataforma de IA en todo el ecosistema de Goil, con ownership end-to-end desde el diseño hasta producción, en un equipo reducido de 2 personas.
 - Implementación de capas conversacionales basadas en Large Language Models (LLMs).
 - Integración de bases de conocimiento de clientes mediante embeddings y bases de datos vectoriales (Retrieval-Augmented Generation, RAG).
 - Desarrollo de una plataforma multitenant propia para la generación y alojamiento de páginas web y aplicaciones generadas por IA.
 - Automatización de procesos internos mediante IA (generación de documentos, resúmenes, análisis de datos, revisión de código).
 - Creación de un gateway de voz basado en ASR y TTS con soporte multitenant.
-- Implementación del middleware de control de gasto y monitorización del uso de IA de los clientes (LLM Gateway).
+- Implementación del middleware de control de gasto y monitorización del uso de IA de los clientes (LLM Gateway), garantizando fiabilidad y observabilidad en producción.
 
 ### Ingeniero de software
 

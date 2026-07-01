@@ -111,7 +111,7 @@ peu) segueix en monospace. La resta de pàgines són 100% monospace.
   trobaràs sobre la bicicleta, a la cuina o llegint.»
 - **Localització:** Tarragona, Catalunya
 - **Experiència:**
-  - AI Product Engineer — Goil (ag. 2025 — Actual)
+  - AI Lead Engineer — Goil (ag. 2025 — Actual)
   - Software Engineer — Decathlon Technology Spain (gen. 2024 — jul. 2025)
   - Innovation Manager — Decathlon Technology Spain (gen. 2023 — febr. 2024)
   - Software Engineer — Decathlon Technology Spain (març 2022 — març 2023)
@@ -131,7 +131,7 @@ PERE MONTPEÓ █
 
 <bio>
 
-STATUS:  AI Product Engineer @ Goil · Actual
+STATUS:  AI Lead Engineer @ Goil · Actual
 LLOC:    Tarragona, Catalunya
 
 ~~~

@@ -1,6 +1,6 @@
 # Pere Montpeó
 
-Software Engineer · AI Product Engineer
+Software Engineer · AI Lead Engineer
 
 Vilanova i la Geltrú, Barcelona, Spain · [peremontpeo.dev](https://peremontpeo.dev) · [github.com/pmontp19](https://github.com/pmontp19) · [linkedin.com/in/perem](https://linkedin.com/in/perem)
 
@@ -8,23 +8,23 @@ Vilanova i la Geltrú, Barcelona, Spain · [peremontpeo.dev](https://peremontpeo
 
 ## Summary
 
-Software Engineer specializing in Cloud solutions and AI digital platforms. Passionate about building scalable, high-quality systems that solve real problems. Strong advocate for best practices, rigorous coding standards, and performance optimization. Experienced in bridging business strategy with scalable infrastructure, having led innovation and product development projects in corporate environments. Currently leading the AI platform development at Goil, driving digital transformation through agent-based solutions.
+Software Engineer specializing in Cloud solutions and AI digital platforms. Passionate about building scalable, high-quality systems that solve real problems. Strong advocate for best practices, rigorous coding standards, and performance optimization. Experienced in bridging business strategy with scalable infrastructure, having led innovation and product development projects in corporate environments. Currently leading the AI platform architecture at Goil, with end-to-end technical ownership of the stack, standards, and production reliability, driving digital transformation through agent-based solutions.
 
 ---
 
 ## Professional Experience
 
-### AI Product Engineer
+### AI Lead Engineer
 
 **Goil** · August 2025 – Present · Spain
 
-- Leading the development of the AI platform across the entire Goil ecosystem.
+- Leading the technical architecture of the AI platform across the entire Goil ecosystem, with end-to-end ownership from design to production, within a small 2-person team.
 - Implementation of conversational layers based on Large Language Models (LLMs).
 - Integration of customer knowledge bases using embeddings and vector databases (Retrieval-Augmented Generation, RAG).
 - Development of a proprietary multi-tenant platform for AI-generated web pages and application hosting.
 - Automation of internal processes through AI (document generation, summaries, data analysis, code review).
 - Creation of a voice gateway based on ASR and TTS with multi-tenant support.
-- Implementation of cost control and AI usage monitoring middleware for clients (LLM Gateway).
+- Implementation of cost control and AI usage monitoring middleware for clients (LLM Gateway), ensuring production reliability and observability.
 
 ### Software Engineer
 

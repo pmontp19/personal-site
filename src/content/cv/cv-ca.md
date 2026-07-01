@@ -1,6 +1,6 @@
 # Pere Montpeó
 
-Enginyer de software · AI Product Engineer
+Enginyer de software · AI Lead Engineer
 
 Vilanova i la Geltrú, Barcelona, Espanya · [peremontpeo.dev](https://peremontpeo.dev) · [github.com/pmontp19](https://github.com/pmontp19) · [linkedin.com/in/perem](https://linkedin.com/in/perem)
 
@@ -8,23 +8,23 @@ Vilanova i la Geltrú, Barcelona, Espanya · [peremontpeo.dev](https://peremontp
 
 ## Resum professional
 
-Enginyer de software especialitzat en solucions Cloud i plataformes digitals d'IA. M'apassiona construir sistemes escalables i d'alta qualitat que resolguin problemes reals. Defenso les bones pràctiques, els estàndards de codi rigorosos i l'optimització del rendiment. Amb experiència en connectar l'estratègia de negoci amb infraestructures escalables, he liderat projectes d'innovació i desenvolupament de producte en entorns corporatius. Actualment, lidero el desenvolupament de la plataforma d'IA a Goil, impulsant la transformació digital mitjançant solucions basades en agents.
+Enginyer de software especialitzat en solucions Cloud i plataformes digitals d'IA. M'apassiona construir sistemes escalables i d'alta qualitat que resolguin problemes reals. Defenso les bones pràctiques, els estàndards de codi rigorosos i l'optimització del rendiment. Amb experiència en connectar l'estratègia de negoci amb infraestructures escalables, he liderat projectes d'innovació i desenvolupament de producte en entorns corporatius. Actualment, lidero l'arquitectura i el desenvolupament de la plataforma d'IA a Goil, amb responsabilitat tècnica end-to-end sobre l'stack, els estàndards i la fiabilitat en producció, impulsant la transformació digital mitjançant solucions basades en agents.
 
 ---
 
 ## Experiència professional
 
-### AI Product Engineer
+### AI Lead Engineer
 
 **Goil** · Agost 2025 – Actualitat · Espanya
 
-- Lideratge del desenvolupament de la plataforma d'IA en tot l'ecosistema de Goil.
+- Lideratge tècnic de l'arquitectura de la plataforma d'IA en tot l'ecosistema de Goil, amb ownership end-to-end des del disseny fins la producció, en un equip reduït de 2 persones.
 - Implementació de capes conversacionals basades en Large Language Models (LLMs).
 - Integració de bases de coneixement de clients mitjançant embeddings i bases de dades vectorials (Retrieval-Augmented Generation, RAG).
 - Desenvolupament d'una plataforma multitenant pròpia per a la generació i allotjament de pàgines web i aplicacions generades per IA.
 - Automatització de processos interns mitjançant IA (generació de documents, resums, anàlisi de dades, revisió de codi).
 - Creació d'un gateway de veu basat en ASR i TTS amb suport multitenant.
-- Implementació del middleware de control de despesa i monitorització de l'ús d'IA dels clients (LLM Gateway).
+- Implementació del middleware de control de despesa i monitorització de l'ús d'IA dels clients (LLM Gateway), garantint fiabilitat i observabilitat en producció.
 
 ### Enginyer de software
 
