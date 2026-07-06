@@ -1,12 +1,12 @@
 ---
-title: "Incendis Catalunya: una integració de Home Assistant feta (gairebé) del tot amb agents d'IA"
-description: "He construït i publicat ha-incendiscat, una integració de Home Assistant per seguir incendis forestals a Catalunya en temps real — i he desglossat quant m'ha costat en tokens fer-ho amb Claude Code i OpenCode."
+title: "Incendis Catalunya: una integració de Home Assistant"
+description: "He construït i publicat ha-incendiscat, una integració de Home Assistant per seguir incendis forestals a Catalunya en temps real, i he desglossat quant m'ha costat en tokens fer-ho amb Claude Code."
 date: 2026-07-06
 ---
 
 L'estiu del 2021 un incendi va cremar durant dies entre la Ribera d'Ebre, la Terra Alta i el Priorat — un dels [incendis forestals](https://interior.gencat.cat/ca/incendis-forestals/inici/index.html) més grans que recordo a Catalunya. No és un fet aïllat: cada estiu el país viu sota l'amenaça del foc, i la resposta institucional (Bombers, Agents Rurals amb el Pla Alfa) genera dades públiques en temps real que gairebé ningú fa servir fora dels seus propis visors.
 
-Jo tinc [Home Assistant](https://www.home-assistant.io/) a casa. Vaig pensar: per què no portar aquesta informació allà on ja miro l'estat de la meva llar?
+Jo tinc [Home Assistant](https://www.home-assistant.io/) a casa. Vaig pensar: per què no portar aquesta informació allà on ja miro i automatitzo l'estat de casa?
 
 ## Home Assistant, en dues línies
 
@@ -19,7 +19,7 @@ Home Assistant és una plataforma d'automatització de la llar, de codi obert i 
 - El [visor d'actuacions](https://experience.arcgis.com/experience/f6172fd2d6974bc0a8c51e3a6bc2a735) dels Bombers de la Generalitat — incendis actius en temps real (ubicació, fase, vehicles desplegats).
 - El [Pla Alfa](https://experience.arcgis.com/experience/2cf7ebbe492f401db826cb21eae9bfae) dels Agents Rurals — nivell de risc d'incendi diari (0-4) per municipi.
 
-Amb això genera un mapa amb els focs actius, sensors agregats (nombre d'incendis, distància al més proper, vehicles desplegats, risc Pla Alfa), un `binary_sensor` que s'activa quan hi ha un incendi dins del teu radi d'alerta, events per enganxar-hi automacions, i un blueprint llest per rebre una notificació push al mòbil.
+Amb això genera un mapa amb els focs actius, sensors agregats (nombre d'incendis, distància al més proper, vehicles desplegats, risc Pla Alfa), un `binary_sensor` que s'activa quan hi ha un incendi dins del teu radi d'alerta, events per enganxar-hi automatitzacions, i un blueprint llest per rebre una notificació push al mòbil.
 
 Cap de les dues fonts és una API oficial — són FeatureServers d'ArcGIS pensats per alimentar visors web, no per integrar-se en altres sistemes. Poden canviar d'esquema sense avís, així que bona part del disseny és tolerància a fallades: llegir camps amb valors per defecte, marcar el servei com a "degradat" després de tres errors seguits del mateix tipus, i no esborrar mai dades ja carregades.
 
@@ -37,7 +37,7 @@ També vaig canviar de nom a mitja implementació. El projecte es deia "Bombers 
 
 Tot el codi d'aquest projecte l'he escrit conversant amb agents, no picant-lo línia a línia. Val la pena desglossar-ho perquè els números sorprenen.
 
-[Claude Code](https://claude.com/claude-code) ha fet el gruix de la feina: 13 sessions repartides en 4 dies, gairebé totes amb Sonnet 5, amb Opus 4.8 puntualment per a un checklist de pre-llançament, un dubte semàntic sobre nivells de risc, i una revisió de codi. En total, **~138 milions de tokens** processats — però un **96% (~132M) són lectures de cache**: el codi i els docs ja escrits, rellegits a cada torn sense tornar-los a pagar sencers. Fora del cache, la feina real és ~570.000 tokens d'entrada nova, ~835.000 de sortida generada, i ~4,1M escrits a cache. A sobre, dos subagents de recerca puntuals (per estudiar CI/CD de referència i mapes tipus flightradar per mostrar els focs com una targeta).
+[Claude Code](https://claude.com/claude-code) ha fet el gruix de la feina: 13 sessions repartides en 4 dies, gairebé totes amb Sonnet 5, amb Opus 4.8 puntualment per a un checklist de prellançament, un dubte semàntic sobre nivells de risc i una revisió de codi. En total, **~138 milions de tokens** processats — però un **96% (~132M) són lectures de cache**: el codi i els docs ja escrits, rellegits a cada torn sense tornar-los a pagar sencers. Fora del cache, la feina real és ~570.000 tokens d'entrada nova, ~835.000 de sortida generada, i ~4,1M escrits a cache. A sobre, dos subagents de recerca puntuals (per estudiar CI/CD de referència i mapes tipus flightradar per mostrar els focs com una targeta).
 
 [OpenCode](https://opencode.ai/) hi ha entrat només dues vegades, i amb un model gratuït (`nemotron-3-ultra-free`): un cop per netejar referències internes a "Task N" que havien quedat als docstrings (l'`AGENTS.md` del projecte demana explícitament no referenciar-les mai als comentaris, perquè el pla evoluciona i la referència queda òrfena), i un altre per mirar analítiques de la integració a HACS. En total, ~1,3 milions de tokens — pràcticament testimonial comparat amb Claude Code.
 
