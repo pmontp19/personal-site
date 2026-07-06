@@ -25,6 +25,8 @@ Amb això genera un mapa amb els focs actius, sensors agregats (nombre d'incendi
 
 ![Sensors agregats d'Incendis Catalunya al dashboard: incendis actius, distància, vehicles desplegats i risc Pla Alfa](/images/blog/incendiscat-entitats.webp)
 
+![Notificació push a iOS generada pel blueprint: risc alt d'incendi avui a Camós](/images/blog/incendiscat-notificacio.webp)
+
 Cap de les dues fonts és una API oficial. Són FeatureServers d'ArcGIS pensats per alimentar visors web, no per integrar-se en altres sistemes. Poden canviar d'esquema sense avís, així que bona part del disseny és tolerància a fallades: llegir camps amb valors per defecte, marcar el servei com a "degradat" després de tres errors seguits del mateix tipus, i no esborrar mai dades ja carregades.
 
 ## Com s'ha construït
