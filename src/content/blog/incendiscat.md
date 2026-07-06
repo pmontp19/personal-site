@@ -21,6 +21,10 @@ Home Assistant és una plataforma d'automatització de la llar, de codi obert i 
 
 Amb això genera un mapa amb els focs actius, sensors agregats (nombre d'incendis, distància al més proper, vehicles desplegats, risc Pla Alfa), un `binary_sensor` que s'activa quan hi ha un incendi dins del teu radi d'alerta, events per enganxar-hi automatitzacions, i un blueprint llest per rebre una notificació push al mòbil.
 
+![Mapa d'Incendis Catalunya amb els focs actius a la comarca de la Selva i el Gironès](/images/blog/incendiscat-mapa.webp)
+
+![Sensors agregats d'Incendis Catalunya al dashboard: incendis actius, distància, vehicles desplegats i risc Pla Alfa](/images/blog/incendiscat-entitats.webp)
+
 Cap de les dues fonts és una API oficial. Són FeatureServers d'ArcGIS pensats per alimentar visors web, no per integrar-se en altres sistemes. Poden canviar d'esquema sense avís, així que bona part del disseny és tolerància a fallades: llegir camps amb valors per defecte, marcar el servei com a "degradat" després de tres errors seguits del mateix tipus, i no esborrar mai dades ja carregades.
 
 ## Com s'ha construït
@@ -28,6 +32,10 @@ Cap de les dues fonts és una API oficial. Són FeatureServers d'ArcGIS pensats 
 Vaig començar pel que sol quedar-se pel camí: documents de disseny abans de codi. Vaig estudiar dues integracions HACS que ataquen el mateix problema en altres territoris: [`ha-wildfire-monitor`](https://github.com/johnbr/ha-wildfire-monitor) (Califòrnia, API REST de CAL FIRE) i [`ha-pyrovigil`](https://github.com/Duarte-Mercedes-Santos/ha-pyrovigil) (Portugal, el mateix patró ArcGIS FeatureServer que Catalunya). D'aquí en vaig treure un pla de 16 tasques.
 
 Cada tasca és un commit: model de dades i client ArcGIS, coordinador amb polling i events, sensors i binary_sensors, entitats de geolocalització per cada foc, flux de configuració en dos passos, client del Pla Alfa, entitats de diagnòstic, traduccions (ca/es/en), blueprint de notificació, README. Després, una ronda només d'enduriment: revisió de codi, hardening del client ArcGIS, neteja general.
+
+![Primer pas del flux de configuració: ubicació i radis de seguiment i alerta sobre el mapa](/images/blog/incendiscat-config-ubicacio.webp)
+
+![Segon pas del flux de configuració: subtipus d'incident, fases actives i interval de sondeig](/images/blog/incendiscat-config-filtres.webp)
 
 El bug més interessant no va sortir de cap revisió, va sortir d'usar-ho de debò: vaig muntar una instància de Home Assistant aïllada per provar la integració abans d'instal·lar-la a casa, i allà vaig descobrir que la vista d'ArcGIS dels Bombers no permet detectar baixes de forma incremental: un incendi que es resol simplement deixa d'aparèixer, no queda marcat com a tancat. Vaig haver de canviar l'estratègia de sincronització a "descarregar-ho tot cada cicle i comparar amb l'anterior", perquè amb sincronització incremental un incendi resolt es quedava viu per sempre a Home Assistant.
 
