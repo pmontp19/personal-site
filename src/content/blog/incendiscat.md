@@ -4,7 +4,7 @@ description: "He construït i publicat ha-incendiscat, una integració de Home A
 date: 2026-07-06
 ---
 
-L'estiu del 2021 un incendi va cremar durant dies entre la Ribera d'Ebre, la Terra Alta i el Priorat. Va ser un dels [incendis forestals](https://interior.gencat.cat/ca/incendis-forestals/inici/index.html) més grans que recordo a Catalunya. No és un fet aïllat: cada estiu el país viu sota l'amenaça del foc, i la resposta institucional (Bombers, Agents Rurals amb el Pla Alfa) genera dades públiques en temps real que gairebé ningú fa servir fora dels seus propis visors.
+Fa tres dies un incendi ha cremat [més de 2.300 hectàrees del massís de les Gavarres](https://ca.wikipedia.org/wiki/Incendi_de_les_Gavarres_de_2026), a l'Empordà, i ha obligat a confinar vuit municipis. No és un fet aïllat: cada estiu el país viu sota l'amenaça del foc, i la resposta institucional (Bombers, Agents Rurals amb el Pla Alfa) genera dades públiques en temps real que gairebé ningú fa servir fora dels seus propis visors.
 
 Jo tinc [Home Assistant](https://www.home-assistant.io/) a casa. Vaig pensar: per què no portar aquesta informació allà on ja miro i automatitzo l'estat de casa?
 
