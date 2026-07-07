@@ -1,6 +1,6 @@
 # Pere Montpeó
 
-Software Engineer · AI Product Engineer
+Software Engineer · AI Lead Engineer
 
 Vilanova i la Geltrú, Barcelona, Spain · [peremontpeo.dev](https://peremontpeo.dev) · [github.com/pmontp19](https://github.com/pmontp19) · [linkedin.com/in/perem](https://linkedin.com/in/perem)
 
@@ -14,9 +14,9 @@ Software Engineer specializing in Cloud solutions and AI digital platforms. Pass
 
 ## Professional Experience
 
-### AI Product Engineer
+### AI Lead Engineer
 
-**Goil** · August 2025 – Present · Spain
+**Goil** · July 2025 – Present · El Vendrell, Catalunya, Spain
 
 - Leading the development of the AI platform across the entire Goil ecosystem.
 - Implementation of conversational layers based on Large Language Models (LLMs).

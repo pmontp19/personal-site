@@ -1,8 +1,8 @@
 ---
 company: "Goil"
-role: "AI Product Engineer"
-startDate: 2025-08-01
-description: "Leading the AI platform development across the Goil ecosystem. Building LLM conversational layers, RAG integrations, multitenancy platform, and AI automation."
+role: "AI Lead Engineer"
+startDate: 2025-07-01
+description: "Leading the technical architecture of the AI platform across the Goil ecosystem. Building LLM conversational layers, custom RAG pipelines (pgvector + OpenAI embeddings), an LLM gateway with per-client cost monitoring, a multitenancy platform for AI-generated web/app hosting. Stack: Next.js, Express, TypeScript, Vercel AI SDK, MongoDB, PostgreSQL."
 tags: ["AI", "LLM", "RAG", "Vector DBs", "ASR", "TTS", "Multitenancy", "LLM Gateway", "FinOps"]
 logo: "/images/companies/goil.png"
 ---
