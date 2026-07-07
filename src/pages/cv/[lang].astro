@@ -319,7 +319,7 @@ const { Content } = await render(cv);
 </style>
 
 <script>
-  document.addEventListener("astro:page-load", () => {
+  document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("print-button");
     if (!button) return;
     button.addEventListener("click", () => {

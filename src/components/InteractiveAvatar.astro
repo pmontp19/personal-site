@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import avatarImage from "../assets/avatar.png";
 ---
 
-<div id="avatarContainer" transition:name="avatar-transition">
+<div id="avatarContainer">
   <div class="face-container">
     <Image
       src={avatarImage}
@@ -269,27 +269,6 @@ import avatarImage from "../assets/avatar.png";
       },
       5000 + Math.random() * 2000,
     );
-
-    const cleanup = () => {
-      isInitialized = false;
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("touchmove", handleTouchMove);
-      const currentAvatarContainer = document.getElementById("avatarContainer");
-      if (currentAvatarContainer) {
-        currentAvatarContainer.removeEventListener("click", handleAvatarClick);
-        currentAvatarContainer.removeEventListener(
-          "touchstart",
-          handleAvatarTouchStart,
-        );
-      }
-      if (blinkIntervalId) {
-        clearInterval(blinkIntervalId);
-        blinkIntervalId = null;
-      }
-      document.removeEventListener("astro:before-swap", cleanup);
-    };
-
-    document.addEventListener("astro:before-swap", cleanup, { once: true });
   }
 
   if (document.readyState === "loading") {
@@ -297,8 +276,6 @@ import avatarImage from "../assets/avatar.png";
   } else {
     initializeAvatar();
   }
-
-  document.addEventListener("astro:page-load", initializeAvatar);
 </script>
 
 <style>

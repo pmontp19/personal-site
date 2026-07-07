@@ -30,7 +30,6 @@ const readingTime = featuredPost
           <div class="post-meta text-muted">
             <time
               datetime={featuredPost.data.date.toISOString()}
-              transition:name={`date-${getSlug(featuredPost.id)}`}
             >
               {formatDate(featuredPost.data.date)}
             </time>
@@ -38,7 +37,6 @@ const readingTime = featuredPost
           </div>
           <h3
             class="post-title"
-            transition:name={`title-${getSlug(featuredPost.id)}`}
           >
             <a href={`/blog/${getSlug(featuredPost.id)}`}>
               {featuredPost.data.title}

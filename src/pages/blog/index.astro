@@ -31,14 +31,12 @@ const allPosts = (
           <time
             datetime={post.data.date.toISOString()}
             class="row-date muted"
-            transition:name={`date-${getSlug(post.id)}`}
           >
             {formatDate(post.data.date)}
           </time>
           <a
             class="mdlink row-title"
             href={`/blog/${getSlug(post.id)}/`}
-            transition:name={`title-${getSlug(post.id)}`}
           >
             {post.data.title}
           </a>

@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import ExperienceEntry from "../components/ExperienceEntry.astro";
-import { formatDate, getSlug } from "../utils/date";
+import { formatDate } from "../utils/date";
 
 const experiences = (await getCollection("experience")).sort(
   (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf(),
@@ -29,11 +29,11 @@ const locale = "ca-ES";
     experiences.map((exp, index) => (
       <article class="exp-entry">
         <p class="exp-head">
-          <span class="title" transition:name={`role-${getSlug(exp.id)}`}>
+          <span class="title">
             {exp.data.role}
           </span>
           <span class="muted"> @ </span>
-          <span class="accent" transition:name={`company-${getSlug(exp.id)}`}>
+          <span class="accent">
             {exp.data.company}
           </span>
         </p>
@@ -77,7 +77,6 @@ const locale = "ca-ES";
 <script>
   function initializeShowMore() {
     const buttons = document.querySelectorAll(".show-more-button");
-    const cleanups: Array<() => void> = [];
 
     buttons.forEach((button) => {
       const handler = () => {
@@ -91,17 +90,10 @@ const locale = "ca-ES";
         if (label) label.textContent = expanded ? "veure més" : "veure menys";
       };
       button.addEventListener("click", handler);
-      cleanups.push(() => button.removeEventListener("click", handler));
     });
-
-    const cleanup = () => {
-      cleanups.forEach((fn) => fn());
-      document.removeEventListener("astro:before-swap", cleanup);
-    };
-    document.addEventListener("astro:before-swap", cleanup, { once: true });
   }
 
-  document.addEventListener("astro:page-load", initializeShowMore);
+  document.addEventListener("DOMContentLoaded", initializeShowMore);
 </script>
 
 <style>

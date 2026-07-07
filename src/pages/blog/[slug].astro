@@ -86,14 +86,12 @@ function formatDate(date: Date): string {
 
   <article class="post">
     <a href="/blog" class="mdlink back">← tornar als apunts</a>
-    <h1 class="post-title title" transition:name={`title-${slug}`}>
+    <h1 class="post-title title">
       {entry.data.title}
     </h1>
     <p class="post-meta muted">
       <time
-        datetime={entry.data.date.toISOString()}
-        transition:name={`date-${slug}`}>{formatDate(entry.data.date)}</time
-      >
+        datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
       {
         entry.data.lastUpdated && (
           <span> · actualitzat {formatDate(entry.data.lastUpdated)}</span>

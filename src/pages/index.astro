@@ -61,7 +61,7 @@ Enginyer de programari especialitzat en tot i en res. Actualment, fent que els o
 <span class="tilde">~~~</span>
 
 <span class="label">ÚLTIM APUNT:</span>
-{latest && (<a class="mdlink" href={`/blog/${getSlug(latest.id)}/`} transition:name={`title-${getSlug(latest.id)}`}>{latest.data.title}</a>)}
+{latest && (<a class="mdlink" href={`/blog/${getSlug(latest.id)}/`}>{latest.data.title}</a>)}
 <span class="muted">{latest ? `${formatDate(latest.data.date)} · ${latestReadingTime}` : ""}</span>
 <a class="mdlink" href="/blog">veure'ls tots →</a>
 
@@ -95,7 +95,6 @@ Enginyer de programari especialitzat en tot i en res. Actualment, fent que els o
     el.dataset.initialized = "true";
   }
   document.addEventListener("DOMContentLoaded", initHomeEmail);
-  document.addEventListener("astro:page-load", initHomeEmail);
 </script>
 
 <style>
