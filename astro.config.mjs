@@ -12,8 +12,14 @@ export default defineConfig({
   markdown: {
     // Astro 7's native Sätteri processor. Heading slugs are generated natively;
     // the headingIds plugin reproduces remark-heading-id's `## Heading {#id}`
-    // custom IDs, and externalLinks replaces the old rehype external-links plugin.
+    // custom IDs (Sätteri's native `headingAttributes` is buggy in 0.9.2), and
+    // externalLinks replaces the old rehype external-links plugin. Smart
+    // punctuation enables ellipses/dashes but skips curly quotes to preserve
+    // Catalan apostrophes (l'AI, d'ús).
     processor: satteri({
+      features: {
+        smartPunctuation: { quotes: false, dashes: true, ellipses: true },
+      },
       hastPlugins: [headingIds(), externalLinks()],
     }),
   },

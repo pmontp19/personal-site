@@ -11,6 +11,9 @@ const CUSTOM_ID_RE = /^(.*?)[ \t]*\{#([A-Za-z0-9_-]+)\}[ \t]*$/;
  * Runs before Sätteri's built-in heading-ids plugin, which keeps an existing
  * `id` and otherwise falls back to slugging the text — so headings without a
  * `{#id}` still get an auto-generated slug.
+ *
+ * Kept despite Sätteri's native `headingAttributes` feature because, as of
+ * Sätteri 0.9.2, that feature parses the `{...}` syntax but emits no attributes.
  */
 export default function headingIds() {
   return defineHastPlugin({
