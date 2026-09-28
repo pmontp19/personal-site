@@ -23,9 +23,9 @@ decisió que afegeixi «decoració» va en contra de la direcció.
   --bg:      light-dark(oklch(97% 0.003 250), oklch(7% 0.005 260));   /* ≈ #f7f7f8 / #070708 */
   --surface: var(--bg);                                               /* pàgina única, no hi ha superfícies */
   --fg:      light-dark(oklch(20% 0.004 250), oklch(97% 0.003 250));
-  --muted:   light-dark(oklch(52% 0.004 250), oklch(55% 0.004 250));  /* labels ALL CAPS, dates, metadades */
+  --muted:   light-dark(oklch(52% 0.004 250), oklch(58% 0.004 250));  /* labels ALL CAPS, dates, metadades */
   --border:  transparent;                                             /* sense vores; els separadors són ~~~ */
-  --accent:  oklch(68% 0.14 65);                                      /* ambre CRT, hereu de hsl(40,100%,30%) */
+  --accent:  light-dark(oklch(54% 0.13 65), oklch(68% 0.14 65));     /* ambre CRT; més fosc en clar per AA */
 }
 .theme[data-theme="light"] { color-scheme: light; }
 .theme[data-theme="dark"]  { color-scheme: dark; }
@@ -177,9 +177,10 @@ CONTACTE:
 
 ## Accessibilitat
 
-- Contrast: `--fg` sobre `--bg` compleix AA en tots dos temes; l'accent ambre s'usa
-  per a text d'enllaç sobre fons, verificar AA (≥ 4.5:1) — ajustar la lluminositat de
-  l'accent si cal sense canviar el to.
+- Contrast: `--fg` sobre `--bg` compleix AA en tots dos temes. L'accent ambre
+  original (`oklch(68% 0.14 65)`) donava 2.7:1 sobre el fons clar; en tema clar
+  es baixa la lluminositat a `54%` (≈ 4.8:1) mantenint el to. En fosc es queda a
+  `68%` (≈ 7:1). `--muted` en fosc puja a `58%` (≈ 4.9:1).
 - `prefers-reduced-motion`: desactiva cursor parpellejant, parpelleig d'ulls i
   qualsevol transició.
 - Focus visible (`outline` en accent) a tots els enllaços i botons.

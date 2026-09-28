@@ -12,10 +12,10 @@ const isExp = pathname.startsWith("/experiencia");
     <span class="muted">© {year} Pere Montpeó · </span>
     <a class="mdlink" href="/" aria-current={isHome ? "page" : undefined}
       >inici</a
-    >
+    >{" "}
     <a class="mdlink" href="/blog" aria-current={isBlog ? "page" : undefined}
       >apunts</a
-    >
+    >{" "}
     <a
       class="mdlink"
       href="/experiencia"
@@ -23,7 +23,7 @@ const isExp = pathname.startsWith("/experiencia");
     >
   </nav>
   <p class="foot-line">
-    <span class="label">TEMA:</span>
+    <span class="label">TEMA:</span>{" "}
     <button
       id="light-theme-button"
       class="theme-opt"
@@ -76,6 +76,10 @@ const isExp = pathname.startsWith("/experiencia");
   .theme-opt:hover,
   .theme-opt:focus-visible {
     text-decoration: underline;
+  }
+  .theme-opt[aria-pressed="true"] {
+    color: var(--fg);
+    font-weight: 700;
   }
   .theme-opt:focus-visible {
     outline: 1px solid var(--accent);

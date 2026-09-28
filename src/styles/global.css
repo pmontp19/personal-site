@@ -16,8 +16,9 @@
   /* --- tokens base (OKLch) --- */
   --bg: light-dark(oklch(97% 0.003 250), oklch(7% 0.005 260));
   --fg: light-dark(oklch(20% 0.004 250), oklch(97% 0.003 250));
-  --muted: light-dark(oklch(52% 0.004 250), oklch(55% 0.004 250));
-  --accent: oklch(68% 0.14 65); /* ambre CRT, hereu de hsl(40,100%,30%) */
+  --muted: light-dark(oklch(52% 0.004 250), oklch(58% 0.004 250));
+  /* ambre CRT; més fosc en clar per complir AA (≥ 4.5:1) sobre --bg */
+  --accent: light-dark(oklch(54% 0.13 65), oklch(68% 0.14 65));
   --line: light-dark(oklch(88% 0.004 250), oklch(24% 0.006 260));
   --surface: light-dark(oklch(94% 0.004 250), oklch(15% 0.006 260));
 

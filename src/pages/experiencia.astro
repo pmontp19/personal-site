@@ -29,13 +29,9 @@ const locale = "ca-ES";
     experiences.map((exp, index) => (
       <article class="exp-entry">
         <p class="exp-head">
-          <span class="title">
-            {exp.data.role}
-          </span>
+          <span class="title">{exp.data.role}</span>
           <span class="muted"> @ </span>
-          <span class="accent">
-            {exp.data.company}
-          </span>
+          <span class="accent">{exp.data.company}</span>
         </p>
         <p class="exp-date muted">
           {formatDate(exp.data.startDate, dateOptions, locale)} —{" "}
