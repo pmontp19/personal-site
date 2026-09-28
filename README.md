@@ -1,57 +1,60 @@
-# Astro Starter Kit: Basics
+# peremontpeo.dev
 
-```sh
-npm create astro@latest -- --template basics
-```
+Lloc web personal i blog de Pere Montpeó: [peremontpeo.dev](https://peremontpeo.dev).
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+Fet amb [Astro](https://astro.build) com a lloc estàtic. L'estètica és de
+«fitxer de text» (monospace, separadors `~~~`, un únic accent ambre); la font de
+veritat del disseny és [`docs/design.md`](docs/design.md).
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+## Requisits
 
-## 🚀 Project Structure
+- Node `>= 22.12`
+- [pnpm](https://pnpm.io) (versió fixada a `packageManager` de `package.json`)
 
-Inside of your Astro project, you'll see the following folders and files:
+## Ordres
+
+| Ordre                   | Què fa                                                  |
+| :---------------------- | :------------------------------------------------------ |
+| `pnpm install`          | Instal·la les dependències                              |
+| `pnpm dev`              | Servidor de desenvolupament a `localhost:4321`          |
+| `pnpm build`            | Genera el lloc a `./dist/`                              |
+| `pnpm preview`          | Serveix el build localment                              |
+| `pnpm check`            | Comprovació de tipus (`astro check`)                    |
+| `pnpm lint`             | ESLint                                                  |
+| `pnpm format`           | Formata amb Prettier (`format:check` només comprova)    |
+| `pnpm generate-history` | Genera l'historial de versions dels apunts a partir del git |
+
+## Estructura
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+src/
+├── content/
+│   ├── blog/          # apunts (.md / .mdx)
+│   ├── experience/    # entrades d'experiència laboral
+│   └── cv/            # CV en ca / es / en
+├── components/        # components Astro
+├── layouts/Layout.astro
+├── pages/             # rutes: /, /blog, /experiencia, /cv, feed.xml, llms.txt, OG images…
+├── plugins/           # plugins del processador Markdown (Sätteri)
+├── styles/global.css  # tokens i primitives del disseny
+└── utils/
+docs/                  # spec de disseny i plans
+scripts/               # scripts auxiliars (historial git dels apunts)
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Contingut
 
-There's nothing special about `src/components/`, but that's where we recommend placing any Astro/React/Vue/Svelte/Preact components.
+- **Apunts:** un fitxer a `src/content/blog/` amb `title`, `description` i `date`
+  al frontmatter (opcionals: `lastUpdated`, `draft`, `image`, `imageAlt`).
+  L'esquema és a `src/content.config.ts`.
+- **Experiència:** un fitxer a `src/content/experience/` amb `company`, `role`,
+  `startDate` i, si escau, `endDate`.
 
-Any static assets, like images, can be placed in the `public/` directory.
+El build genera també el feed RSS (`/feed.xml`), el sitemap, `llms.txt` i les
+imatges Open Graph de cada apunt.
 
-## 🧞 Commands
+## CI
 
-All commands are run from the root of the project, from a terminal:
-
-This project uses [pnpm](https://pnpm.io/) as its package manager.
-
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Cada PR a `main` passa per [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
+instal·lació amb lockfile, `format:check`, `lint`, `check` i `build`. Vegeu
+[`docs/plans/ci-checks-roadmap.md`](docs/plans/ci-checks-roadmap.md).

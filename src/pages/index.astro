@@ -35,7 +35,15 @@ const personSchema = {
   name: "Pere Montpeó",
   url: "https://peremontpeo.dev",
   jobTitle: "AI Lead Engineer",
-  description: "Enginyer de programari especialitzat en desenvolupament web.",
+  worksFor: { "@type": "Organization", name: "Goil" },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Tarragona",
+    addressRegion: "Catalunya",
+    addressCountry: "ES",
+  },
+  description:
+    "Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols.",
   sameAs: [
     "https://github.com/pmontp19",
     "https://linkedin.com/in/perem",
