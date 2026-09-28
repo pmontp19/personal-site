@@ -9,6 +9,8 @@ interface Props {
   description?: string;
   canonicalUrl?: string;
   jsonLd?: object;
+  ogImage?: string;
+  ogType?: "website" | "article";
 }
 
 const {
@@ -17,9 +19,12 @@ const {
   description = "Lloc web i blog de Pere Montpeó. Enginyer de programari especialitzat en desenvolupament web.",
   canonicalUrl,
   jsonLd,
+  ogImage,
+  ogType = "website",
 } = Astro.props as Props;
 const siteUrl = "https://peremontpeo.dev";
 const pageUrl = canonicalUrl || siteUrl;
+const ogImageUrl = ogImage || `${siteUrl}/api/og-image/default.png`;
 ---
 
 <!doctype html>
@@ -38,17 +43,14 @@ const pageUrl = canonicalUrl || siteUrl;
     <title>{title}</title>
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={`${siteUrl}/api/og-image/default.png`} />
+    <meta property="og:image" content={ogImageUrl} />
     <meta property="og:locale" content="ca_ES" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta
-      name="twitter:image"
-      content={`${siteUrl}/api/og-image/default.png`}
-    />
+    <meta name="twitter:image" content={ogImageUrl} />
     {
       jsonLd && (
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -116,15 +118,31 @@ const pageUrl = canonicalUrl || siteUrl;
 </html>
 
 <script>
-  function applyTheme(value: "light" | "dark" | "system") {
+  type Theme = "light" | "dark" | "system";
+
+  function applyTheme(value: Theme) {
     const root = document.documentElement;
     if (value === "light" || value === "dark")
       root.setAttribute("data-theme", value);
     else root.removeAttribute("data-theme");
+    // Marca l'opció activa per a lectors de pantalla i estils
+    for (const t of ["light", "dark", "system"] as const) {
+      document
+        .getElementById(`${t}-theme-button`)
+        ?.setAttribute("aria-pressed", String(t === value));
+    }
   }
 
   function init() {
-    const set = (v: "light" | "dark" | "system") => {
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem("theme");
+    } catch {
+      /* localStorage no disponible */
+    }
+    applyTheme(saved === "light" || saved === "dark" ? saved : "system");
+
+    const set = (v: Theme) => {
       try {
         localStorage.setItem("theme", v);
       } catch {

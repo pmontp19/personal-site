@@ -28,16 +28,12 @@ const readingTime = featuredPost
       <MagicCard class="featured-post-card">
         <div class="post-content">
           <div class="post-meta text-muted">
-            <time
-              datetime={featuredPost.data.date.toISOString()}
-            >
+            <time datetime={featuredPost.data.date.toISOString()}>
               {formatDate(featuredPost.data.date)}
             </time>
             <span class="reading-time">⌛ {readingTime}</span>
           </div>
-          <h3
-            class="post-title"
-          >
+          <h3 class="post-title">
             <a href={`/blog/${getSlug(featuredPost.id)}`}>
               {featuredPost.data.title}
             </a>
