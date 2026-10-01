@@ -25,13 +25,7 @@ export interface OGFontStyle {
   size?: number;
   lineHeight?: number;
   weight?:
-    | "Normal"
-    | "Bold"
-    | "SemiBold"
-    | "Medium"
-    | "Light"
-    | "Thin"
-    | "Black";
+    "Normal" | "Bold" | "SemiBold" | "Medium" | "Light" | "Thin" | "Black";
   families?: string[];
 }
 
