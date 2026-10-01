@@ -64,86 +64,88 @@ function formatDate(date: Date): string {
       property="article:published_time"
       content={entry.data.date.toISOString()}
     />
-    {
-      entry.data.lastUpdated && (
-        <meta
-          property="article:modified_time"
-          content={entry.data.lastUpdated.toISOString()}
-        />
-      )
-    }
+    {entry.data.lastUpdated && (
+      <meta
+        property="article:modified_time"
+        content={entry.data.lastUpdated.toISOString()}
+      />
+    )}
     <meta property="article:author" content="Pere Montpeó" />
   </Fragment>
 
   <article class="post">
-    <a href="/blog" class="mdlink back">← tornar als apunts</a>
-    <h1 class="post-title title">
-      {entry.data.title}
-    </h1>
+    <a href="/blog" class="mdlink back">
+      ← tornar als apunts
+    </a>
+    <h1 class="post-title title">{entry.data.title}</h1>
     <p class="post-meta muted">
-      <time datetime={entry.data.date.toISOString()}
-        >{formatDate(entry.data.date)}</time
-      >
-      {
-        entry.data.lastUpdated && (
-          <span> · actualitzat {formatDate(entry.data.lastUpdated)}</span>
-        )
-      }
+      <time datetime={entry.data.date.toISOString()}>
+        {formatDate(entry.data.date)}
+      </time>
+      {entry.data.lastUpdated && (
+        <span> · actualitzat {formatDate(entry.data.lastUpdated)}</span>
+      )}
       <span> · {readingTime}</span>
     </p>
 
-    {
-      entry.data.image && (
-        <div class="hero-image">
-          <Image
-            src={entry.data.image}
-            alt={entry.data.imageAlt || entry.data.title}
-            widths={[400, 800, 1200]}
-            sizes="(max-width: 46rem) 100vw, 46rem"
-          />
-        </div>
-      )
-    }
+    {entry.data.image && (
+      <div class="hero-image">
+        <Image
+          src={entry.data.image}
+          alt={entry.data.imageAlt || entry.data.title}
+          widths={[400, 800, 1200]}
+          sizes="(max-width: 46rem) 100vw, 46rem"
+        />
+      </div>
+    )}
 
-    <p class="tilde" aria-hidden="true">~~~</p>
+    <p class="tilde" aria-hidden="true">
+      ~~~
+    </p>
 
-    {
-      toc.length >= 4 && (
-        <details class="toc">
-          <summary>Contingut</summary>
-          <ol>
-            {toc.map((h) => (
-              <li>
-                <a href={`#${h.slug}`}>{h.text}</a>
-              </li>
-            ))}
-          </ol>
-        </details>
-      )
-    }
+    {toc.length >= 4 && (
+      <details class="toc">
+        <summary>Contingut</summary>
+        <ol>
+          {toc.map((h) => (
+            <li>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    )}
 
     <div class="post-content prose">
       <Content />
     </div>
 
-    <p class="tilde" aria-hidden="true">~~~</p>
+    <p class="tilde" aria-hidden="true">
+      ~~~
+    </p>
 
     <footer class="post-footer">
-      <a href="/blog" class="mdlink">← tots els apunts</a>
+      <a href="/blog" class="mdlink">
+        ← tots els apunts
+      </a>
       <span class="muted share">
         compartir:
         <a
           class="mdlink"
           href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(entry.data.title)}&url=${encodeURIComponent(pageUrl)}`}
           target="_blank"
-          rel="noopener noreferrer">twitter</a
+          rel="noopener noreferrer"
         >
+          twitter
+        </a>
         <a
           class="mdlink"
           href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(entry.data.title)}`}
           target="_blank"
-          rel="noopener noreferrer">linkedin</a
+          rel="noopener noreferrer"
         >
+          linkedin
+        </a>
       </span>
     </footer>
   </article>

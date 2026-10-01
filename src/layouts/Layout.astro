@@ -51,11 +51,9 @@ const ogImageUrl = ogImage || `${siteUrl}/api/og-image/default.png`;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
-    {
-      jsonLd && (
-        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-      )
-    }
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
     <meta
       name="theme-color"
       content="#f7f7f8"
@@ -107,7 +105,9 @@ const ogImageUrl = ogImage || `${siteUrl}/api/og-image/default.png`;
     </style>
   </head>
   <body>
-    <a href="#main" class="skip-link">Vés al contingut</a>
+    <a href="#main" class="skip-link">
+      Vés al contingut
+    </a>
     <div class="frame">
       <main id="main">
         <slot />

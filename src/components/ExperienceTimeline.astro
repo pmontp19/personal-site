@@ -18,23 +18,21 @@ const locale = "ca-ES";
 ---
 
 <div class="timeline">
-  {
-    items.map((exp) => (
-      <div class={`timeline-item ${!exp.data.endDate ? "current" : ""}`}>
-        <div class={`timeline-dot ${!exp.data.endDate ? "pulsating" : ""}`} />
-        <div class="timeline-content">
-          <h3 class="timeline-role">{exp.data.role}</h3>
-          <p class="timeline-company text-muted">{exp.data.company}</p>
-          <p class="timeline-date text-muted">
-            {formatDate(exp.data.startDate, dateOptions, locale)} —{" "}
-            {exp.data.endDate
-              ? formatDate(exp.data.endDate, dateOptions, locale)
-              : "Actual"}
-          </p>
-        </div>
+  {items.map((exp) => (
+    <div class={`timeline-item ${!exp.data.endDate ? "current" : ""}`}>
+      <div class={`timeline-dot ${!exp.data.endDate ? "pulsating" : ""}`} />
+      <div class="timeline-content">
+        <h3 class="timeline-role">{exp.data.role}</h3>
+        <p class="timeline-company text-muted">{exp.data.company}</p>
+        <p class="timeline-date text-muted">
+          {formatDate(exp.data.startDate, dateOptions, locale)} —{" "}
+          {exp.data.endDate
+            ? formatDate(exp.data.endDate, dateOptions, locale)
+            : "Actual"}
+        </p>
       </div>
-    ))
-  }
+    </div>
+  ))}
 </div>
 
 <style>

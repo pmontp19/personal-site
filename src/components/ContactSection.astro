@@ -30,25 +30,25 @@ const socialLinks = [
       class="mdlink email-link"
       type="button"
       data-user={emailUser}
-      data-domain={emailDomain}>correu</button
+      data-domain={emailDomain}
     >
+      correu
+    </button>
   </li>
-  {
-    socialLinks.map((link) => (
-      <li class="contact-row">
-        <span class="dash muted">-</span>
-        <span class="ck label">{link.label}</span>
-        <a
-          class="mdlink"
-          href={link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {link.name}
-        </a>
-      </li>
-    ))
-  }
+  {socialLinks.map((link) => (
+    <li class="contact-row">
+      <span class="dash muted">-</span>
+      <span class="ck label">{link.label}</span>
+      <a
+        class="mdlink"
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {link.name}
+      </a>
+    </li>
+  ))}
 </ul>
 
 <script is:inline>
