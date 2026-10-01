@@ -34,15 +34,15 @@ const chars = [...text];
   data-char-set={characterSet}
   aria-label={text}
 >
-  <span class="hyper-text-ghost" aria-hidden="true">{text}</span>
+  <span class="hyper-text-ghost" aria-hidden="true">
+    {text}
+  </span>
   <span class="hyper-text-scramble" aria-hidden="true">
-    {
-      chars.map((char, i) => (
-        <span data-char={char} data-index={i}>
-          {char}
-        </span>
-      ))
-    }
+    {chars.map((char, i) => (
+      <span data-char={char} data-index={i}>
+        {char}
+      </span>
+    ))}
   </span>
 </Tag>
 

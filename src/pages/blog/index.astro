@@ -21,22 +21,22 @@ const allPosts = (
     programari i altres coses que em semblen interessants.
   </p>
 
-  <p class="tilde" aria-hidden="true">~~~</p>
+  <p class="tilde" aria-hidden="true">
+    ~~~
+  </p>
 
   <ul class="term-list">
-    {
-      allPosts.map((post) => (
-        <li class="term-row">
-          <span class="dash muted">-</span>
-          <time datetime={post.data.date.toISOString()} class="row-date muted">
-            {formatDate(post.data.date)}
-          </time>
-          <a class="mdlink row-title" href={`/blog/${getSlug(post.id)}/`}>
-            {post.data.title}
-          </a>
-        </li>
-      ))
-    }
+    {allPosts.map((post) => (
+      <li class="term-row">
+        <span class="dash muted">-</span>
+        <time datetime={post.data.date.toISOString()} class="row-date muted">
+          {formatDate(post.data.date)}
+        </time>
+        <a class="mdlink row-title" href={`/blog/${getSlug(post.id)}/`}>
+          {post.data.title}
+        </a>
+      </li>
+    ))}
   </ul>
 </Layout>
 

@@ -20,37 +20,37 @@ const readingTime = featuredPost
 <section id="apunts" class="section blog-section">
   <div class="section-header">
     <h2>Últim apunt</h2>
-    <a href="/blog" class="view-all-link-text button-link">Veure tots →</a>
+    <a href="/blog" class="view-all-link-text button-link">
+      Veure tots →
+    </a>
   </div>
 
-  {
-    featuredPost && (
-      <MagicCard class="featured-post-card">
-        <div class="post-content">
-          <div class="post-meta text-muted">
-            <time datetime={featuredPost.data.date.toISOString()}>
-              {formatDate(featuredPost.data.date)}
-            </time>
-            <span class="reading-time">⌛ {readingTime}</span>
-          </div>
-          <h3 class="post-title">
-            <a href={`/blog/${getSlug(featuredPost.id)}`}>
-              {featuredPost.data.title}
-            </a>
-          </h3>
-          <p class="post-description text-muted">
-            {featuredPost.data.description}
-          </p>
+  {featuredPost && (
+    <MagicCard class="featured-post-card">
+      <div class="post-content">
+        <div class="post-meta text-muted">
+          <time datetime={featuredPost.data.date.toISOString()}>
+            {formatDate(featuredPost.data.date)}
+          </time>
+          <span class="reading-time">⌛ {readingTime}</span>
         </div>
-        <a
-          href={`/blog/${getSlug(featuredPost.id)}`}
-          class="read-more button-link"
-        >
-          Llegir més →
-        </a>
-      </MagicCard>
-    )
-  }
+        <h3 class="post-title">
+          <a href={`/blog/${getSlug(featuredPost.id)}`}>
+            {featuredPost.data.title}
+          </a>
+        </h3>
+        <p class="post-description text-muted">
+          {featuredPost.data.description}
+        </p>
+      </div>
+      <a
+        href={`/blog/${getSlug(featuredPost.id)}`}
+        class="read-more button-link"
+      >
+        Llegir més →
+      </a>
+    </MagicCard>
+  )}
 </section>
 
 <style>
