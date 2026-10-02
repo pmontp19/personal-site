@@ -1,0 +1,86 @@
+---
+const W = 560;
+const loop = [
+  { y: 170, title: "AGENT", desc: "avalua i decideix" },
+  { y: 320, title: "EINES", desc: "bash, navegador, git, tests" },
+  { y: 470, title: "VERIFICACIÓ", desc: "CI, QA, revisió: done?" },
+];
+---
+
+<figure class="fig">
+  <figcaption>
+    <b>El bucle d'una sessió</b>
+    <span>Jo a l'inici i al final · l'agent fa la volta fins a done</span>
+  </figcaption>
+  <svg viewBox="0 0 720 742" role="img" aria-labelledby="fig-bucle-title">
+    <title id="fig-bucle-title">
+      Bucle d'una sessió amb objectiu: jo defineixo l'objectiu, l'agent avalua,
+      crida eines i verifica el resultat. Si no està acabat, torna a començar.
+      Quan la PR és en verd i revisada, surt del bucle i torna a mi per a la
+      revisió final
+    </title>
+    <defs>
+      <marker
+        id="fig-bucle-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path class="mk" d="M0 0L10 5L0 10z"></path>
+      </marker>
+      <marker
+        id="fig-bucle-arrow-ac"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="5"
+        markerHeight="5"
+        orient="auto-start-reverse"
+      >
+        <path class="mk-ac" d="M0 0L10 5L0 10z"></path>
+      </marker>
+    </defs>
+
+    <rect class="box-ac" x="1" y="1" width={W - 2} height="98"></rect>
+    <text class="t on-ac" x="24" y="44">JO · OBJECTIU</text>
+    <text class="on-ac" x="24" y="80">el goal i quan està acabat</text>
+
+    <text class="ac b" x="64" y="146">BUCLE DE L'AGENT</text>
+    {
+      loop.map((b) => (
+        <>
+          <rect class="box" x="1" y={b.y + 1} width={W - 2} height="98" />
+          <text class="t" x="24" y={b.y + 44}>
+            {b.title}
+          </text>
+          <text x="24" y={b.y + 80}>
+            {b.desc}
+          </text>
+        </>
+      ))
+    }
+    <g class="ln" marker-end="url(#fig-bucle-arrow)">
+      <path d="M40 100V168"></path>
+      <path d="M40 270V318"></path>
+      <path d="M40 420V468"></path>
+    </g>
+
+    <path
+      class="ln-ac dash"
+      d="M560 520H712V220H566"
+      marker-end="url(#fig-bucle-arrow-ac)"></path>
+    <text class="ac b" x="572" y="364">NO:</text>
+    <text class="ac b" x="572" y="396">REPETIR</text>
+
+    <path class="ln-ac" d="M40 570V638" marker-end="url(#fig-bucle-arrow-ac)"
+    ></path>
+    <text class="fg b" x="64" y="614">DONE: PR EN VERD I REVISADA</text>
+
+    <rect class="box-ac" x="1" y="641" width={W - 2} height="98"></rect>
+    <text class="t on-ac" x="24" y="684">JO · REVISIÓ</text>
+    <text class="on-ac" x="24" y="720">intenció, risc i gust</text>
+  </svg>
+</figure>
