@@ -29,6 +29,10 @@ const expLines = (await getCollection("experience"))
   })
   .join("\n");
 
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -79,6 +83,12 @@ Enginyer de programari especialitzat en tot i en res. Actualment, fent que els o
 <span class="label">EXPERIÈNCIA:</span>
 {expLines}
 <a class="mdlink" href="/experiencia">veure tot →</a>
+
+<span class="tilde">~~~</span>
+
+<span class="label">PROJECTES:</span>
+{projects.map((p) => (<Fragment>- <a class="mdlink" href={p.data.url} target="_blank" rel="noopener noreferrer">{p.data.name}</a> <span class="muted">{p.data.description}</span>
+</Fragment>))}<a class="mdlink" href="/projectes">veure tots →</a>
 
 <span class="tilde">~~~</span>
 

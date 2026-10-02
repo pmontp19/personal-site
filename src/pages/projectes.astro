@@ -1,0 +1,62 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+
+const projects = await Promise.all(
+  (await getCollection("projects"))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (p) => ({ ...p, Content: (await render(p)).Content })),
+);
+---
+
+<Layout
+  title="Projectes | Pere Montpeó"
+  description="Side projects de Pere Montpeó."
+  canonicalUrl="https://peremontpeo.dev/projectes/"
+>
+  <h1 class="title page-title">PROJECTES</h1>
+
+  <p class="tilde" aria-hidden="true">
+    ~~~
+  </p>
+
+  {projects.map((p) => (
+    <article>
+      <p class="proj-head">
+        <a
+          class="mdlink title"
+          href={p.data.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {p.data.name}
+        </a>
+        <span class="muted"> · {p.data.year}</span>
+        {p.data.status && <span class="muted"> · {p.data.status}</span>}
+      </p>
+      <p class="proj-desc">{p.data.description}</p>
+      <div class="proj-desc">
+        <p.Content />
+      </div>
+      {p.data.tags && <p class="muted">{p.data.tags.join(" · ")}</p>}
+      <p class="tilde" aria-hidden="true">
+        ~~~
+      </p>
+    </article>
+  ))}
+</Layout>
+
+<style>
+  .page-title {
+    font-size: 1.4rem;
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
+  }
+  .proj-head {
+    margin: 0;
+  }
+  .proj-desc {
+    margin: 0 0 0.5rem;
+    max-width: 64ch;
+  }
+</style>
