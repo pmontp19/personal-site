@@ -1,0 +1,123 @@
+---
+// Ordre aproximat, no a escala. Només NOV 2025 i FEB 2026 són dates.
+const NOV = 150;
+const FEB = 318;
+const envs = [
+  { x: 0, w: 142, lines: ["VS CODE", "COPILOT"], muted: true },
+  { x: 156, w: 154, lines: ["terminal"], muted: true },
+  { x: 326, w: 130, lines: ["CMUX"] },
+  { x: 464, w: 128, lines: ["HERDR"] },
+  { x: 600, w: 120, lines: ["ORCA"], now: true },
+];
+const models = [
+  { x: 158, w: 146, lines: ["SONNET", "i haiku"] },
+  { x: 320, w: 162, lines: ["OPUS", "i sonnet"] },
+  {
+    x: 490,
+    w: 230,
+    lines: ["OPUS 5.5", "sonnet 5.5", "fable oracle"],
+    now: true,
+  },
+];
+---
+
+<figure class="fig">
+  <figcaption>
+    <b>Com ha canviat el setup</b>
+    <span>Ordre aproximat, no a escala</span>
+  </figcaption>
+  <svg viewBox="0 0 720 540" role="img" aria-labelledby="fig-setup-title">
+    <title id="fig-setup-title">
+      Cronologia del setup. Claude Code és la constant de base. Abans del
+      novembre de 2025, VS Code i Copilot. Des del clic del novembre de 2025 i
+      sense editor des del febrer de 2026, Claude Code corre en entorns que han
+      anat canviant: terminal, cmux, Herdr i avui Orca. Models: Sonnet i de
+      vegades Haiku, després Opus amb Sonnet per executar, i avui Opus 5.5 amb
+      Sonnet 5.5 i Fable d'oracle.
+    </title>
+
+    <text class="ac b" x={NOV + 8} y="28">
+      NOV 2025
+    </text>
+    <text x={NOV + 8} y="62">
+      el clic
+    </text>
+    <text class="ac b" x={FEB + 8} y="28">
+      FEB 2026
+    </text>
+    <text x={FEB + 8} y="62">
+      sense editor
+    </text>
+    <text class="ac b" x="720" y="28" text-anchor="end">
+      AVUI
+    </text>
+    <g class="ln-ac" style="stroke-width:2;stroke-dasharray:3 5">
+      <line x1={NOV} x2={NOV} y1="0" y2="520"></line>
+      <line x1={FEB} x2={FEB} y1="0" y2="520"></line>
+    </g>
+
+    <text class="b" x="0" y="110">
+      AGENT
+    </text>
+    <rect class="tint-2" x="0" y="124" width={NOV - 4} height="60"></rect>
+    <rect
+      class="ac"
+      x={NOV + 4}
+      y="124"
+      width={720 - NOV - 4}
+      height="60"
+    ></rect>
+    <text class="t on-ac" x={NOV + 22} y="165">
+      CLAUDE CODE · LA CONSTANT
+    </text>
+
+    <text class="b" x="0" y="234">
+      ENTORN
+    </text>
+    {envs.map((e) => (
+      <>
+        <rect
+          class={e.now ? "box-tint" : "box"}
+          x={e.x + 1}
+          y="249"
+          width={e.w - 2}
+          height="78"
+        />
+        {e.lines.map((l, i) => (
+          <text
+            class={e.muted ? "" : "t"}
+            x={e.x + e.w / 2}
+            y={e.lines.length === 1 ? 297 : 281 + i * 32}
+            text-anchor="middle"
+          >
+            {l}
+          </text>
+        ))}
+      </>
+    ))}
+
+    <text class="b" x="0" y="378">
+      MODELS
+    </text>
+    {models.map((m) => (
+      <>
+        <rect
+          class={m.now ? "box-tint" : "box"}
+          x={m.x + 1}
+          y="393"
+          width={m.w - 2}
+          height="126"
+        />
+        {m.lines.map((l, i) => (
+          <text
+            class={i === 0 ? "t" : m.now ? "fg" : ""}
+            x={m.x + 14}
+            y={434 + i * 34}
+          >
+            {l}
+          </text>
+        ))}
+      </>
+    ))}
+  </svg>
+</figure>

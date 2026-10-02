@@ -1,0 +1,146 @@
+---
+// Cada nivell és una franja; les fases hi van com a xips. 16.8 unitats per caràcter a 28px.
+const CH = 16.8;
+const PAD = 16;
+const X0 = 56;
+type Chip = { label: string; side?: boolean };
+const levels: [string, Chip[]][] = [
+  ["MANUAL", [{ label: "Desplegament" }]],
+  ["SUPERVISAT", [{ label: "Spec i planificació" }, { label: "Merge" }]],
+  ["DELEGAT AMB REVISIÓ", [{ label: "Implementació" }, { label: "Revisió" }]],
+  [
+    "AUTÒNOM",
+    [
+      { label: "Implementació", side: true },
+      { label: "Testing" },
+      { label: "QA" },
+      { label: "Desplegament", side: true },
+    ],
+  ],
+];
+const ROW = 64; // alçada d'una fila de xips
+const MAXX = 720;
+// Els xips salten de fila si no caben; cada franja creix amb les seves files.
+let cursorY = 64;
+const placed = levels.map(([name, chips]) => {
+  let x = X0;
+  let row = 0;
+  const y = cursorY;
+  const out = chips.map((c) => {
+    const w = c.label.length * CH + PAD * 2;
+    if (x + w > MAXX) {
+      x = X0;
+      row += 1;
+    }
+    const chip = { ...c, x, w, row };
+    x += w + 12;
+    return chip;
+  });
+  cursorY += 120 + row * ROW;
+  return { name, y, chips: out };
+});
+const bandY = (i: number) => placed[i].y;
+const endY = cursorY; // final de l'última franja
+const implX = X0 + ("Implementació".length * CH + PAD * 2) * 0.75;
+---
+
+<figure class="fig">
+  <figcaption>
+    <b>Autonomia per fase, avui</b>
+    <span>Depèn del risc i de l'evidència, no de la capacitat</span>
+  </figcaption>
+  <svg
+    viewBox={`0 0 720 ${endY + 160}`}
+    role="img"
+    aria-labelledby="fig-nivells-title"
+  >
+    <title id="fig-nivells-title">
+      Nivell d'autonomia de l'agent per fase, avui. Desplegament: manual. Spec i
+      planificació i merge: supervisat. Revisió: delegat amb revisió.
+      Implementació: delegat amb revisió a la feina i autònom en frontend i
+      projectes personals. Desplegament: manual a la feina i autònom als
+      projectes personals. Testing i QA: autònom. Més autonomia on el risc és
+      baix i la verificació és barata
+    </title>
+    <defs>
+      <marker
+        id="fig-nivells-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path class="mk" d="M0 0L10 5L0 10z"></path>
+      </marker>
+      <marker
+        id="fig-nivells-arrow-ac"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path class="mk-ac" d="M0 0L10 5L0 10z"></path>
+      </marker>
+    </defs>
+
+    <text class="b" x={X0} y="30">
+      MÉS RISC
+    </text>
+    <path
+      class="ln"
+      d={`M18 16V${endY + 60}`}
+      marker-end="url(#fig-nivells-arrow)"
+    ></path>
+    {placed.map((lvl) => (
+      <>
+        <text class="ac b" x={X0} y={lvl.y + 26}>
+          {lvl.name}
+        </text>
+        {lvl.chips.map((c) => (
+          <>
+            <rect
+              class={c.side ? "box dash" : "box-tint"}
+              style={c.side ? "stroke:var(--accent)" : undefined}
+              x={c.x + 1}
+              y={lvl.y + 41 + c.row * ROW}
+              width={c.w - 2}
+              height="54"
+            />
+            <text class="fg" x={c.x + PAD} y={lvl.y + 78 + c.row * ROW}>
+              {c.label}
+            </text>
+          </>
+        ))}
+      </>
+    ))}
+    <path
+      class="ln-ac dash"
+      style="stroke-width:2"
+      d={`M${implX} ${bandY(2) + 96}V${bandY(3) + 38}`}
+      marker-end="url(#fig-nivells-arrow-ac)"
+    ></path>
+    <text class="b" x={X0} y={endY + 88}>
+      MENYS RISC · VERIFICACIÓ BARATA
+    </text>
+
+    <rect class="box-tint" x="1" y={endY + 123} width="26" height="26"></rect>
+    <text x="40" y={endY + 145}>
+      FEINA
+    </text>
+    <rect
+      class="box dash"
+      style="stroke:var(--accent)"
+      x="161"
+      y={endY + 123}
+      width="26"
+      height="26"
+    ></rect>
+    <text x="200" y={endY + 145}>
+      FRONTEND I PERSONALS
+    </text>
+  </svg>
+</figure>

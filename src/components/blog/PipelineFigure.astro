@@ -1,0 +1,115 @@
+---
+const informe = [
+  { t: "· origen de l'issue" },
+  { t: "· què fa el canvi" },
+  { t: "· troballes per severitat" },
+  { t: "amb fitxer:línia", sub: true },
+  { t: "· veredicte + comentari" },
+];
+---
+
+<figure class="fig">
+  <figcaption>
+    <b>La revisió com a pipeline</b>
+    <span>49 sessions en 14 dies · l'agent llegeix, la persona aprova</span>
+  </figcaption>
+  <svg viewBox="0 0 720 822" role="img" aria-labelledby="fig-pipeline-title">
+    <title id="fig-pipeline-title">
+      Pipeline de revisió: un watcher detecta les PR on em demanen revisió, crea
+      un worktree aïllat i hi posa un agent revisor que no pot fer commit, push,
+      comentar ni merge. L'agent lliura un informe amb l'origen de l'issue, què
+      fa el canvi, les troballes per severitat amb fitxer i línia i un veredicte
+      amb el comentari. Jo soc la porta humana: hi dono un cop d'ull i el
+      publico
+    </title>
+    <defs>
+      <marker
+        id="fig-pipeline-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path class="mk" d="M0 0L10 5L0 10z"></path>
+      </marker>
+    </defs>
+
+    <rect class="box" x="1" y="1" width="338" height="128"></rect>
+    <text class="t" x="24" y="44">
+      WATCHER
+    </text>
+    <text x="24" y="80">
+      busca les PR on
+    </text>
+    <text x="24" y="112">
+      em demanen revisió
+    </text>
+
+    <rect class="box" x="381" y="1" width="338" height="128"></rect>
+    <text class="t" x="404" y="44">
+      WORKTREE AÏLLAT
+    </text>
+    <text x="404" y="80">
+      una còpia neta
+    </text>
+    <text x="404" y="112">
+      per a cada PR
+    </text>
+
+    <rect class="box" x="1" y="181" width="718" height="168"></rect>
+    <text class="t" x="24" y="224">
+      AGENT REVISOR
+    </text>
+    <text x="24" y="260">
+      només llegeix
+    </text>
+    <text class="ac b" x="24" y="294">
+      NO COMMIT · NO PUSH
+    </text>
+    <text class="ac b" x="24" y="326">
+      NO COMENTA · NO MERGE
+    </text>
+
+    <rect class="box" x="1" y="401" width="718" height="238"></rect>
+    <text class="t" x="24" y="444">
+      INFORME
+    </text>
+    {informe.map((l, i) => (
+      <text class={l.sub ? "" : "fg"} x={l.sub ? 64 : 24} y={482 + i * 34}>
+        {l.t}
+      </text>
+    ))}
+
+    <rect class="box-ac" x="1" y="691" width="338" height="128"></rect>
+    <text class="t on-ac" x="24" y="734">
+      PORTA HUMANA
+    </text>
+    <text class="on-ac" x="24" y="770">
+      jo decideixo
+    </text>
+    <text class="on-ac" x="24" y="802">
+      què s'inclou
+    </text>
+
+    <rect class="box" x="381" y="691" width="338" height="128"></rect>
+    <text class="t" x="404" y="734">
+      PUBLICAR
+    </text>
+    <text x="404" y="770">
+      el comentari
+    </text>
+    <text x="404" y="802">
+      a la PR
+    </text>
+
+    <g class="ln" marker-end="url(#fig-pipeline-arrow)">
+      <path d="M340 65H378"></path>
+      <path d="M550 130V178"></path>
+      <path d="M550 350V398"></path>
+      <path d="M170 640V688"></path>
+      <path d="M340 755H378"></path>
+    </g>
+  </svg>
+</figure>

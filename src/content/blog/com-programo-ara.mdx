@@ -1,0 +1,238 @@
+---
+title: "Com programo ara: sense editor, amb agents i amb la revisió com a coll d'ampolla"
+description: "Del Copilot i l'editor obert a sessions autònomes que no paren fins que la PR és en verd. El meu setup actual, com ha evolucionat i què trenca quan entregues molt més que mai."
+date: 2026-10-01
+draft: false
+---
+
+import Note from '../../components/blog/Note.astro';
+import PrVolumFigure from '../../components/blog/PrVolumFigure.astro';
+import SetupFigure from '../../components/blog/SetupFigure.astro';
+import SdlcFigure from '../../components/blog/SdlcFigure.astro';
+import NivellsFigure from '../../components/blog/NivellsFigure.astro';
+import PipelineFigure from '../../components/blog/PipelineFigure.astro';
+import BucleFigure from '../../components/blog/BucleFigure.astro';
+
+<PrVolumFigure />
+
+Aquestes són totes les meves PR mergejades per mes, de feina i de projectes personals, perquè surten del mateix temps i dels mateixos recursos. A sota, el temps que triga a arribar al merge una PR que ha de revisar algú de l'equip: les personals no esperen cap company. No és una mètrica de productivitat: una PR no és valor. Però la forma és clara. El volum total ha passat de 32 a 214 al mes, i la mediana d'espera de les que revisa l'equip, de 12 minuts a 27,8 hores. Escriure codi ja no és el pas lent. Revisar-lo, sí.
+
+Aquest post explica com programo ara, com hi he arribat i per què la revisió s'ha convertit en el coll d'ampolla.
+
+**En resum**
+
+- Des del febrer de 2026 no obro l'editor: defineixo un objectiu i l'agent treballa fins que la PR és en verd i revisada.
+- Entrego molt més, però cada PR espera molt més: el pas que depèn d'una persona (la revisió) no escala. A escala personal, el mateix límit és la meva memòria de treball.
+- Els agents revisors tenen ganes de trobar coses i allarguen el bucle. El que retallo ho converteixo en regla perquè no torni a passar.
+- El que ho fa possible: bucles de feedback ràpids en local, barreres dures (linters, tests, CI) i context de producció només de lectura.
+- Ja no planifico: executo directament.
+
+<Note>El meu setup canvia de setmana en setmana. Això és una foto de l'1 d'octubre de 2026, no una recepta definitiva.</Note>
+
+## Fins al novembre de 2025: autocompletar
+
+VS Code, Copilot per autocompletar i el xat dins l'editor. Una finestra de terminal amb Claude Code, dues com a molt, i un sol projecte a la vegada. Escrivia i llegia tot el codi a mà: cada línia passava pels meus ulls abans de ser a la PR.
+
+És còmode perquè l'esforç i el control van units. I té un sostre evident: el teu ritme d'escriptura i de lectura.
+
+## El clic del novembre de 2025
+
+El novembre de 2025 la indústria, sobretot a Silicon Valley, va fer un clic: els models podien fer molt més del que pensàvem. Opus 4.5, Gemini 3 Pro i companyia. Per a mi va ser el pas d'autocompletar a agent de programació autònom.
+
+Cap al febrer de 2026 ja no obria l'editor. Terminal, agent i diff a la PR. Sense editor no vol dir sense criteri: vol dir que el criteri es mou d'*escriure* a *definir i verificar*.
+
+## El setup d'avui
+
+Avui el setup té quatre peces:
+
+- **Agents**: Claude Code és el meu *daily driver* a la feina, ara sobretot amb Opus 5.5: ho capta a la primera i necessita molt poc *steering*. Sonnet 5.5 per a tasques de menys valor, i a vegades Fable fa d'oracle quan necessito una segona opinió difícil. Gemini (pla Google AI Pro) el faig servir poc, perquè Antigravity, fins i tot al terminal, és molt dolent; el reprenc amb Gemini 3.8 Flash i vull provar Gemini 4, sortit la nit del 30 de setembre. Per a sessions llargues i barates amb un pla fix, OpenCode amb Z.ai GLM: ara GLM-5.3-flash, per la visió, que aprofito sobretot a genealogia.
+- **Orquestració**: el que canvia és l'entorn on corren els agents. He passat per [cmux](https://cmux.com), un terminal per a macOS pensat per a agents, i per [Herdr](https://herdr.dev/), on segueixen en marxa encara que tanquis el portàtil. Ara soc a [Orca](https://github.com/stablyai/orca). Em dona un worktree aïllat per sessió sense fricció: una còpia de treball de git per a cada agent, perquè no es trepitgin. I el puc instal·lar com a servidor remot i connectar-m'hi des del mòbil per Tailscale, una VPN privada. Una sessió avança sense que jo sigui davant l'ordinador.
+- **Git**: també el fan els agents. Quan jo ho dic i tot és en verd i aprovat, fan el merge i netegen l'entorn.
+- **Desplegament**: als projectes personals, el merge desplega directament a producció. A la feina és l'únic pas que no és automàtic.
+
+<SetupFigure />
+
+### QA: l'agent prova la seva feina
+
+Perquè un agent treballi sol, primer ha de poder comprovar la seva feina.
+
+**Frontend.** [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) és el meu millor amic, i [agent-browser](https://agent-browser.dev) també va molt bé. Un MCP és un connector que dona eines i dades a l'agent. Amb un model amb visió, el QA del frontend no necessita cap test e2e escrit: obre l'app, reprodueix el bug o prova la funcionalitat nova i m'ho ensenya. El QA al navegador del dia a dia el fa Claude Code. Ho complemento amb el MCP de Mobbin per buscar patrons de disseny reals, i n'he parlat més al [post de QA amb agents](/blog/qa-ai-agents-browser-automation).
+
+**API i backend.** També ho prova tot: crida l'API, comprova respostes i efectes. A vegades escriu tests e2e o d'integració; d'altres, es fa els seus propis scripts per provar parts de forma integrada sense haver d'aixecar tota l'API. El que importa és que el resultat sigui una prova que l'agent ha executat, no una opinió.
+
+### Les al·lucinacions ja no són el que eren
+
+Altres MCP han perdut pes. Abans feia servir sobretot Context7; ara, Firecrawl, i cada cop menys. Les al·lucinacions s'han reduït dràsticament. Molts models van directament al codi de la dependència, o munten un petit experiment per confirmar la causa de forma empírica, no per sensació. Algunes llibreries ja porten la documentació incrustada. Un MCP es queda només si el model no resol el problema sol. El [context engineering](https://x.com/trq212/status/2080710971228918066) també va d'això: treure el que ja no cal.
+
+### Donar-li context per fer troubleshooting
+
+Treure context que sobra no vol dir deixar l'agent a cegues. Amb un bug, el que li falta és context de producció, i això m'ha funcionat més que qualsevol prompt. Un agent que només veu el codi endevina. Un que veu què ha passat de debò, ho resol. Per això li dono accés, **sempre en mode lectura**, a:
+
+- **PostHog (MCP)**: què feia l'usuari abans de l'error, quins esdeveniments hi ha, sessions i errors.
+- **Logs de Grafana**: què ha dit el servidor en aquell moment.
+- **La base de dades i les cues**, a vegades amb un MCP, només per mirar.
+- **El context de la infraestructura**: com està muntada i què es connecta amb què.
+- **Un entorn on reproduir el bug.** Aquest és el més important. Si l'agent pot reproduir-lo, pot verificar que l'ha arreglat; si no, només pot opinar.
+
+Un exemple d'avui mateix: s'havia perdut la connexió entre Redis i la instància que processa les cues, i no s'havia recuperat. L'agent ha llegit els logs, ha mirat les cues i els *jobs* encallats i, com que coneixia la infraestructura, ha lligat caps i ha trobat la causa sense que jo li expliqués cap peça. Reprodueix, troba la causa, arregla i torna a reproduir.
+
+### Sessions amb un objectiu
+
+Amb verificació i context, n'hi ha prou amb un objectiu. Defineixo un goal, l'encàrrec amb la condició de final: «arregla l'issue #123, afegeix un test que falli abans i passi després, i deixa la PR en verd». L'agent no para fins que la PR és en verd i revisada. Jo hi soc a l'inici (el goal) i al final (la revisió).
+
+Perquè funcioni, l'agent necessita feedback ràpid: tests, checks i linters en local, regles dures i un CI ràpid. Rarament es queda donant voltes; el risc és que es desviï de l'objectiu, i per això el goal ha de ser concret.
+
+El CLI d'Orca deixa que una sessió n'orquestri unes altres. Li puc dir:
+
+- «Agafa els issues que tinc assignats, obre un workspace per a cadascun i posa-hi un agent a treballar.» Jo verifico i integro al final, amb una revisió adversària: un segon agent que intenta trobar-hi errors.
+- «Mira totes les meves PR, fes *rebase* si cal i resol els conflictes en paral·lel.»
+
+### Una idea no espera
+
+L'orquestració gestiona les sessions que ja tinc en marxa. Per a una idea nova, moltes vegades l'obro a l'app de Claude per a iPhone, que em dona un entorn al núvol amb el meu projecte. No cal esperar a seure davant l'ordinador. Puc tenir una idea durant el cap de setmana i dilluns ja tinc alguna cosa provada.
+
+### Ja no planifico
+
+Amb un goal concret, el pla sobra. Amb Opus 4.5 i 5 planificava molt, i amb Fable encara més, per implementar després amb Sonnet. Ara, pel dia a dia, no planifico: executo directament. Els plans tenen molt de *drift*: el codi canvia entre el pla i la implementació, i l'agent troba coses que el pla no preveia. Els models actuals ho gestionen sense gaires problemes.
+
+Si a tu no et funciona així, la meva hipòtesi, de més a menys probable: un model poc recent; falta de context o de documentació; o un projecte complex com un ERP (SAP, Microsoft Dynamics), amb pocs exemples a les dades d'entrenament i un bucle de feedback de minuts o hores. Ajuda molt un monorepo amb bones pràctiques d'arquitectura (DDD, hexagonal). Des d'Opus 5 no calen regles explícites de com crear mòduls, ports o models nous.
+
+### Revisar sessions anteriors
+
+El que sí que faig molt és mirar enrere: demano a l'agent que revisi les sessions anteriors i busqui patrons. On he hagut d'intervenir, què he repetit, què faltava a `AGENTS.md`, el fitxer d'instruccions del repo per als agents. D'aquí surten regles noves i skills, paquets d'instruccions reutilitzables. L'objectiu és que la següent sessió autònoma no necessiti que hi intervingui.
+
+### Skills: provar-les i quedar-me amb el que funciona
+
+No totes les skills les escric jo. Provo les de fora un temps i n'integro als projectes les parts que funcionen. Un exemple és la skill de revisió del backoffice, adaptada al nostre producte.
+
+L'última que m'ha anat molt bé és [Ponytail](https://github.com/DietrichGebert/ponytail): l'agent actua com un desenvolupador sènior mandrós. Abans d'escriure res, es pregunta si cal que existeixi, si ja és al codebase, si ho resol la biblioteca estàndard, la plataforma o una dependència instal·lada, i si pot ser una línia. Només llavors escriu el mínim codi que funcioni, sense estalviar-se mai la validació d'entrades, la seguretat ni l'accessibilitat. Els agents tendeixen a sobreconstruir, i menys codi vol dir menys superfície per revisar. Els autors afirmen ~54% menys de codi de mitjana en les seves proves; són xifres seves, no meves.
+
+Tres col·leccions més que faig servir sovint, de tres autors que respecto:
+
+- [Les de Matt Pocock](https://github.com/mattpocock/skills), «skills per a enginyers de veritat, no per fer *vibe coding*»: petites, composables i que funcionen amb qualsevol model. La que més faig servir és `grill-with-docs`: una entrevista implacable que afina un pla o un disseny i, de passada, deixa documents (ADR i glossari). Aquest post va néixer d'un *grill* així, abans del primer esborrany.
+- [Les d'Addy Osmani](https://github.com/addyosmani/agent-skills), que codifiquen el cicle de vida (definir, planificar, construir, verificar, revisar, publicar) amb ordres com `/spec`, `/plan`, `/build`, `/review` i `/ship`. Les faig servir com a punt de partida i en retallo el que no encaixa amb el nostre repo.
+- [Les d'Emil Kowalski](https://github.com/emilkowalski/skills), per a *design engineering*: criteri sobre els detalls d'interfície, els components i, sobretot, les animacions. En animacions han estat un abans i un després: l'agent ja no n'afegeix per afegir, decideix quan, quant i amb quina corba. El seu curs és a [animations.dev](https://animations.dev/).
+
+### En números
+
+Tot plegat es tradueix en volum. Alguns números meus recents, extrets de les sessions locals:
+
+- **Claude Code**: 168 sessions en 14 dies, fins a 28 de superposades, i unes 10 crides a eines per cada missatge meu. Els meus missatges tenen una mediana de 68 caràcters. L'agent condueix el terminal: el 80% de les crides són `bash`.
+- **OpenCode**: 112 sessions en 15 dies, amb unes 88 h de feina d'agent amb GLM-5.3-flash sota un pla fix.
+- **Totes les PR**: 214 mergejades al setembre, davant de 32 un any abans, entre feina i projectes personals (com el de [genealogia](/blog/myheritage-agents-autonoms)).
+- **Contribucions a GitHub**: 1.298 el setembre de 2026, davant d'unes 265 un any abans.
+- **Cost**: el monitor d'ús (CodexBar) estima, a preus d'API, uns 3.100 $ i 6.100 milions de tokens a Claude en 30 dies, amb Opus com a model principal. Amb el pla Team no és el que pago, però dona la mida. Va coincidir amb el període en què més funcionalitats i contribucions he fet, a l'empresa i als projectes personals.
+
+## Programari: de picar codi a dissenyar el sistema
+
+Aquest volum no és només cosa meva: és el cicle de vida del programari (SDLC) que canvia. Els agents n'han anat menjant fases:
+
+<SdlcFigure />
+
+GitHub ho resumeix [com un canvi de rol](https://github.blog/developer-skills/career-growth/from-coder-to-orchestrator-how-agents-shift-the-role-of-a-developer/): de programador a orquestrador.
+
+[Addy Osmani](https://x.com/addyosmani/status/2072885435312042327) proposa pensar-ho com a nivells d'autonomia: quanta llibertat dones a l'agent depèn del risc i de l'evidència que pot aportar, no de què sigui capaç de fer. Em va ajudar a posar nom a allò que ja feia: més autonomia on equivocar-se costa poc i verificar és barat (frontend, projectes personals), menys on no (el desplegament a l'empresa).
+
+<NivellsFigure />
+
+El desplegament n'és l'exemple clar. Als meus projectes personals, el merge va a producció sense passos manuals. A l'empresa, amb diversos tenants, he de controlar molt bé quina versió té cada client i quan, i aquest pas continua sent meu.
+
+La revisió és la fase que s'ha mogut a mitges: «agent primer, humà després». Aquest «després» és on s'atura tot.
+
+## La revisió és el coll d'ampolla
+
+L'«agent primer» ja el tinc muntat: un pipeline dins d'Orca amb Claude Code. Un *watcher* busca les PR on em demanen revisió, crea un worktree aïllat i hi posa un agent a revisar-la. En 14 dies, 49 sessions de revisió. L'agent té prohibit fer commit, push o `gh pr review`, comentar o fer merge. Em lliura l'origen de l'issue, què fa el canvi, les troballes per severitat amb fitxer i línia, i un veredicte amb el comentari exacte. Jo hi dono un cop d'ull i el publico: l'agent llegeix, la persona aprova. I ara mateix aquest cop d'ull és el coll d'ampolla de l'equip.
+
+<PipelineFigure />
+
+Per què arriba a 27,8 hores si l'agent ja pre-revisa? Perquè aquest temps va des que s'obre la PR fins al merge, i hi caben els bucles. Un LLM revisant té **ganes de trobar coses**: és verbós i vol ajudar. Abans un company mirava la PR, la provava i deia què veia. Ara ho fa el seu agent, troba coses, l'autor les implementa i un altre agent del pipeline torna a demanar canvis. Això pot durar hores, i abans no passava.
+
+Per això cal el filtre. A mi em diu «approve» amb *nitpicks* i *considers* que jo trec. Altres vegades aplica criteris de l'equip que mai van quedar escrits a `AGENTS.md`. Aquest és el pitjor cas: no era un error de l'agent, era coneixement que només vivia al cap de les persones.
+
+El meu criteri per retallar: trec el que és massa petit per allargar la funcionalitat o el fix, i a vegades en surt un issue de seguiment. Si hi ha un bug clar, demano una nova revisió.
+
+Torno al gràfic de l'inici. Les meves PR amb revisió d'equip han passat de 31 el setembre de 2025 a 49 el març de 2026 i a 79 el setembre de 2026 (89 l'agost). La mediana d'espera, de 12 minuts a 42 minuts i a 27,8 hores. Fins fa dos mesos es movia entre uns minuts i unes poques hores. A tot l'equip, de 62 a 184 PR mergejades al mes, i la mediana de 12 minuts a 20,4 hores. Fem tres vegades més PR i cadascuna espera cent vegades més.
+
+Tampoc és que les PR siguin més grans. La mediana de les meves ha passat de 453 a 290 línies canviades, i de 9 a 5 fitxers. L'espera no ve de la mida, ve del volum. I són més petites per una bona raó. Abans, gestionar branques, PR i releases a mà tenia un cost, i en una PR de funcionalitat hi posaves dues o tres coses petites per estalviar-te'l. Ara git va en pilot automàtic i és fàcil fer més PR, més petites i concises, que és la idea de git des del principi.
+
+El volum també creix per un altre motiu: han baixat els errors, però han pujat els bugs identificats. Els models actuals semblen mirar de reüll tot el que els envolta: fas un refactor petit o proves una funcionalitat nova i en detecten molts més. Jo acabo el que estava fent i li demano que obri un issue per cada cosa que trobi pel camí. Abans, enmig d'una funcionalitat nova, era inviable dedicar temps a bugs menors que cap client havia vist.
+
+A l'equip, almenys un company revisava i validava cada PR, a més del CI en verd. Amb 3 PR al dia, la revisió d'un company hi cabia. Ara, en un bon dia, en fem 20. La revisió ja no és manual, però sovint encara hi ha una persona al mig, i les PR passen hores obertes esperant-la.
+
+**Els workflows establerts depenen de les persones**: de qui revisa, de qui té temps, de qui coneix aquell mòdul. Escalen mentre el volum és constant; quan es multiplica per tres, es converteixen en cua. No és que l'equip sigui més lent: és que el pas que no escala s'ha quedat sol. I triplicar les PR té un preu per a qui les revisa. Per això el problema és de l'equip, no només meu.
+
+I no és un problema només nostre:
+
+- Anthropic [ha explicat](https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic) que el volum de codi i de tests generat per agents va ofegar el seu propi CI, i que van haver de redissenyar-lo.
+- GitHub [reconeix](https://github.blog/ai-and-ml/github-copilot/better-tools-made-copilot-code-review-worse-heres-how-we-actually-improved-it/) que millorar les eines de la revisió de Copilot l'havia fet pitjor, fins que van repensar el flux de treball.
+- GitHub també proposa [partir una PR gegant generada per IA en una pila revisable](https://github.blog/engineering/turn-one-giant-ai-generated-pull-request-to-a-reviewable-stack/). Si hi ha tantes PR gegants que cal un format nou, el problema és general.
+
+## Cap on vaig: l'agent ha de menjar-se la revisió
+
+Perquè la revisió deixi de ser el sostre, ha de deixar de dependre només de persones. La idea que més em serveix: **cada *nitpick* que retallo, i cada criteri que només viu al cap d'algú, ha de convertir-se en una regla**. Una línia a `AGENTS.md`, una skill, un linter, un test.
+
+A l'equip, cadascú experimenta amb el seu setup i comparteix el que funciona. Els canvis a `AGENTS.md` i les skills concretes sí que entren al flux habitual: van al repositori per PR, com qualsevol codi, i els rep tothom.
+
+El que ja hem convertit en barreres: hem passat d'ESLint a Oxlint, més ràpid i amb més regles; algunes regles han passat de *warn* a *error*; un *ratchet* detecta els errors nous sense exigir un codi perfecte el primer dia; i tenim tests unitaris i d'integració. El camí que veig:
+
+1. **Més agents revisant.** Fins avui el Copilot de GitHub ens ha anat prou bé: entén l'abast de la PR i sempre troba alguna cosa que s'escapa. Cal sumar-hi més revisors automàtics, no substituir-los.
+2. **Més comprovacions estàtiques**: seguretat, tests, tipus, linters. Allò que un check pot decidir no ho ha de decidir una persona.
+3. **Criteris escrits.** El que avui decideixo amb un cop d'ull ha de quedar escrit a la font perquè no torni a sortir. És el que ja faig amb les sessions anteriors, aplicat a la revisió.
+4. **Bucles.** L'agent que revisa i el que corregeix treballen fins que convergeixen, i només escalen a l'humà quan no hi ha consens. És el que Addy Osmani anomena [*loop engineering*](https://addyosmani.com/blog/loop-engineering/): deixar de ser qui li dona prompts a l'agent per dissenyar el sistema que ho fa. Hi cita Boris Cherny, el responsable de Claude Code a Anthropic: «Ja no li dono prompts a Claude. Tinc bucles que ho fan i decideixen què cal fer. La meva feina és escriure bucles.»
+5. **L'humà es queda amb el que és irreductible**: intenció, risc i gust.
+
+<BucleFigure />
+
+### El bucle sencer: PostHog *self-driving*
+
+Un exemple de fins on pot arribar el bucle és el [*self-driving* de PostHog](https://posthog.com/docs/self-driving). El producte genera senyals (errors, sessions, salut dels serveis), els senyals s'agrupen en informes i un agent n'investiga cada un. Si és accionable, obre una PR perquè la revisis i la fusionis; si no, demana la teva opinió. Després mesura si el canvi ha funcionat i ho torna al bucle com a senyal nou. Hi ha memòria entre execucions perquè no reobri sempre la mateixa PR, i tot passa dins de les barreres que tu defineixes.
+
+PostHog ho ven, és evident, però la idea val sense comprar res. Un agent de codi té el teu codi, però no el teu context: les dades reals d'ús li diuen què val la pena arreglar. No n'hi ha prou de fer una PR, cal mesurar si el canvi ha funcionat. I l'humà es queda al final, revisant i fusionant.
+
+És el mateix patró que he anat explicant, portat a l'extrem: l'agent no només executa l'encàrrec, descobreix què cal fer. I torna al coll d'ampolla: amb una màquina que obre PR soles, el pas que no escala és, encara més, la revisió.
+
+## El que no m'ha funcionat
+
+Arribar fins aquí ha tingut ensopegades.
+
+**Perdre feina a git.** Ho feia tot en un mateix arbre, i amb agents que fan *stash*, *checkout* i *reset*, perdre canvis és qüestió de temps. Ho he patit, sobretot amb models antics (Sonnet 4, GLM-4 o anteriors, crec). Tenia regles perquè no poguessin fer *push*: el feia jo, després de mirar els canvis, i mai amb *force*. Amb els models actuals això ha evolucionat: avui fan el merge quan jo ho dic. Però el remei de debò és el worktree per sessió: cap agent trepitja la feina d'un altre. L'altre remei és el mode auto de Claude Code, que avalua les ordres abans d'executar-les i atura les destructives.
+
+**Perdre el control.** Els primers dies amb agents autònoms tenia la sensació de no controlar res; sovint ni sabia què havia fet l'agent. Llegir-ho tot no escala, així que he canviat el que miro: no el codi, sinó les barreres. Linters, CI, tests ben fets i verificacions al final de cada tasca. Unes instruccions en un context s'obliden o s'interpreten; un check que falla, no. Les dades personals i els secrets, a més, queden fora del context.
+
+Una conseqüència incòmoda: en moltes tasques els agents escriuen codi igual de bo o millor que el meu. Llegir-lo línia a línia per «corregir-lo» deixa de tenir sentit. El que aporto jo és saber si el resultat és el correcte: quan reviso, no miro l'estil, miro si fa el que toca.
+
+**Firstmate.** Hi vaig dedicar unes setmanes ([Firstmate](https://github.com/kunchenguid/firstmate): «Talk to one agent. Ship with a crew»). El concepte m'encanta, però per dins no em va convèncer: poca visibilitat, processos que trigaven molt sense saber per què i límits d'ús que s'esgotaven de seguida, potser només per la paral·lelització. Tot i això, el recomano: l'autor, [Kun Chen](https://github.com/kunchenguid), antic enginyer de Meta, Microsoft i Atlassian, té molt bones idees i ha adoptat de ple l'enginyeria de programari agèntica. Val la pena seguir el [seu canal de YouTube](https://www.youtube.com/channel/UCb69t9ZkE5z1KvCmfJoaifA). Me'n vaig quedar la idea de l'orquestrador, que ara faig servir en diversos projectes en paral·lel, de feina i personals, amb una skill per implementar funcionalitats grans i una altra per comprovar que s'aplica bé.
+
+**La càrrega cognitiva.** Més projectes en paral·lel vol dir més coses al cap, i la meva memòria de treball té un límit. Amb 3 o 4 tasques obertes, sé on era cadascuna i puc desconnectar i tornar. Amb 10 o més ja no sé on era la primera, de què anava ni què havia demanat. Les últimes setmanes això s'ha traduït en un bloqueig. L'agent no es cansa; jo sí.
+
+Què m'ha ajudat, per ordre d'importància:
+
+1. **Especificar bé l'issue al principi.** Si l'encàrrec és clar, no cal que me'l recordi.
+2. **Regles clares a `AGENTS.md`**, perquè l'orquestrador sàpiga què ha de fer, com i quan ha de parar.
+3. **Un indicador clar de quan una cosa està feta** (*done*). Sense això, tot sembla obert.
+4. **Demanar resums de l'estat de tot el que està en marxa.** En lloc de recordar-ho, ho pregunto.
+5. **La campana d'Orca**: les sessions m'esperen amb una notificació en lloc de reclamar-me atenció.
+
+És el mateix coll d'ampolla que a l'equip, a escala d'una persona: el que depèn de mi fa cua.
+
+## Per començar
+
+Si encara no treballes amb agents autònoms, aquests són els passos amb més retorn que faria:
+
+1. Un worktree per sessió d'agent.
+2. Mesura l'espera de les teves PR, de l'obertura al merge. Amb `gh pr list --state merged --json createdAt,mergedAt` n'hi ha prou.
+3. Dona-li context de producció només de lectura i un entorn on reproduir bugs.
+4. Posa un agent a revisar primer, sense permisos per publicar res.
+5. Cada setmana, demana-li que revisi les sessions anteriors i converteix el que repeteixes en regles a `AGENTS.md`.
+
+I una cosa que no faria encara: deixar que faci el merge sense que li ho hagis dit.
+
+## Per acabar: el que queda és criteri
+
+Fa un any el coll d'ampolla era escriure codi. Ara és revisar-lo, perquè és l'últim pas que depèn d'una persona. D'aquí a un any serà una altra cosa.
+
+La meva aposta és que la IA anirà agafant més parts de l'SDLC. Els models van tapant les mancances que tenien: el que avui encara reviso a mà, demà ho farà un bucle. Anthropic mateix explica que [delega una part creixent del desenvolupament d'IA a la mateixa IA](https://www.anthropic.com/institute/recursive-self-improvement). Tot el que pugui ser programari, serà programari.
+
+Com a persones, ens haurem d'anar separant de l'SDLC, perquè cada fase que depèn d'una persona acaba sent una cua. Però **de moment els enginyers de programari encara hi serem**. El que canvia és quin és el filtre. Qui comença ara, o està estudiant, té un camí difícil: picar codi, la part que abans era la porta d'entrada, és just la que els agents ja fan millor. Només se'n sortiran els que tinguin **criteri i bones idees**: saber què val la pena construir, què deixar entrar i què no, i detectar quan un resultat verd és en realitat un error.
+
+Si ja has trobat com desfer aquest coll d'ampolla al teu equip, o simplement en vols parlar, [parlem-ne](/contact).

@@ -1,0 +1,80 @@
+---
+type Who = "JO" | "MIXT" | "AGENT";
+const rows: [string, Who, Who][] = [
+  ["Spec i planificació", "JO", "MIXT"],
+  ["Implementació", "MIXT", "AGENT"],
+  ["Testing", "JO", "AGENT"],
+  ["QA", "JO", "AGENT"],
+  ["Revisió", "JO", "MIXT"],
+  ["Merge", "JO", "MIXT"],
+  ["Desplegament", "JO", "JO"],
+];
+const box = { JO: "box", MIXT: "box-tint", AGENT: "box-ac" };
+const ink = { JO: "fg", MIXT: "fg", AGENT: "on-ac" };
+const COLS = [336, 534];
+const W = 184;
+const legend: [Who, string, number][] = [
+  ["JO", "JO", 0],
+  ["MIXT", "MIXT (JO + AGENT)", 130],
+  ["AGENT", "AGENT", 500],
+];
+---
+
+<figure class="fig">
+  <figcaption>
+    <b>Qui fa cada fase</b>
+    <span>Cicle de vida del programari · nov 2025 vs avui</span>
+  </figcaption>
+  <svg viewBox="0 0 720 590" role="img" aria-labelledby="fig-sdlc-title">
+    <title id="fig-sdlc-title">
+      Qui fa cada fase del cicle de vida del programari, el novembre de 2025 i
+      avui. Novembre de 2025: implementació mixta, la resta jo. Avui:
+      implementació, testing i QA les fa l'agent; spec, revisió i merge són
+      mixtes; el desplegament el continuo fent jo
+    </title>
+
+    <text class="ac b" x={COLS[0] + W / 2} y="30" text-anchor="middle">
+      NOV 2025
+    </text>
+    <text class="ac b" x={COLS[1] + W / 2} y="30" text-anchor="middle">
+      AVUI
+    </text>
+    {rows.map(([name, before, now], r) => {
+      const y = 54 + r * 66;
+      return (
+        <>
+          <text class="fg" x="0" y={y + 37}>
+            {name}
+          </text>
+          {[before, now].map((who, c) => (
+            <>
+              <rect
+                class={box[who]}
+                x={COLS[c] + 1}
+                y={y + 1}
+                width={W - 2}
+                height="52"
+              />
+              <text
+                class={`t ${ink[who]}`}
+                x={COLS[c] + W / 2}
+                y={y + 37}
+                text-anchor="middle"
+              >
+                {who}
+              </text>
+            </>
+          ))}
+        </>
+      );
+    })}
+    {legend.map(([who, label, x]) => (
+      <>
+        <rect class={box[who]} x={x + 1} y="545" width="26" height="26" />
+        <text x={x + 40} y="567">
+          {label}
+        </text>
+      </>
+    ))}
+  </svg>
+</figure>

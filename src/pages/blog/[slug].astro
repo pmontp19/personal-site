@@ -248,14 +248,15 @@ function formatDate(date: Date): string {
     border: 1px solid var(--line);
     text-align: left;
   }
-  .post-content :global(.external-link) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25em;
+  .post-content :global(.external-link-icon-wrapper) {
+    white-space: nowrap;
+    margin-left: 0.25em;
   }
   .post-content :global(.external-link-icon) {
+    display: inline-block;
     width: 0.85em;
     height: 0.85em;
+    vertical-align: -0.1em;
   }
 
   .toc {
