@@ -1,7 +1,8 @@
 ---
 name: tincmem.cat
 url: https://tincmem.cat
-description: Cercador d'escenes de "Plats bruts".year: 2026
+description: Cercador d'escenes de "Plats bruts".
+year: 2026
 order: 1
 press:
   - name: Nació Digital
