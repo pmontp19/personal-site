@@ -87,51 +87,60 @@ const implX = X0 + ("Implementació".length * CH + PAD * 2) * 0.75;
       </marker>
     </defs>
 
-    <text class="b" x={X0} y="30">MÉS RISC</text>
+    <text class="b" x={X0} y="30">
+      MÉS RISC
+    </text>
     <path
       class="ln"
       d={`M18 16V${endY + 60}`}
-      marker-end="url(#fig-nivells-arrow)"></path>
-    {
-      placed.map((lvl) => (
-        <>
-          <text class="ac b" x={X0} y={lvl.y + 26}>
-            {lvl.name}
-          </text>
-          {lvl.chips.map((c) => (
-            <>
-              <rect
-                class={c.side ? "box dash" : "box-tint"}
-                style={c.side ? "stroke:var(--accent)" : undefined}
-                x={c.x + 1}
-                y={lvl.y + 41 + c.row * ROW}
-                width={c.w - 2}
-                height="54"
-              />
-              <text class="fg" x={c.x + PAD} y={lvl.y + 78 + c.row * ROW}>
-                {c.label}
-              </text>
-            </>
-          ))}
-        </>
-      ))
-    }
+      marker-end="url(#fig-nivells-arrow)"
+    ></path>
+    {placed.map((lvl) => (
+      <>
+        <text class="ac b" x={X0} y={lvl.y + 26}>
+          {lvl.name}
+        </text>
+        {lvl.chips.map((c) => (
+          <>
+            <rect
+              class={c.side ? "box dash" : "box-tint"}
+              style={c.side ? "stroke:var(--accent)" : undefined}
+              x={c.x + 1}
+              y={lvl.y + 41 + c.row * ROW}
+              width={c.w - 2}
+              height="54"
+            />
+            <text class="fg" x={c.x + PAD} y={lvl.y + 78 + c.row * ROW}>
+              {c.label}
+            </text>
+          </>
+        ))}
+      </>
+    ))}
     <path
       class="ln-ac dash"
       style="stroke-width:2"
       d={`M${implX} ${bandY(2) + 96}V${bandY(3) + 38}`}
-      marker-end="url(#fig-nivells-arrow-ac)"></path>
-    <text class="b" x={X0} y={endY + 88}>MENYS RISC · VERIFICACIÓ BARATA</text>
+      marker-end="url(#fig-nivells-arrow-ac)"
+    ></path>
+    <text class="b" x={X0} y={endY + 88}>
+      MENYS RISC · VERIFICACIÓ BARATA
+    </text>
 
     <rect class="box-tint" x="1" y={endY + 123} width="26" height="26"></rect>
-    <text x="40" y={endY + 145}>FEINA</text>
+    <text x="40" y={endY + 145}>
+      FEINA
+    </text>
     <rect
       class="box dash"
       style="stroke:var(--accent)"
       x="161"
       y={endY + 123}
       width="26"
-      height="26"></rect>
-    <text x="200" y={endY + 145}>FRONTEND I PERSONALS</text>
+      height="26"
+    ></rect>
+    <text x="200" y={endY + 145}>
+      FRONTEND I PERSONALS
+    </text>
   </svg>
 </figure>

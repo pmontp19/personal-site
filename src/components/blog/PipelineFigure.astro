@@ -37,40 +37,72 @@ const informe = [
     </defs>
 
     <rect class="box" x="1" y="1" width="338" height="128"></rect>
-    <text class="t" x="24" y="44">WATCHER</text>
-    <text x="24" y="80">busca les PR on</text>
-    <text x="24" y="112">em demanen revisió</text>
+    <text class="t" x="24" y="44">
+      WATCHER
+    </text>
+    <text x="24" y="80">
+      busca les PR on
+    </text>
+    <text x="24" y="112">
+      em demanen revisió
+    </text>
 
     <rect class="box" x="381" y="1" width="338" height="128"></rect>
-    <text class="t" x="404" y="44">WORKTREE AÏLLAT</text>
-    <text x="404" y="80">una còpia neta</text>
-    <text x="404" y="112">per a cada PR</text>
+    <text class="t" x="404" y="44">
+      WORKTREE AÏLLAT
+    </text>
+    <text x="404" y="80">
+      una còpia neta
+    </text>
+    <text x="404" y="112">
+      per a cada PR
+    </text>
 
     <rect class="box" x="1" y="181" width="718" height="168"></rect>
-    <text class="t" x="24" y="224">AGENT REVISOR</text>
-    <text x="24" y="260">només llegeix</text>
-    <text class="ac b" x="24" y="294">NO COMMIT · NO PUSH</text>
-    <text class="ac b" x="24" y="326">NO COMENTA · NO MERGE</text>
+    <text class="t" x="24" y="224">
+      AGENT REVISOR
+    </text>
+    <text x="24" y="260">
+      només llegeix
+    </text>
+    <text class="ac b" x="24" y="294">
+      NO COMMIT · NO PUSH
+    </text>
+    <text class="ac b" x="24" y="326">
+      NO COMENTA · NO MERGE
+    </text>
 
     <rect class="box" x="1" y="401" width="718" height="238"></rect>
-    <text class="t" x="24" y="444">INFORME</text>
-    {
-      informe.map((l, i) => (
-        <text class={l.sub ? "" : "fg"} x={l.sub ? 64 : 24} y={482 + i * 34}>
-          {l.t}
-        </text>
-      ))
-    }
+    <text class="t" x="24" y="444">
+      INFORME
+    </text>
+    {informe.map((l, i) => (
+      <text class={l.sub ? "" : "fg"} x={l.sub ? 64 : 24} y={482 + i * 34}>
+        {l.t}
+      </text>
+    ))}
 
     <rect class="box-ac" x="1" y="691" width="338" height="128"></rect>
-    <text class="t on-ac" x="24" y="734">PORTA HUMANA</text>
-    <text class="on-ac" x="24" y="770">jo decideixo</text>
-    <text class="on-ac" x="24" y="802">què s'inclou</text>
+    <text class="t on-ac" x="24" y="734">
+      PORTA HUMANA
+    </text>
+    <text class="on-ac" x="24" y="770">
+      jo decideixo
+    </text>
+    <text class="on-ac" x="24" y="802">
+      què s'inclou
+    </text>
 
     <rect class="box" x="381" y="691" width="338" height="128"></rect>
-    <text class="t" x="404" y="734">PUBLICAR</text>
-    <text x="404" y="770">el comentari</text>
-    <text x="404" y="802">a la PR</text>
+    <text class="t" x="404" y="734">
+      PUBLICAR
+    </text>
+    <text x="404" y="770">
+      el comentari
+    </text>
+    <text x="404" y="802">
+      a la PR
+    </text>
 
     <g class="ln" marker-end="url(#fig-pipeline-arrow)">
       <path d="M340 65H378"></path>

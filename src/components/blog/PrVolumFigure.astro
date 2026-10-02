@@ -45,9 +45,9 @@ const last = hours.length - 1;
 <figure class="fig">
   <figcaption>
     <b>Més PR, més espera</b>
-    <span
-      >Totes les PR mergejades · l'espera, de les PR amb revisió d'equip</span
-    >
+    <span>
+      Totes les PR mergejades · l'espera, de les PR amb revisió d'equip
+    </span>
   </figcaption>
   <svg viewBox="0 0 720 780" role="img" aria-labelledby="fig-pr-title">
     <title id="fig-pr-title">
@@ -56,103 +56,105 @@ const last = hours.length - 1;
       merge, de 0,2 a 27,8
     </title>
 
-    <text class="ac b" x="0" y="34">PR MERGEJADES PER MES</text>
-    {
-      [0, 100, 200].map((v) => (
-        <>
-          <line
-            class="grid"
-            x1={X0}
-            x2="720"
-            y1={BAR_Y0 - v * BAR_K}
-            y2={BAR_Y0 - v * BAR_K}
-          />
-          <text x="64" y={BAR_Y0 - v * BAR_K + 9} text-anchor="end">
-            {v}
+    <text class="ac b" x="0" y="34">
+      PR MERGEJADES PER MES
+    </text>
+    {[0, 100, 200].map((v) => (
+      <>
+        <line
+          class="grid"
+          x1={X0}
+          x2="720"
+          y1={BAR_Y0 - v * BAR_K}
+          y2={BAR_Y0 - v * BAR_K}
+        />
+        <text x="64" y={BAR_Y0 - v * BAR_K + 9} text-anchor="end">
+          {v}
+        </text>
+      </>
+    ))}
+    {prs.map((n, i) => (
+      <rect
+        class={i >= 12 ? "ac" : "tint-2"}
+        x={cx(i) - 15}
+        y={BAR_Y0 - n * BAR_K}
+        width="30"
+        height={n * BAR_K}
+      >
+        <title>{`${months[i]} ${year(i)}: ${n} PR`}</title>
+      </rect>
+    ))}
+    {prs.map(
+      (n, i) =>
+        barLabels.has(i) && (
+          <text
+            class="fg b halo"
+            x={cx(i)}
+            y={BAR_Y0 - n * BAR_K - 10}
+            text-anchor="middle"
+          >
+            {n}
           </text>
-        </>
-      ))
-    }
-    {
-      prs.map((n, i) => (
-        <rect
-          class={i >= 12 ? "ac" : "tint-2"}
-          x={cx(i) - 15}
-          y={BAR_Y0 - n * BAR_K}
-          width="30"
-          height={n * BAR_K}
-        >
-          <title>{`${months[i]} ${year(i)}: ${n} PR`}</title>
-        </rect>
-      ))
-    }
-    {
-      prs.map(
-        (n, i) =>
-          barLabels.has(i) && (
-            <text
-              class="fg b halo"
-              x={cx(i)}
-              y={BAR_Y0 - n * BAR_K - 10}
-              text-anchor="middle"
-            >
-              {n}
-            </text>
-          ),
-      )
-    }
+        ),
+    )}
 
-    <text class="ac b" x="0" y="440">MEDIANA D'HORES FINS AL MERGE</text>
-    {
-      [0, 10, 20, 30].map((v) => (
-        <>
-          <line class="grid" x1={X0} x2="720" y1={hy(v)} y2={hy(v)} />
-          <text x="64" y={hy(v) + 9} text-anchor="end">{`${v}h`}</text>
-        </>
-      ))
-    }
+    <text class="ac b" x="0" y="440">
+      MEDIANA D'HORES FINS AL MERGE
+    </text>
+    {[0, 10, 20, 30].map((v) => (
+      <>
+        <line class="grid" x1={X0} x2="720" y1={hy(v)} y2={hy(v)} />
+        <text x="64" y={hy(v) + 9} text-anchor="end">{`${v}h`}</text>
+      </>
+    ))}
 
     <g class="ln-ac dash" style="stroke-width:2;stroke-dasharray:3 5">
-      {
-        [NOV, FEB].map((x) => (
-          <path d={`M${x} 120V${BAR_Y0}M${x} ${hy(30)}V${H_Y0}`} />
-        ))
-      }
+      {[NOV, FEB].map((x) => (
+        <path d={`M${x} 120V${BAR_Y0}M${x} ${hy(30)}V${H_Y0}`} />
+      ))}
     </g>
-    <text class="fg b" x={NOV - 8} y="76" text-anchor="end">NOV 2025</text>
-    <text x={NOV - 8} y="110" text-anchor="end">agents</text>
-    <text class="fg b" x={FEB + 8} y="76">FEB 2026</text>
-    <text x={FEB + 8} y="110">sense editor</text>
+    <text class="fg b" x={NOV - 8} y="76" text-anchor="end">
+      NOV 2025
+    </text>
+    <text x={NOV - 8} y="110" text-anchor="end">
+      agents
+    </text>
+    <text class="fg b" x={FEB + 8} y="76">
+      FEB 2026
+    </text>
+    <text x={FEB + 8} y="110">
+      sense editor
+    </text>
 
     <path class="ln-ac" d={line} stroke-linejoin="round"></path>
-    {
-      hours.map((h, i) => (
-        <circle class="ac" cx={cx(i)} cy={hy(h)} r={i >= 12 ? 7 : 4}>
-          <title>{`${months[i]} ${year(i)}: ${fmt(h)} h`}</title>
-        </circle>
-      ))
-    }
+    {hours.map((h, i) => (
+      <circle class="ac" cx={cx(i)} cy={hy(h)} r={i >= 12 ? 7 : 4}>
+        <title>{`${months[i]} ${year(i)}: ${fmt(h)} h`}</title>
+      </circle>
+    ))}
     <text
       class="fg b halo"
       x={cx(12) - 14}
       y={hy(hours[12]) + 9}
-      text-anchor="end">{`${fmt(hours[12])}h`}</text
-    >
+      text-anchor="end"
+    >{`${fmt(hours[12])}h`}</text>
     <text
       class="fg b halo"
       x={cx(last) - 14}
       y={hy(hours[last]) + 9}
-      text-anchor="end">{`${fmt(hours[last])}h`}</text
-    >
+      text-anchor="end"
+    >{`${fmt(hours[last])}h`}</text>
 
-    {
-      monthTicks.map((i) => (
-        <text x={cx(i)} y="736" text-anchor="middle">
-          {months[i]}
-        </text>
-      ))
-    }
-    <text x={cx(0)} y="770" text-anchor="middle">2025</text>
-    <text x={cx(5)} y="770" text-anchor="middle">2026</text>
+    {monthTicks.map((i) => (
+      <text x={cx(i)} y="736" text-anchor="middle">
+        {months[i]}
+      </text>
+    ))}
+    <text x={cx(0)} y="770" text-anchor="middle">
+      2025
+    </text>
+    <text x={cx(5)} y="770" text-anchor="middle">
+      2026
+    </text>
   </svg>
 </figure>
