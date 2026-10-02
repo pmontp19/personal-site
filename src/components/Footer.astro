@@ -4,6 +4,7 @@ const { pathname } = Astro.url;
 const isHome = pathname === "/";
 const isBlog = pathname.startsWith("/blog");
 const isExp = pathname.startsWith("/experiencia");
+const isProj = pathname.startsWith("/projectes");
 ---
 
 <footer class="site-footer">
@@ -24,6 +25,13 @@ const isExp = pathname.startsWith("/experiencia");
       aria-current={isExp ? "page" : undefined}
     >
       experiència
+    </a>{" "}
+    <a
+      class="mdlink"
+      href="/projectes"
+      aria-current={isProj ? "page" : undefined}
+    >
+      projectes
     </a>
   </nav>
   <p class="foot-line">

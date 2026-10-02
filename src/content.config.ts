@@ -28,6 +28,22 @@ const experience = defineCollection({
   }),
 });
 
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
+  schema: z.object({
+    name: z.string(),
+    url: z.string().url(),
+    description: z.string(),
+    year: z.number(),
+    order: z.number(),
+    status: z.string().optional(),
+    press: z
+      .array(z.object({ name: z.string(), url: z.string().url() }))
+      .optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+
 const cv = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/cv" }),
   schema: z.object({}),
@@ -36,5 +52,6 @@ const cv = defineCollection({
 export const collections = {
   blog,
   experience,
+  projects,
   cv,
 };
