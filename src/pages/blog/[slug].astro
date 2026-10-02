@@ -104,16 +104,36 @@ function formatDate(date: Date): string {
     </p>
 
     {toc.length >= 4 && (
-      <details class="toc">
-        <summary>Contingut</summary>
-        <ol>
-          {toc.map((h) => (
-            <li>
+      <>
+        <nav class="toc-ticks" aria-label="Contingut">
+          <ul>
+            {toc.map((h) => (
+              <li>
+                <a href={`#${h.slug}`}>
+                  <span class="t">{h.text}</span>
+                  <span class="k" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div class="toc-bar">
+          <div class="menu" id="toc-menu">
+            {toc.map((h) => (
               <a href={`#${h.slug}`}>{h.text}</a>
-            </li>
-          ))}
-        </ol>
-      </details>
+            ))}
+          </div>
+          <button
+            type="button"
+            class="bar"
+            aria-expanded="false"
+            aria-controls="toc-menu"
+            aria-label="Contingut de l'article"
+          >
+            <span class="fill" />
+          </button>
+        </div>
+      </>
     )}
 
     <div class="post-content prose">
@@ -150,6 +170,75 @@ function formatDate(date: Date): string {
     </footer>
   </article>
 </Layout>
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>(
+    ".toc-ticks a, .toc-bar .menu a",
+  );
+  if (links.length) {
+    const heads = [
+      ...document.querySelectorAll<HTMLAnchorElement>(".toc-ticks a"),
+    ].map((a) => document.getElementById(a.hash.slice(1)));
+    const post = document.querySelector<HTMLElement>(".post-content")!;
+    const fill = document.querySelector<HTMLElement>(".toc-bar .fill")!;
+    const bar = document.querySelector<HTMLElement>(".toc-bar")!;
+    const button = bar.querySelector("button")!;
+    const BLOCKS = 12;
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const top = post.offsetTop;
+      const end = top + post.offsetHeight - innerHeight;
+      const p = Math.min(
+        1,
+        Math.max(0, (scrollY - top) / Math.max(1, end - top)),
+      );
+      const f = Math.round(p * BLOCKS);
+      fill.textContent = "█".repeat(f) + "░".repeat(BLOCKS - f);
+      let cur = -1;
+      heads.forEach((h, i) => {
+        if (h && h.getBoundingClientRect().top <= innerHeight * 0.35) cur = i;
+      });
+      links.forEach((a) => {
+        const i = heads.findIndex((h) => h?.id === a.hash.slice(1));
+        a.toggleAttribute("data-current", i === cur);
+        a.toggleAttribute("data-done", i < cur);
+        if (i === cur) a.setAttribute("aria-current", "true");
+        else a.removeAttribute("aria-current");
+      });
+    };
+    const setOpen = (open: boolean) => {
+      bar.toggleAttribute("data-open", open);
+      button.setAttribute("aria-expanded", String(open));
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    addEventListener("resize", update);
+    button.addEventListener("click", () =>
+      setOpen(!bar.hasAttribute("data-open")),
+    );
+    addEventListener("click", (e) => {
+      if (!bar.contains(e.target as Node)) setOpen(false);
+    });
+    addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+    bar
+      .querySelectorAll("a")
+      .forEach((a) => a.addEventListener("click", () => setOpen(false)));
+    update();
+  }
+</script>
 
 <style>
   .post {
@@ -259,24 +348,137 @@ function formatDate(date: Date): string {
     vertical-align: -0.1em;
   }
 
-  .toc {
-    max-width: 42rem;
-    margin: 0 0 1.5rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--line);
-    background-color: var(--surface);
+  /* --- toc: tics al marge (>=1000px), barra flotant (mòbil) --- */
+  .toc-ticks {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
   }
-  .toc summary {
-    cursor: pointer;
-    font-weight: 600;
+  .toc-ticks ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
-  .toc ol {
-    list-style: none; /* els h2 del post ja porten numeració pròpia */
-    margin: 0.75rem 0 0;
-    padding-left: 0;
+  .toc-ticks a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    height: 22px;
+    color: var(--muted);
+    text-decoration: none;
   }
-  .toc a {
+  .toc-ticks .t {
+    opacity: 0;
+    transform: translateX(4px);
+    transition:
+      opacity 0.15s,
+      transform 0.15s;
+    white-space: nowrap;
+    background: var(--bg);
+    padding: 0 6px;
+  }
+  .toc-ticks .k {
+    width: 12px;
+    height: 1px;
+    background: var(--muted);
+    opacity: 0.5;
+    transition:
+      width 0.15s,
+      opacity 0.15s;
+  }
+  .toc-ticks:hover .t,
+  .toc-ticks:focus-within .t {
+    opacity: 1;
+    transform: none;
+  }
+  .toc-ticks a[data-done] .k {
+    background: var(--fg);
+    opacity: 1;
+  }
+  .toc-ticks a[data-current] {
     color: var(--accent);
+  }
+  .toc-ticks a[data-current] .k {
+    width: 22px;
+    height: 2px;
+    background: var(--accent);
+    opacity: 1;
+  }
+
+  .toc-bar {
+    display: none;
+    position: fixed;
+    left: 50%;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 5;
+  }
+  .toc-bar .bar {
+    display: block;
+    font: inherit;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 12px 16px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.12s ease-out;
+  }
+  .toc-bar .bar:active {
+    transform: scale(0.96);
+  }
+  .toc-bar .menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    width: min(20rem, calc(100vw - 32px));
+    padding: 6px 0;
+    max-height: 60dvh;
+    overflow-y: auto;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 8px) scale(0.97);
+    transform-origin: 50% 100%;
+    transition:
+      opacity 0.16s ease-out,
+      transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s 0.2s;
+  }
+  .toc-bar[data-open] .menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0) scale(1);
+    transition-delay: 0s;
+  }
+  .toc-bar .menu a {
+    display: block;
+    padding: 9px 16px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .toc-bar .menu a[data-current] {
+    color: var(--accent);
+  }
+
+  @media (max-width: 999px) {
+    .toc-ticks {
+      display: none;
+    }
+    .toc-bar {
+      display: block;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .toc-ticks *,
+    .toc-bar * {
+      transition: none !important;
+    }
   }
 
   .post-footer {
