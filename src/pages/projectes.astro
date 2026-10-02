@@ -38,6 +38,24 @@ const projects = await Promise.all(
       <div class="proj-desc">
         <p.Content />
       </div>
+      {p.data.press && (
+        <p class="proj-desc">
+          <span class="label">PREMSA:</span>{" "}
+          {p.data.press.map((m, i) => (
+            <>
+              {i > 0 && <span class="muted"> · </span>}
+              <a
+                class="mdlink"
+                href={m.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {m.name}
+              </a>
+            </>
+          ))}
+        </p>
+      )}
       {p.data.tags && <p class="muted">{p.data.tags.join(" · ")}</p>}
       <p class="tilde" aria-hidden="true">
         ~~~

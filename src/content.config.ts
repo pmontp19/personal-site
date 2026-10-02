@@ -37,6 +37,9 @@ const projects = defineCollection({
     year: z.number(),
     order: z.number(),
     status: z.string().optional(),
+    press: z
+      .array(z.object({ name: z.string(), url: z.string().url() }))
+      .optional(),
     tags: z.array(z.string()).optional(),
   }),
 });
