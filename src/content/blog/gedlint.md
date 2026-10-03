@@ -2,7 +2,7 @@
 title: "No tenia un problema de genealogia, tenia un problema de software"
 description: "Com vaig passar d'un script de Python a gedlint, un linter en Rust per a GEDCOM amb regles, reparacions i un ratchet per adoptar-lo sobre un arbre brut."
 date: 2026-10-03
-draft: true
+draft: false
 ---
 
 L'arbre que vaig exportar de MyHeritage tenia 509 individus i cap garantia de ser un fitxer correcte. Al [post anterior](/blog/myheritage-agents-autonoms) deia, de passada, que un linter validava cada commit. Aquest és el post d'aquest linter: [gedlint](https://github.com/pmontp19/gedlint).
