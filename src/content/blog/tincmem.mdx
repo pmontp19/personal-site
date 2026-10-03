@@ -15,10 +15,11 @@ Els Simpson tenen [Frinkiac](https://frinkiac.com): escrius una frase, et surt e
 **En resum**
 
 - Cerques qualsevol frase dels 73 capítols de *Plats bruts*, tries el fotograma i en fas un mem o un GIF.
-- No he escrit cap línia: ho ha fet un agent. Jo vaig posar l'objectiu i les decisions.
+- No he escrit cap línia: ho ha fet un agent. Jo vaig posar l'objectiu i el vaig dirigir en uns quants punts clau.
 - No calia transcriure res: els subtítols de 3Cat ja hi eren, i el color de cada línia diu qui parla.
 - El pipeline tria 69.520 fotogrames a partir de 31.295 frases: el més nítid de cada moment i sense repetir plans.
 - També el poden fer servir els agents: `llms.txt`, respostes en Markdown i un servidor MCP. Un bot de SEO em va esgotar la quota gratuïta de Cloudflare.
+- El codi era la part fàcil; la difícil, que les dades fossin bones.
 
 ## El prompt: un objectiu
 
@@ -28,7 +29,7 @@ Després sí que hi vaig posar criteri: provar-ho primer amb un sol capítol, la
 
 Jo m'imaginava que caldria transcriure l'àudio amb algun model de veu i alinear el text amb el vídeo. L'agent va anar per un altre camí. Va trobar els capítols a l'API de 3Cat i, al mateix lloc que el vídeo, els subtítols en català en format VTT. La transcripció ja existia, amb els temps exactes de cada frase.
 
-El primer commit és del 23 de setembre i funcionava amb un sol capítol. El 25 ja era a tincmem.cat amb domini propi. Una setmana i 39 commits després, la web és la que veieu ara.
+El primer commit és del 23 de setembre i funcionava amb un sol capítol. El 25 ja era a tincmem.cat amb domini propi. Una setmana i 39 commits després, la web és la que pots veure ara.
 
 ## Els subtítols ja diuen qui parla
 
@@ -57,7 +58,7 @@ Tenir la frase i el moment exacte no és tenir un bon fotograma. Agafar el prime
 
 **2. Tres moments per frase.** De cada frase en surten tres candidats: just després de començar, al mig i just abans d'acabar. Una frase llarga sovint té més d'una cara aprofitable. Els moments massa junts (a menys de 0,4 segons) es fusionen.
 
-**3. El més nítid de tres.** De cada moment se'n treuen tres fotogrames separats per una fracció de segon, i es queda el que té més vora. La mesura és la variància d'un filtre laplacià: una imatge moguda té les vores esborrades i dona un valor baix. És un truc senzill que elimina gairebé tots els fotogrames borrosos.
+**3. El més nítid de tres.** De cada moment se'n treuen tres fotogrames separats per una fracció de segon, i es queda el que té les vores més marcades. La mesura és la variància d'un filtre laplacià: una imatge moguda té les vores esborrades i dona un valor baix. És un truc senzill que elimina gairebé tots els fotogrames borrosos.
 
 **4. Fora els repetits.** Dins d'un mateix pla, si el David parla tres frases seguides sense moure's, en surten tres fotogrames quasi idèntics. El pipeline redueix cada imatge a 16×12 píxels en gris, la compara amb les que ja ha desat del mateix pla i, si la diferència mitjana és molt petita, la descarta.
 
@@ -75,7 +76,7 @@ El nom, per cert, també té la seva història. L'agent el va batejar Platsiac, 
 
 ## També per a agents
 
-Com que l'agent ho feia tot, li vaig demanar que la web també la poguessin fer servir altres agents. També ho vam fer amb Claude, en dues tandes. La primera, a la mateixa sessió local que el pipeline: el servidor MCP, el `llms.txt`, un `robots.txt` que ho deixa rastrejar tot, el sitemap i les dades estructurades. La segona, tres dies després, en una sessió de Claude Code al núvol que va acabar en una PR: el Markdown, les imatges directes i la cerca sense índex.
+Com que l'agent ho feia tot, li vaig demanar que la web també la poguessin fer servir altres agents. Ho va fer Claude, en dues tandes. La primera, a la mateixa sessió local que el pipeline: el servidor MCP, el `llms.txt`, un `robots.txt` que ho deixa rastrejar tot, el sitemap i les dades estructurades. La segona, tres dies després, en una sessió de Claude Code al núvol que va acabar en una PR: el Markdown, les imatges directes i la cerca sense índex.
 
 La web es pinta amb JavaScript, i un agent que la llegeixi només hi troba els botons i l'ajuda del teclat, cap frase. Per això té:
 
@@ -86,9 +87,11 @@ La web es pinta amb JavaScript, i un agent que la llegeixi només hi troba els b
 
 Així, pots demanar a Claude «busca'm un mem de Plats bruts per dir que no tinc ganes d'anar a la feina» i et torna la imatge.
 
-Cada fotograma té la seva adreça (`/T1C1/642400/213`) i una previsualització que genera el Worker. El sitemap en llista més de 31.000, una per frase. Vaig donar d'alta la web a Google Search Console i, poques hores després, va caure: s'havia acabat la quota gratuïta de Workers, 100.000 peticions al dia per compte. El primer sospitós era Google, però les dades deien una altra cosa. Googlebot no arribava a 2.000 peticions. El culpable era AhrefsBot, un rastrejador de SEO, amb unes 260.000 en cinc dies. I com que la quota és per compte, també va caure el servidor MCP.
+## Un bot em va deixar sense quota
 
-La solució immediata va ser el pla de pagament de Workers, 5 dòlars al mes, i en 30 segons tornava a funcionar. El dia abans, la sessió al núvol ja havia tret feina al Worker. La portada ja no hi passa, i la cerca dels agents no construeix cap índex: el pla gratuït només deixa 10 ms de CPU per petició, i muntar l'índex de MiniSearch en trigava entre 400 i 700. Ara és una cerca lineal sobre un fitxer de text pla, que hi cap de sobres.
+Cada fotograma té la seva adreça (`/T1C1/642400/213`) i una previsualització que genera el Worker. El sitemap en llista més de 31.000, una per frase. Vaig donar d'alta la web a Google Search Console i, poques hores després, va caure: s'havia acabat la quota gratuïta de Workers, 100.000 peticions al dia per compte. El primer sospitós era Google, però les dades deien una altra cosa. Entre el 25 i el 29 de setembre, Googlebot no va arribar a 2.000 peticions, i AhrefsBot, un rastrejador de SEO, en va fer unes 260.000. I com que la quota és per compte, també va caure el servidor MCP.
+
+La solució immediata va ser el pla de pagament de Workers, 5 dòlars al mes, i en 30 segons tornava a funcionar. El dia abans, la sessió al núvol ja havia preparat un canvi per treure feina al Worker, i el vaig desplegar just després. D'una banda, la portada ja no hi passa, i això són moltes menys peticions. De l'altra, la cerca dels agents no construeix cap índex. Això no era per la quota sinó per la CPU: el pla gratuït només deixa 10 ms per petició, i muntar l'índex de MiniSearch en trigava entre 400 i 700. Ara és una cerca lineal sobre un fitxer de text pla, que hi cap de sobres.
 
 ## Teresina S.A., al calaix
 
