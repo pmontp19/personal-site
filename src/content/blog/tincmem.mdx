@@ -1,6 +1,6 @@
 ---
 title: "Tinc mem: un Frinkiac de Plats bruts fet per agents"
-description: "Com he fet tincmem.cat, un cercador de fotogrames de Plats bruts per fer mems i GIFs: subtítols que ja deien qui parla, un pipeline amb ffmpeg i un agent que ho va fer tot sol a partir d'una frase."
+description: "Com he fet tincmem.cat, un cercador de fotogrames de Plats bruts per fer mems i GIFs: subtítols que ja deien qui parla, un pipeline amb ffmpeg i un agent que va escriure tot el codi."
 date: 2026-10-03
 draft: false
 ---
@@ -15,14 +15,16 @@ Els Simpson tenen [Frinkiac](https://frinkiac.com): escrius una frase, et surt e
 **En resum**
 
 - Cerques qualsevol frase dels 73 capítols de *Plats bruts*, tries el fotograma i en fas un mem o un GIF.
-- No he escrit cap línia: ho ha fet un agent a partir d'una sola frase, «fes-me un Frinkiac de Plats bruts».
+- No he escrit cap línia: ho ha fet un agent. Jo vaig posar l'objectiu i les decisions.
 - No calia transcriure res: els subtítols de 3Cat ja hi eren, i el color de cada línia diu qui parla.
 - El pipeline tria 69.520 fotogrames a partir de 31.295 frases: el més nítid de cada moment i sense repetir plans.
-- També el poden fer servir els agents: `llms.txt`, respostes en Markdown i un servidor MCP. Que Google ho indexés tot em va gastar la quota gratuïta de Cloudflare.
+- També el poden fer servir els agents: `llms.txt`, respostes en Markdown i un servidor MCP. Un bot de SEO em va esgotar la quota gratuïta de Cloudflare.
 
-## El prompt: una frase
+## El prompt: un objectiu
 
-Fa poc vaig explicar [com programo ara](/blog/com-programo-ara): defineixo un objectiu i l'agent treballa fins que la feina està feta. Tinc mem n'és un exemple extrem. Opus 5.5 acabava de sortir i el volia posar a prova, així que li vaig donar el mínim: vull un Frinkiac de *Plats bruts*. Res de tecnologies, d'on treure els capítols o com havia de ser la web.
+Fa poc vaig explicar [com programo ara](/blog/com-programo-ara): defineixo un objectiu i l'agent treballa fins que la feina està feta. Tinc mem n'és un exemple extrem. Opus 5.5 acabava de sortir i el volia posar a prova, així que li vaig donar el mínim: un projecte inspirat en Frinkiac però per a *Plats bruts*, que primer estudiés com ho havien fet i després em digués quina infraestructura caldria. Res de tecnologies, d'on treure els capítols o com havia de ser la web.
+
+Després sí que hi vaig posar criteri: provar-ho primer amb un sol capítol, la cerca amb BM25, el servidor MCP, el nom i el domini, i arreglar els GIFs quan vaig veure que a l'iPhone no s'acabaven mai.
 
 Jo m'imaginava que caldria transcriure l'àudio amb algun model de veu i alinear el text amb el vídeo. L'agent va anar per un altre camí. Va trobar els capítols a l'API de 3Cat i, al mateix lloc que el vídeo, els subtítols en català en format VTT. La transcripció ja existia, amb els temps exactes de cada frase.
 
@@ -67,9 +69,9 @@ Cada capítol original pesa uns 860 MB, i el pipeline l'esborra en acabar. Al fi
 
 Tota la web és un sol `index.html`. La cerca és al navegador, amb [MiniSearch](https://github.com/lucaong/minisearch); els GIFs es fan al navegador amb [gifenc](https://github.com/mattdesl/gifenc) a partir del vídeo petit, i els fotogrames de cada capítol només es baixen quan calen.
 
-La part estàtica pesa poc més d'1 MB i va en un Worker de Cloudflare. Els fotogrames no hi caben: els fitxers estàtics dels Workers tenen un límit de 20.000 fitxers i aquí n'hi ha més de 69.000 només de fotogrames. Van a R2, l'emmagatzematge d'objectes de Cloudflare, amb un domini propi.
+La part estàtica són uns 12 MB, sobretot les frases en JSON, i va en un Worker de Cloudflare. Els fotogrames no hi caben: els fitxers estàtics dels Workers tenen un límit de 20.000 fitxers i aquí n'hi ha més de 69.000 només de fotogrames. Van a R2, l'emmagatzematge d'objectes de Cloudflare, amb un domini propi.
 
-El nom, per cert, també té la seva història. Gairebé tots els capítols de la primera temporada es diuen «Tinc alguna cosa»: *Tinc pis*, *Tinc por*, *Tinc enveja*... i «mem» és la forma que recomana el TERMCAT per dir *meme*. I si vas a una adreça que no existeix, la pàgina d'error és un fotograma del T6C12 on l'Emma diu: «No existeix! Te l'has inventada!».
+El nom, per cert, també té la seva història. L'agent el va batejar Platsiac, i després va proposar «Tinc meme»: gairebé tots els capítols de la primera temporada es diuen «Tinc alguna cosa», com *Tinc pis*, *Tinc por* o *Tinc enveja*. Jo hi vaig canviar *meme* per «mem», la forma que recomana el TERMCAT, i tincmem.cat estava lliure. I si vas a una adreça que no existeix, la pàgina d'error és un fotograma del T6C12 on l'Emma diu: «No existeix! Te l'has inventada!».
 
 ## També per a agents
 
@@ -82,9 +84,9 @@ Com que l'agent ho feia tot, li vaig demanar que la web també la poguessin fer 
 
 Així, pots demanar a Claude «busca'm un mem de Plats bruts per dir que no tinc ganes d'anar a la feina» i et torna la imatge.
 
-Cada fotograma té la seva adreça (`/T1C1/642400/213`) i una previsualització que genera el Worker. Amb el sitemap i les dades estructurades, Google es va posar a indexar-los. Tots. Desenes de milers de pàgines, cadascuna una petició al Worker, i em vaig acabar la quota gratuïta diària de Workers de Cloudflare.
+Cada fotograma té la seva adreça (`/T1C1/642400/213`) i una previsualització que genera el Worker. El sitemap en llista més de 31.000, una per frase. Vaig donar d'alta la web a Google Search Console i, poques hores després, va caure: s'havia acabat la quota gratuïta de Workers, 100.000 peticions al dia per compte. El primer sospitós era Google, però les dades deien una altra cosa. Googlebot no arribava a 2.000 peticions. El culpable era AhrefsBot, un rastrejador de SEO, amb unes 260.000 en cinc dies. I com que la quota és per compte, també va caure el servidor MCP.
 
-La solució va ser treure feina al Worker. La portada ja no hi passa, i la cerca dels agents no construeix cap índex: el pla gratuït només deixa 10 ms de CPU per petició, i muntar l'índex de MiniSearch en trigava entre 400 i 700. Ara és una cerca lineal sobre un fitxer de text pla, que hi cap de sobres.
+La solució immediata va ser el pla de pagament de Workers, 5 dòlars al mes, i en 30 segons tornava a funcionar. El dia abans, una sessió de Claude Code al núvol ja havia tret feina al Worker. La portada ja no hi passa, i la cerca dels agents no construeix cap índex: el pla gratuït només deixa 10 ms de CPU per petició, i muntar l'índex de MiniSearch en trigava entre 400 i 700. Ara és una cerca lineal sobre un fitxer de text pla, que hi cap de sobres.
 
 ## Teresina S.A., al calaix
 
