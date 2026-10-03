@@ -75,7 +75,9 @@ El nom, per cert, també té la seva història. L'agent el va batejar Platsiac, 
 
 ## També per a agents
 
-Com que l'agent ho feia tot, li vaig demanar que la web també la poguessin fer servir altres agents. La web es pinta amb JavaScript, i un agent que la llegeixi no hi troba res. Per això té:
+Com que l'agent ho feia tot, li vaig demanar que la web també la poguessin fer servir altres agents. També ho vam fer amb Claude, en dues tandes. La primera, a la mateixa sessió local que el pipeline: el servidor MCP, el `llms.txt`, un `robots.txt` que ho deixa rastrejar tot, el sitemap i les dades estructurades. La segona, tres dies després, en una sessió de Claude Code al núvol que va acabar en una PR: el Markdown, les imatges directes i la cerca sense índex.
+
+La web es pinta amb JavaScript, i un agent que la llegeixi només hi troba els botons i l'ajuda del teclat, cap frase. Per això té:
 
 - Un [`llms.txt`](https://tincmem.cat/llms.txt) que explica com fer-la servir.
 - Cerca i fotogrames en Markdown: `tincmem.cat/index.md?q=…` o qualsevol enllaç amb `Accept: text/markdown`.
@@ -86,7 +88,7 @@ Així, pots demanar a Claude «busca'm un mem de Plats bruts per dir que no tinc
 
 Cada fotograma té la seva adreça (`/T1C1/642400/213`) i una previsualització que genera el Worker. El sitemap en llista més de 31.000, una per frase. Vaig donar d'alta la web a Google Search Console i, poques hores després, va caure: s'havia acabat la quota gratuïta de Workers, 100.000 peticions al dia per compte. El primer sospitós era Google, però les dades deien una altra cosa. Googlebot no arribava a 2.000 peticions. El culpable era AhrefsBot, un rastrejador de SEO, amb unes 260.000 en cinc dies. I com que la quota és per compte, també va caure el servidor MCP.
 
-La solució immediata va ser el pla de pagament de Workers, 5 dòlars al mes, i en 30 segons tornava a funcionar. El dia abans, una sessió de Claude Code al núvol ja havia tret feina al Worker. La portada ja no hi passa, i la cerca dels agents no construeix cap índex: el pla gratuït només deixa 10 ms de CPU per petició, i muntar l'índex de MiniSearch en trigava entre 400 i 700. Ara és una cerca lineal sobre un fitxer de text pla, que hi cap de sobres.
+La solució immediata va ser el pla de pagament de Workers, 5 dòlars al mes, i en 30 segons tornava a funcionar. El dia abans, la sessió al núvol ja havia tret feina al Worker. La portada ja no hi passa, i la cerca dels agents no construeix cap índex: el pla gratuït només deixa 10 ms de CPU per petició, i muntar l'índex de MiniSearch en trigava entre 400 i 700. Ara és una cerca lineal sobre un fitxer de text pla, que hi cap de sobres.
 
 ## Teresina S.A., al calaix
 
