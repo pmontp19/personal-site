@@ -28,7 +28,7 @@ Vaig començar amb un script de Python (`gedcheck.py`). Funcionava, però era a 
 
 El 6 de setembre: un POC i un MVP amb motor en streaming i 21 tests (un per regla). A la nit, v0.2.0 amb regles de cardinalitat i CI, i poc després un `AGENTS.md`. El 7, binaris precompilats, una GitHub Action i anotacions inline al diff.
 
-El CI no és un extra. Un linter que ningú executa és un script. Quan el vaig connectar a l'arbre es va posar vermell durant tot el dia, i un dels errors era del linter: la regla E005 només disparava a la primera línia del fitxer perquè un flag no es tornava a posar a `false`. Arreglada, va trobar 140 casos reals.
+El CI no és un extra. Un linter que ningú executa és un script. Quan el vaig connectar a l'arbre es va posar vermell durant tot el dia, i un dels errors era del linter: la regla E005 només disparava a la primera línia del fitxer perquè un flag no es tornava a posar a `false`. Arreglada, va trobar 140 casos reals, `CONT` niuats sota un `CONC`. Eren les mateixes 140 línies que una reescriptura d'historial a l'arbre va reintroduir el 10 de setembre, i que el CI va caçar sol.
 
 Una decisió del primer dia encara mana: **zero dependències**. Ni `clap`, ni `serde`. Arguments i JSON a mà. Sembla excessiu, però el resultat és un sol binari minúscul, sense runtime, i és el que va fer possible el visor web.
 
