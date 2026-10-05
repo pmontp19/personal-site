@@ -116,6 +116,10 @@ function formatDate(date: Date): string {
               </li>
             ))}
           </ul>
+          <div class="card" aria-hidden="true">
+            <span class="ct" />
+            <span class="cx" />
+          </div>
         </nav>
         <div class="toc-bar">
           <div class="menu" id="toc-menu">
@@ -176,9 +180,10 @@ function formatDate(date: Date): string {
     ".toc-ticks a, .toc-bar .menu a",
   );
   if (links.length) {
+    const id = (a: HTMLAnchorElement) => decodeURIComponent(a.hash.slice(1));
     const heads = [
       ...document.querySelectorAll<HTMLAnchorElement>(".toc-ticks a"),
-    ].map((a) => document.getElementById(a.hash.slice(1)));
+    ].map((a) => document.getElementById(id(a)));
     const post = document.querySelector<HTMLElement>(".post-content")!;
     const fill = document.querySelector<HTMLElement>(".toc-bar .fill")!;
     const bar = document.querySelector<HTMLElement>(".toc-bar")!;
@@ -201,13 +206,52 @@ function formatDate(date: Date): string {
         if (h && h.getBoundingClientRect().top <= innerHeight * 0.35) cur = i;
       });
       links.forEach((a) => {
-        const i = heads.findIndex((h) => h?.id === a.hash.slice(1));
+        const i = heads.findIndex((h) => h?.id === id(a));
         a.toggleAttribute("data-current", i === cur);
         a.toggleAttribute("data-done", i < cur);
         if (i === cur) a.setAttribute("aria-current", "true");
         else a.removeAttribute("aria-current");
       });
     };
+    const nav = document.querySelector<HTMLElement>(".toc-ticks")!;
+    const rows = [...nav.querySelectorAll<HTMLAnchorElement>("a")];
+    const ct = nav.querySelector<HTMLElement>(".ct")!;
+    const cx = nav.querySelector<HTMLElement>(".cx")!;
+    const excerpt = (h: HTMLElement | null) => {
+      let el = h?.nextElementSibling;
+      while (el && !el.textContent?.trim() && !/^H[1-6]$/.test(el.tagName))
+        el = el.nextElementSibling;
+      return el && !/^H[1-6]$/.test(el.tagName)
+        ? (el.textContent ?? "").replace(/\s+/g, " ").trim()
+        : "";
+    };
+    const hover = (i: number | null) => {
+      rows.forEach((a, j) => {
+        if (i === null) a.removeAttribute("data-d");
+        else a.dataset.d = String(Math.min(3, Math.abs(j - i)));
+      });
+      nav.toggleAttribute("data-active", i !== null);
+      if (i === null) return;
+      ct.textContent = rows[i].querySelector(".t")!.textContent;
+      cx.textContent = excerpt(heads[i]);
+      nav.style.setProperty(
+        "--cy",
+        `${rows[i].offsetTop + rows[i].offsetHeight / 2}px`,
+      );
+    };
+    nav.addEventListener("pointermove", (e) => {
+      const i = rows.findIndex((a) => {
+        const r = a.getBoundingClientRect();
+        return e.clientY >= r.top && e.clientY < r.bottom;
+      });
+      if (i >= 0 || !(e.target as Element).closest(".card"))
+        hover(i < 0 ? null : i);
+    });
+    nav.addEventListener("pointerleave", () => hover(null));
+    nav.addEventListener("focusin", (e) =>
+      hover(rows.indexOf((e.target as Element).closest("a")!)),
+    );
+    nav.addEventListener("focusout", () => hover(null));
     const setOpen = (open: boolean) => {
       bar.toggleAttribute("data-open", open);
       button.setAttribute("aria-expanded", String(open));
@@ -371,28 +415,73 @@ function formatDate(date: Date): string {
     text-decoration: none;
   }
   .toc-ticks .t {
-    opacity: 0;
-    transform: translateX(4px);
-    transition:
-      opacity 0.15s,
-      transform 0.15s;
-    white-space: nowrap;
-    background: var(--bg);
-    padding: 0 6px;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
   .toc-ticks .k {
-    width: 12px;
-    height: 1px;
+    width: 24px;
+    height: 2px;
+    border-radius: 1px;
     background: var(--muted);
     opacity: 0.5;
+    transform-origin: right;
+    transform: scaleX(0.5);
     transition:
-      width 0.15s,
+      transform 0.15s,
       opacity 0.15s;
   }
-  .toc-ticks:hover .t,
-  .toc-ticks:focus-within .t {
-    opacity: 1;
+  .toc-ticks a[data-d="0"] .k {
     transform: none;
+    opacity: 0.9;
+  }
+  .toc-ticks a[data-d="1"] .k {
+    transform: scaleX(0.667);
+  }
+  .toc-ticks a[data-d="2"] .k {
+    transform: scaleX(0.417);
+  }
+  .toc-ticks .card {
+    position: absolute;
+    right: calc(100% + 12px);
+    top: var(--cy, 0);
+    width: 20rem;
+    padding: 12px;
+    transform: translateY(-50%);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.25);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.15s,
+      visibility 0s 0.15s;
+  }
+  .toc-ticks[data-active] .card {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .toc-ticks .ct {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--fg);
+    font-weight: 500;
+  }
+  .toc-ticks .cx {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    margin-top: 4px;
+    color: var(--muted);
   }
   .toc-ticks a[data-done] .k {
     background: var(--fg);
@@ -402,8 +491,6 @@ function formatDate(date: Date): string {
     color: var(--accent);
   }
   .toc-ticks a[data-current] .k {
-    width: 22px;
-    height: 2px;
     background: var(--accent);
     opacity: 1;
   }
