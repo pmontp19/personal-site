@@ -1,7 +1,6 @@
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { readdirSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import * as Diff from "diff";
 import { marked } from "marked";
 import htmldiffModule from "htmldiff-js";
 // htmldiff-js has a nested default export under some ESM interop paths.
@@ -15,18 +14,11 @@ interface CommitInfo {
   message: string;
 }
 
-interface DiffChange {
-  value: string;
-  added?: boolean;
-  removed?: boolean;
-}
-
 interface VersionView {
   commit: CommitInfo;
   html: string;
-  diffHtml: string;
+  diffHtml?: string; // omitted on the original version (same as html)
   isOriginal: boolean;
-  changes: DiffChange[];
 }
 
 interface GitHistoryPayload {
@@ -49,8 +41,9 @@ function getCommits(filePath: string): CommitInfo[] {
 
   for (const p of paths) {
     try {
-      const result = execSync(
-        `git log --format="%H|%ad|%s" --date=short --follow -- "${p}"`,
+      const result = execFileSync(
+        "git",
+        ["log", "--format=%H|%ad|%s", "--date=short", "--follow", "--", p],
         { encoding: "utf-8" },
       );
       const commits = result
@@ -69,10 +62,11 @@ function getCommits(filePath: string): CommitInfo[] {
   return [];
 }
 
+const repoRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
+  encoding: "utf-8",
+}).trim();
+
 function getFileAtCommit(filePath: string, commitHash: string): string {
-  const repoRoot = execSync("git rev-parse --show-toplevel", {
-    encoding: "utf-8",
-  }).trim();
   const absolutePath = filePath.startsWith("/")
     ? filePath
     : join(process.cwd(), filePath);
@@ -87,7 +81,7 @@ function getFileAtCommit(filePath: string, commitHash: string): string {
 
   for (const candidate of candidates) {
     try {
-      return execSync(`git show ${commitHash}:"${candidate}"`, {
+      return execFileSync("git", ["show", `${commitHash}:${candidate}`], {
         encoding: "utf-8",
         cwd: repoRoot,
         stdio: ["pipe", "pipe", "pipe"],
@@ -135,34 +129,18 @@ function generateHistory(filePath: string): GitHistoryPayload {
     const html = renderMarkdown(currentContent);
 
     if (isOriginal) {
-      versions.push({
-        commit,
-        html,
-        diffHtml: html,
-        isOriginal: true,
-        changes: [{ value: currentContent }],
-      });
+      versions.push({ commit, html, isOriginal: true });
     } else {
       const olderContent = removeFrontmatter(
         getFileAtCommit(filePath, commits[i + 1].hash),
       );
-      const changes: DiffChange[] = Diff.diffWords(
-        olderContent,
-        currentContent,
-      ).map((c) => {
-        const change: DiffChange = { value: c.value };
-        if (c.added) change.added = true;
-        if (c.removed) change.removed = true;
-        return change;
-      });
-
-      const hasRealChanges = changes.some((c) => c.added || c.removed);
-      if (!hasRealChanges) continue;
-
       const oldHtml = renderMarkdown(olderContent);
       const diffHtml = htmldiff.execute(oldHtml, html);
 
-      versions.push({ commit, html, diffHtml, isOriginal: false, changes });
+      // Skip commits that don't change the rendered post
+      if (!/<(ins|del)\b/.test(diffHtml)) continue;
+
+      versions.push({ commit, html, diffHtml, isOriginal: false });
     }
   }
 
@@ -182,7 +160,7 @@ for (const file of files) {
 
   if (history.hasHistory) {
     const outPath = join(OUT_DIR, `${slug}.json`);
-    writeFileSync(outPath, JSON.stringify(history, null, 2) + "\n");
+    writeFileSync(outPath, JSON.stringify(history));
     console.log(`✓ ${slug} (${history.versions.length} versions)`);
     generated++;
   }
