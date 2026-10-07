@@ -1,55 +1,69 @@
 ---
 title: "Cobertura no és verificació: mutation testing i CRAP per al codi que escriuen els agents"
-description: "Si ja no llegeixo cada línia, necessito saber on els tests no comproven res. Dues idees velles, un gir de l'Uncle Bob aquest setembre, i el que he acabat construint: dues comandes a demanda i cap gate."
+description: "Quan els agents escriuen el codi i també els tests, la cobertura diu que tot va bé i la revisió no dona l'abast. El problema, dues idees velles que el resolen, el gir de l'Uncle Bob aquest setembre, i el que hem posat a l'API de Goil: dues comandes a demanda i cap barrera."
 date: 2026-10-07
 draft: true
 ---
 
 import Note from '../../components/blog/Note.astro';
 
-Un cas d'ús amb un 89% de cobertura. Desa un registre i actualitza unes metadades dins d'un `Promise.all`. He substituït tot el `Promise.all([...])` per `Promise.all([])`, buit, i he passat la suite de tests. Cap test ha fallat.
+A l'API de Goil hi ha un cas d'ús amb un 89% de cobertura de tests. Desa un registre i actualitza unes metadades dins d'un `Promise.all`. He substituït tot el `Promise.all([...])` per `Promise.all([])`, buit, i he passat la suite de tests. Cap test ha fallat.
 
 Els tests executaven aquelles línies. No en comprovaven res. I la cobertura ho comptava com una bona notícia.
 
-Aquest post explica per què això m'importa ara més que mai, en quines idees m'he basat, com ha canviat d'opinió pel camí qui més les ha defensat, i com és la solució que faig servir avui.
+Aquest post explica el problema que hi ha darrere, en quines idees m'he basat per atacar-lo, com ha canviat d'opinió pel camí qui més les ha defensat, i què hem acabat posant a l'API de Goil.
 
 **En resum**
 
-- La cobertura respon "s'ha executat aquesta línia?". No respon "algun test se n'adonaria si fos incorrecta?".
-- Quan els agents escriuen el codi i també els tests, i la revisió és el coll d'ampolla, necessito saber on els tests són buits sense llegir-los tots.
-- Dues idees velles ho resolen: el **mutation testing** (trencar el codi a propòsit i mirar si els tests ho detecten) i el **CRAP** (complexitat contra cobertura, per saber per on començar).
-- L'Uncle Bob havia construït aquest 2026 un sistema d'agents amb aquestes mètriques com a barreres dures, i al setembre l'ha abandonat. Les mètriques han sobreviscut; les barreres, no.
-- La meva solució: dues comandes que corro a mà, acotades al que he canviat, sense cap gate. I una *skill* que diu a l'agent quan fer-les servir.
+- **El problema:** els agents escriuen el codi i també els tests, la revisió ja no dona l'abast, i l'únic senyal automàtic que tenim, la cobertura, diu que tot va bé encara que els tests no comprovin res.
+- **La idea:** el **mutation testing** (trencar el codi a propòsit i mirar si algun test ho detecta) diu on els tests són buits. El **CRAP** (complexitat contra cobertura) diu per on començar.
+- **El context:** l'Uncle Bob havia construït aquest 2026 un sistema d'agents amb aquestes mètriques com a barreres dures, i al setembre l'ha abandonat. Les mètriques s'han quedat; les barreres, no.
+- **La solució:** dues comandes que corren a demanda, només sobre el que ha canviat, sense bloquejar res. I una *skill* perquè l'agent que escriu els tests sigui el primer a passar-los per la mutació.
+- **Funciona:** troba forats reals que la cobertura amagava a l'API de Goil, i ja s'ha fet servir per verificar una PR de tests: d'un 50% a més d'un 89% de mutants morts.
 
 <Note>És una foto del 7 d'octubre de 2026. Mentre l'escrivia, la persona en qui em basava va canviar de criteri, així que no ho tracto com una recepta tancada.</Note>
 
-## Per què ho necessito
+## El problema
 
-A [Com programo ara](/blog/com-programo-ara) explicava que ja no obro l'editor: defineixo l'objectiu i l'agent treballa fins que la PR és en verd. Entrego molt més que abans, i el pas que no escala és la revisió.
+A [Com programo ara](/blog/com-programo-ara) explicava que ja no obro l'editor: defineixo l'objectiu i l'agent treballa fins que la PR és en verd. I explicava què ha passat a l'equip de Goil amb aquest canvi: fem tres vegades més PR que fa un any, i cadascuna espera cent vegades més a ser revisada. Escriure codi ja no és el pas lent. Revisar-lo, sí.
 
-Hi ha un detall que aquell post no tocava. L'agent no només escriu el codi: també escriu els tests. I un test escrit per complir l'expedient s'assembla molt a un test de debò. Crida la funció, rep un resultat, i fa una asserció sobre alguna cosa. Sovint sobre el *mock* que ell mateix ha preparat.
+Aquell post no tocava una conseqüència que ara em preocupa més. L'agent no només escriu el codi: també escriu els tests. I un test escrit per complir l'expedient s'assembla molt a un test de debò. Crida la funció, rep un resultat, i fa una asserció. Sovint sobre el *mock* que ell mateix ha preparat, que vol dir que el test comprova que el test funciona.
 
 Aquests tests passen. Pugen la cobertura. I no protegeixen de res.
 
-Si jo llegís cada línia, ho veuria. Però ja no les llegeixo totes, i aquí és on el problema es torna seriós: la revisió és el recurs escàs, i la cobertura, que és el que surt barat de mesurar, em diu que tot va bé. Necessito un senyal barat, que corri quan jo vulgui, i que m'assenyali on els tests són buits perquè hi pugui posar l'atenció que tinc.
+No és teòric. Aquestes setmanes he obert dues PR a l'API de Goil que només toquen tests. Una en treu que no podien fallar per cap motiu real: comprovacions que un mòdul exporta el que ha d'exportar, còpies que es comparen amb elles mateixes, un test que només provava el seu *mock*. L'altra reescriu els que afirmaven sobre allò que ells mateixos havien preparat. Ningú no els havia vist en revisió.
+
+El problema té tres capes, i la tercera és la que fa mal:
+
+1. **Hi ha més codi que mai**, i bona part dels tests també els escriu un agent.
+2. **La revisió no dona l'abast.** Ni humana ni amb agents revisors es pot llegir cada test i decidir si comprova alguna cosa.
+3. **L'únic senyal automàtic diu que tot va bé.** La cobertura respon "s'ha executat aquesta línia?", no "algun test se n'adonaria si fos incorrecta?". I les barreres de cobertura que ja teníem mesuren aquest mateix senyal feble.
+
+Quan tot està en verd, ningú mira. Aquest és el risc: no un test vermell, sinó una suite verda que no vigila res. Un senyal que diu que tot va bé quan no és així.
+
+El que necessito és un senyal barat, que corri quan jo vulgui, i que m'assenyali on els tests són buits. No per substituir la revisió, sinó per dir-li on ha de posar l'atenció, que és el recurs escàs.
 
 ## Dues idees velles
 
 ### Mutation testing
 
-La idea és senzilla: canvies el codi a propòsit i mires si algun test falla. Un `>` passa a ser `>=`, un `&&` passa a ser `||`, un text passa a ser buit, un bloc sencer desapareix. Cada canvi és un *mutant*. Si algun test falla, el mutant ha mort: els tests vigilen aquell comportament. Si tots els tests continuen en verd, el mutant ha *sobreviscut*: pots trencar aquell tros de codi i ningú se n'adonarà.
+La idea és senzilla: canvies el codi a propòsit i mires si algun test falla. Un `>` passa a ser `>=`, un `&&` passa a ser `||`, un text passa a ser buit, un bloc sencer desapareix. Cada canvi és un *mutant*. Si algun test falla, el mutant ha mort: els tests vigilen aquell comportament. Si tots continuen en verd, el mutant ha *sobreviscut*: pots trencar aquell tros de codi i ningú se n'adonarà.
+
+Respon exactament la pregunta que la cobertura no respon. El `Promise.all` de l'inici és un mutant que sobreviu.
 
 El 2016, Robert C. Martin, l'Uncle Bob, en va escriure [un post](https://blog.cleancoder.com/uncle-bob/2016/06/10/MutationTesting.html) amb `pitest`, l'eina de mutation testing per a Java. A la pregunta de quin percentatge de mutants morts cal buscar, responia:
 
 > The question is absurd. There is no justifiable goal other than 100%.
 
-M'agrada perquè canvia la naturalesa del número. No és una mètrica per mirar de lluny, és una condició.
+M'agrada perquè canvia la naturalesa del número: un mutant viu no és un percentatge a millorar, és un forat concret.
 
 Hi afegeixo una cosa que ell no diu en aquell post, però que he après fent-ho servir. A vegades un mutant no es pot matar perquè el canvi no altera res observable. Un `typeof x === 'string'` just després d'un `Set` que ja només conté strings. Una comprovació de `null` dues línies després d'una funció que ja llença si rep `null`. Quan passa, la resposta correcta no és inventar-se un test: és esborrar la línia. Era codi que sobrava.
 
 ### CRAP
 
-El 2007, Alberto Savoia i Bob Evans van proposar el **CRAP**, *Change Risk Anti-Patterns*, i la seva eina per a Java, crap4j. La pregunta que respon és una altra: si toco aquesta funció, quin risc hi ha que trenqui alguna cosa sense que ningú se n'assabenti?
+El mutation testing té un cost: per a cada mutant torna a passar els tests. En un projecte gran no el pots córrer sobre tot el codi. Necessites saber per on començar.
+
+El 2007, Alberto Savoia i Bob Evans van proposar el **CRAP**, *Change Risk Anti-Patterns*, i la seva eina per a Java, crap4j. Respon a una altra pregunta: si toco aquesta funció, quin risc hi ha que trenqui alguna cosa sense que ningú se n'assabenti?
 
 Barreja dos ingredients. La **complexitat ciclomàtica**, que compta quants camins diferents pot prendre una funció: cada `if`, cada `case`, cada `&&` o `||`, cada bucle en suma un. I la **cobertura** d'aquella funció. La fórmula:
 
@@ -67,21 +81,17 @@ Els exponents són el missatge. La complexitat va al quadrat, però la manca de 
 | 5 | 0% | 30 | Cinc camins i cap test |
 | 10 | 0% | 110 | Aquí hi viuen els bugs |
 
-Per què és útil: els dos casos avorrits no són perillosos. Codi simple sense tests, l'entens llegint-lo. Codi complex amb tests, si el trenques els tests et criden. El que fa mal és la combinació, i el CRAP aïlla exactament aquesta intersecció i l'ordena. En un mòdul antic amb desenes de fitxers, et diu per quines tres funcions començar.
+Els dos casos avorrits no són perillosos. Codi simple sense tests, l'entens llegint-lo. Codi complex amb tests, si el trenques els tests et criden. El que fa mal és la combinació, i el CRAP aïlla exactament aquesta intersecció i l'ordena.
 
-Però té un punt cec, i és el que fa que no el pugui fer servir sol. El seu ingredient de cobertura és la mateixa cobertura de sempre: "s'ha executat". Una funció amb tests que no afirmen res puntua igual de bé que una amb tests de debò. El cas d'ús de l'inici d'aquest post té un CRAP de 12, banda moderada, gens alarmant. I li sobreviuen onze mutants.
+Però té un punt cec, i és el que fa que no el pugui fer servir sol. El seu ingredient de cobertura és la mateixa cobertura de sempre: "s'ha executat". Una funció amb tests que no afirmen res puntua igual de bé que una amb tests de debò. El cas d'ús de l'inici té un CRAP de 12, banda moderada, gens alarmant. I li sobreviuen onze mutants.
 
-Per això els dos van junts. El CRAP és el radar que et diu on mirar. El mutation testing és la prova.
+Per això van tots dos junts. El CRAP és el radar que et diu on mirar. El mutation testing és la prova.
 
 ## Què ha fet l'Uncle Bob aquest 2026
 
-Quan vaig començar a muntar això, la referència obligada era el que l'Uncle Bob estava fent amb agents. Al seu GitHub hi ha [SwarmForge](https://github.com/unclebob/swarm-forge), un sistema per coordinar diversos agents, i una configuració amb sis rols en cadena: qui especifica, qui programa, qui neteja, qui revisa l'arquitectura, qui "endureix" el codi, i QA.
+Abans de decidir com fer-ho servir quedava una pregunta: barrera o senyal? Han de bloquejar la feina, o han de dir on mirar? I qui més havia apostat per la barrera acabava de canviar d'opinió.
 
-Les dues mètriques hi eren com a barreres dures. Al rol de neteja:
-
-> Run the language CRAP tool first on **all** files and reduce CRAP to 10 or below.
-
-I al rol que endureix el codi, just abans d'entregar-lo a QA:
+Al seu GitHub hi ha [SwarmForge](https://github.com/unclebob/swarm-forge), un sistema per coordinar diversos agents, i una configuració amb sis rols en cadena: qui especifica, qui programa, qui neteja, qui revisa l'arquitectura, qui "endureix" el codi, i QA. Les dues mètriques hi eren com a barreres dures. Al rol que endureix el codi, just abans d'entregar-lo a QA:
 
 > As the final verification sequence, run the language mutation tool, then soft Gherkin acceptance mutation [...], then the language CRAP tool [...] CRAP gate is 10 or below on **changed** files.
 
@@ -89,67 +99,88 @@ Fins i tot hi havia previst la trampa òbvia, que és trossejar funcions perquè
 
 > A single `cond` or `case` that answers one question may stay above 10; do not split it into helpers that take booleans the caller already knew.
 
-Ho tenia molt ben pensat. I la segona setmana de setembre ho va deixar estar. L'11 de setembre escrivia que s'havia passat setmanes construint un harness que obligava els agents a treballar exactament com ell volia, ple de barreres, tests, eines i protocols, i que era hora de [repensar-ho](https://x.com/unclebobmartin/status/2098432570887217520). Tres dies després:
+Ho tenia molt ben pensat. I la segona setmana de setembre ho va deixar estar. L'11 de setembre escrivia que havia passat setmanes construint un harness que obligava els agents a treballar exactament com ell volia, ple de barreres, tests, eines i protocols, i que era hora de [repensar-ho](https://x.com/unclebobmartin/status/2098432570887217520). Tres dies després:
 
 > Since I stopped using my harness, my token consumption has fallen by a huge factor. That harness was massively inefficient.
 
-I el 18 de setembre en donava [el perquè](https://x.com/unclebobmartin/status/2100938985543446954): els agents encara necessiten supervisió d'alt nivell, la revisió humana del codi és un coll d'ampolla, i els models han millorat prou perquè els harness deterministes i estrictes siguin, en paraules seves, *suboptimal*.
+El mateix cost que jo volia evitar. I el 18 de setembre en donava [el perquè](https://x.com/unclebobmartin/status/2100938985543446954): els agents encara necessiten supervisió d'alt nivell, la revisió humana del codi és un coll d'ampolla, i els models han millorat prou perquè els harness deterministes i estrictes siguin, en paraules seves, *suboptimal*.
 
-El que va fer després és el que més m'interessa. Va crear [uml-viewer](https://github.com/unclebob/uml-viewer): un visor de l'arquitectura del projecte com a diagrama, on pots clicar fins arribar al codi i demanar canvis a l'agent des d'allà. I el color de cada peça surt d'aquestes dues mètriques:
+El que va fer després és el que més m'interessa. Va crear [uml-viewer](https://github.com/unclebob/uml-viewer): un visor de l'arquitectura del projecte com a diagrama, on pots clicar fins a arribar al codi i demanar canvis a l'agent des d'allà. I el color de cada peça surt d'aquestes dues mètriques:
 
 > Color coding comes from CRAP and mutation metrics. You can adjust the thresholds in config if you like.
 
 Les seves eines de CRAP i de mutació, a més, ara es distribueixen com a *skills* per a agents, no com a peces del seu harness.
 
-Llegit tot junt: **ha abandonat les barreres, no les mètriques.** El CRAP i la mutació han passat de decidir si una feina pot avançar a pintar on ha de mirar una persona. Que és, curiosament, exactament el problema que jo tenia.
+Llegit tot junt: **ha abandonat les barreres, no les mètriques.** El CRAP i la mutació han passat de decidir si una feina pot avançar a pintar on ha de mirar una persona. Que és exactament el problema que jo tenia: no em calia una barrera, em calia saber on mirar.
 
-## La solució d'avui
+## La solució que hem posat a l'API de Goil
+
+D'aquí surt el disseny: un radar que l'agent i qui revisa poden consultar quan cal, i cap barrera.
 
 ### Dues comandes, a demanda
 
-Una per al mutation testing, amb [StrykerJS](https://stryker-mutator.io), l'equivalent de `pitest` per a JavaScript i TypeScript. Una altra per al CRAP. Les dues miren només el que he canviat respecte a la branca principal, inclosos els fitxers que encara no he afegit a git, perquè un cas d'ús que acabo d'escriure és exactament això.
+L'API de Goil és TypeScript, amb vitest per als tests i oxlint com a linter, i la solució n'aprofita tant com pot. Una comanda és per al mutation testing, amb [StrykerJS](https://stryker-mutator.io), l'equivalent de `pitest` per a JavaScript i TypeScript. L'altra, per al CRAP. Totes dues miren només el que ha canviat respecte a la branca principal, inclosos els fitxers que encara no s'han afegit a git, perquè un cas d'ús que acabes d'escriure és exactament això.
 
-No corren en cap *hook* ni en cap pas de la CI. Les faig servir quan valen el que costen: un mòdul nou, un cas d'ús nou, o refer un cas d'ús antic i gros. En un canvi rutinari costen minuts i tokens per una resposta que ja sé.
+No corren en cap *hook* ni en cap pas de la CI. Es fan servir quan valen el que costen: un mòdul nou, un cas d'ús nou, o refer un cas d'ús antic i gros. Sobre un fitxer acotat, el CRAP tarda uns tres segons i la mutació uns deu. Sobre una peça que importa mig projecte, la mutació pot passar de minuts. En un canvi rutinari costen temps i tokens per una resposta que ja saps.
 
-### La complexitat, del linter que ja tinc
+### La complexitat, del linter que ja teníem
 
-La primera versió calculava la complexitat amb un recorregut de l'arbre sintàctic escrit a mà. Funcionava, i a més comptava malament. El linter que ja feia servir, oxlint, té la regla de complexitat d'ESLint, i té un truc: si poses el màxim permès a zero, totes les funcions la incompleixen, i per tant totes informen del seu número. Llegeixo aquests avisos en JSON i en trec la complexitat de cada funció.
+La primera versió calculava la complexitat amb un recorregut de l'arbre sintàctic escrit a mà. oxlint ja té la regla de complexitat d'ESLint: si poses el màxim permès a zero, totes les funcions la incompleixen i totes informen del seu número. Menys codi propi, i el número és el que diria el linter de l'equip.
 
-Menys codi propi, i el número és el que diria el linter. I aquí va sortir la sorpresa: oxlint compta cada `?.` com una bifurcació, que ho és, perquè si el valor és nul el camí salta. El meu recorregut no les comptava. El cas d'ús de l'inici en té cinc: el meu script li donava complexitat 7, i la real és 12. Infravalorava el risc.
+I aquí va sortir la sorpresa. oxlint compta cada `?.` com una bifurcació, que ho és, perquè si el valor és nul el camí salta. El meu recorregut no les comptava. El cas d'ús de l'inici en té cinc: el meu script li donava complexitat 7, i la real és 12. La meva pròpia eina feia el mateix que els tests que volia vigilar: deia que tot anava millor del que anava.
 
 ### Bandes, no un llindar
 
-Faig servir les bandes que documenta l'eina de l'Uncle Bob: fins a 5 net, fins a 30 moderat, per sobre de 30, *crappy*. Pinten l'informe, no el jutgen. I quan no puc saber la cobertura d'una funció, la tracto com a no coberta. No saber-ho no és el mateix que estar bé.
+Faig servir les bandes que documenta l'eina de l'Uncle Bob: fins a 5, *net*; fins a 30, *moderat*; per sobre de 30, *crappy*. Pinten l'informe, no el jutgen. I quan no puc saber la cobertura d'una funció, la tracto com a no coberta. No saber-ho no és el mateix que estar bé.
 
 ### Cap gate
 
-És la decisió que més val la pena discutir, així que aquí van les raons:
+Cap barrera que bloquegi res. És la decisió que més val la pena discutir, així que aquí van les raons:
 
-- **El CRAP infravalora.** El seu ingredient de cobertura és "s'ha executat", que és precisament el que el mutation testing desmenteix. Una mètrica que infravalora pot fer de radar, no de porta.
-- **Una porta es burla.** Premia trossejar funcions perquè el número baixi, sense que baixi el risc.
-- **Sobre un diff, dispara on no toca.** Toques una línia d'un cas d'ús antic de tres-centes, i la porta et culpa de totes les funcions que hi ha.
+- **El CRAP hereta el punt cec de la cobertura.** Pot fer de radar, no de barrera.
+- **Una barrera es burla.** Premia trossejar funcions perquè el número baixi, sense que baixi el risc.
+- **Sobre un diff, dispara on no toca.** Toques una línia d'un cas d'ús antic de tres-centes, i la barrera et culpa de totes les funcions que hi ha.
 - **Qui més les havia defensat les ha tret**, i pel mateix cost que jo vull evitar.
+- **No afegeix cua.** La revisió ja és el coll d'ampolla de l'equip. Una barrera més que bloqueja PR el faria pitjor, no millor.
 
-El que sí que hi ha és una *skill* per a l'agent: un document que li diu quan fer servir cada comanda (el CRAP primer si he de triar per on atacar codi antic; directament la mutació si és codi que acabo d'escriure), com llegir un mutant que sobreviu, i quan no fer servir cap de les dues. La disciplina viu a les instruccions, no al codi de sortida d'un script. Exactament com ho fa ell ara.
+Al post anterior defensava convertir cada criteri en una regla i mirar les barreres en lloc del codi. Això segueix sent una regla, però en forma de *skill*, que és una de les formes que hi enumerava, i no de barrera. La diferència és el senyal: una barrera ha de mesurar el que diu, i el CRAP no ho fa.
+
+### La skill: que l'agent es vigili
+
+Aquesta és la peça que respon més directament el problema. Si qui escriu els tests és l'agent, el primer que els ha de passar per la mutació és el mateix agent, abans que arribin a ningú.
+
+La *skill* és un document que l'agent carrega quan toca, i que li diu quan fer servir cada comanda: el CRAP primer si ha de triar per on atacar codi antic; directament la mutació si és codi que acaba d'escriure. També li diu com llegir un mutant que sobreviu (un forat de test que cal tapar, o una línia que sobra i cal esborrar) i quan no fer servir cap de les dues. La disciplina viu a les instruccions, no al codi de sortida d'un script. Exactament com ho fa ell ara.
+
+## Funciona? Per a mi i per a Goil
+
+És molt nou i la PR que l'afegeix tot just s'ha obert, així que no tinc mesos de dades. Però la pregunta que importa és si troba coses que d'una altra manera no trobaria, i si serveix per millorar-les. A totes dues ja puc respondre.
+
+**Troba el que la cobertura amaga.** Dels onze supervivents del cas d'ús de l'inici, un és tot el bloc que desa les dades. Són tests per escriure que ningú hauria escrit mirant la cobertura.
+
+**Ja s'ha fet servir en una PR de debò.** La segona de les PR de neteja de tests, la que reescriu els tests que afirmaven sobre els seus propis *mocks*, la vaig verificar amb aquesta eina abans que l'eina tingués PR pròpia. En la suite d'uns controladors on vaig mesurar l'abans, el 50% dels mutants morien; després de reescriure els tests, entre el 89% i el 94%. Altres controladors van quedar entre el 90% i el 98%, i dos *mappers*, al 100%. Abans de reescriure'ls, la meitat dels canvis al codi d'aquella suite passaven sense que cap test se n'adonés. Ara ho sé amb un número, i el mateix número diu quant ha millorat.
+
+**Apunta on hi ha hagut problemes de debò.** La primera vegada que vaig passar el CRAP pel punt d'entrada de l'API, la funció que apaga el procés quan arriba un desplegament va sortir *crappy*: complexitat 7, cobertura 0%. En aquella funció hi havia hagut un bug real de producció, ja arreglat. L'arreglo no va venir amb cap test. No l'hauria buscat allà.
+
+**Per a mi**, que és on més ho noto, canvia on poso l'atenció. En lloc de llegir tests un per un per endevinar si comproven alguna cosa, puc mirar quines funcions surten arriscades i quins mutants sobreviuen, i anar-hi directe.
+
+**Per a Goil**, la PR que ho afegeix a l'API és en revisió ara mateix. El que pot aportar a l'equip és un criteri repetible per a una pregunta que fins ara depenia de qui revisava: aquests tests comproven alguna cosa? Ho pot respondre qualsevol persona i qualsevol agent, i no depèn de qui tingui temps per llegir-los.
+
+I la prova que em va convèncer més: quan la vaig fer revisar, l'eina queia exactament en el problema que havia de detectar.
 
 ## Revisat per dos models, a cegues
 
 Abans d'obrir la PR, vaig demanar dues revisions a agents que no havien vist res de la conversa: només el canvi i un document amb el context. I els vaig demanar que executessin les comandes, no que llegissin el diff.
 
-La primera, amb Opus, va tornar amb tres errors. Tots tres anaven en la direcció que fa més mal: codi sense tests que sortia com a cobert. La més irònica: l'eina que havia de detectar funcions arriscades i mal provades en declarava algunes cobertes al 100% quan no les cobria res. Entre els casos reals, dos fluxos de pagament. La causa: dues funcions que comencen a la mateixa línia es consideraven niuades l'una dins de l'altra, cadascuna excloïa les línies de l'altra, no quedava res per comptar, i "res per comptar" es convertia en un 100%. També feia servir els desplaçaments en bytes del linter com si fossin posicions de caràcter, i en un fitxer amb accents el final d'una funció es desplaçava fins a 55 línies.
+La primera, amb Opus, va tornar amb tres errors. Tots tres anaven en la direcció que fa més mal: codi sense tests que sortia com a cobert. L'eina que havia de detectar funcions arriscades i mal provades en declarava algunes cobertes al 100% quan no les cobria res, entre elles dues de fluxos de pagament. Dues funcions que comencen a la mateixa línia es consideraven niuades l'una dins de l'altra, cadascuna excloïa les línies de l'altra, no quedava res per comptar, i "res per comptar" es convertia en "tot cobert". Justament el que m'havia proposat evitar. I un altre error desplaçava el final d'algunes funcions fins a 55 línies.
 
 La segona, amb GLM-5.3-flash a OpenCode, va provar una altra cosa i va trobar el que un fitxer petit mai ensenya: StrykerJS tria els tests de la primera passada pels imports. Mutar una peça importada per mig projecte arrossega mig projecte, i llavors qualsevol test que ja estigués en vermell atura tota la passada abans de provar cap mutant.
 
-Les dues revisions van trobar coses diferents. Cap de les dues va trobar el que jo hauria trobat revisant la meva pròpia feina, que és res.
-
-## El que ja m'ha dit
-
-La primera vegada que vaig passar el CRAP pel punt d'entrada del procés, la funció que l'apaga quan arriba un desplegament va sortir *crappy*: complexitat 7, cobertura 0%. En aquella funció hi havia hagut un bug real de producció, ja arreglat. L'arreglo no va venir amb cap test.
-
-No l'hauria buscat allà. Ara sé on mirar.
+Les dues revisions van trobar coses diferents. Cap de les dues va trobar el que jo hauria trobat revisant la meva pròpia feina, que és res. És el mateix problema del principi, un nivell més amunt: qui fa la feina no és qui millor la verifica.
 
 ## El que ve
 
-El següent pas és la versió barata del visor de l'Uncle Bob, pensada per a la revisió asíncrona: un diagrama Mermaid al cos de la PR, amb els fitxers del canvi agrupats per capa, pintats segons la seva pitjor funció i amb els mutants supervivents anotats. GitHub el renderitza directament, i qui revisa sap per quin fitxer començar sense obrir-ne cap. Tinc un prototip que funciona. El deixo fora fins que vegi si de debò algú se'l mira.
+El següent pas és la versió barata del visor de l'Uncle Bob, pensada per a la revisió asíncrona: un diagrama Mermaid al cos de la PR, amb els fitxers del canvi agrupats per capa, pintats segons la seva pitjor funció i amb els mutants supervivents anotats. GitHub el renderitza directament, i qui revisa sap per quin fitxer començar sense obrir-ne cap. Tinc un prototip que funciona, i més endavant podria marcar també les dependències que van en la direcció equivocada entre capes. El deixo fora fins que vegi si de debò algú se'l mira.
 
-I la versió que de veritat em fa ganes: pintar de vermell les dependències que van en la direcció equivocada entre capes. Seria la primera cosa que caçaria aquest tipus d'errors d'arquitectura, que avui no caça res.
+## Per acabar
+
+Al post anterior deia que el que queda és criteri: saber què val la pena construir, què deixar entrar i què no, i detectar quan un resultat verd és en realitat un error. Amb agents que escriuen el codi i els tests, la suite verda és aquest resultat. La cobertura no ho pot dir. Un mutant que sobreviu, sí.
