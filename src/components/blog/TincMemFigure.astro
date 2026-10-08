@@ -1,0 +1,112 @@
+<figure class="fig">
+  <svg viewBox="0 0 720 672" role="img" aria-labelledby="fig-tincmem-title">
+    <title id="fig-tincmem-title">
+      Pipeline de Tinc mem: de l'API de 3Cat es baixen el vídeo i els
+      subtítols. El color de cada subtítol diu qui parla. Per a cada frase es
+      trien tres moments (inici, mig i final), més un just després de cada
+      canvi de pla que detecta ffmpeg. De cada moment es treuen tres fotogrames
+      i es queda el més nítid. Es descarten els gairebé idèntics dins del
+      mateix pla. El resultat va a R2 i a un Worker de Cloudflare, i surt a
+      tincmem.cat
+    </title>
+    <defs>
+      <marker
+        id="fig-tincmem-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path class="mk" d="M0 0L10 5L0 10z"></path>
+      </marker>
+    </defs>
+
+    <rect class="box" x="1" y="1" width="338" height="128"></rect>
+    <text class="t" x="24" y="44">
+      API DE 3CAT
+    </text>
+    <text x="24" y="80">
+      vídeo MP4
+    </text>
+    <text x="24" y="112">
+      + subtítols VTT
+    </text>
+
+    <rect class="box" x="381" y="1" width="338" height="128"></rect>
+    <text class="t" x="404" y="44">
+      QUI PARLA
+    </text>
+    <text x="404" y="80">
+      color del subtítol
+    </text>
+    <text class="ac b" x="404" y="112">
+      → personatge
+    </text>
+
+    <rect class="box" x="1" y="181" width="718" height="128"></rect>
+    <text class="t" x="24" y="224">
+      MOMENTS
+    </text>
+    <text x="24" y="260">
+      3 per frase: inici, mig i final
+    </text>
+    <text x="24" y="292">
+      + un per canvi de pla (ffmpeg)
+    </text>
+
+    <rect class="box" x="1" y="361" width="338" height="128"></rect>
+    <text class="t" x="24" y="404">
+      EL MÉS NÍTID
+    </text>
+    <text x="24" y="440">
+      de 3 fotogrames
+    </text>
+    <text x="24" y="472">
+      (filtre laplacià)
+    </text>
+
+    <rect class="box" x="381" y="361" width="338" height="128"></rect>
+    <text class="t" x="404" y="404">
+      SENSE REPETITS
+    </text>
+    <text x="404" y="440">
+      fora els calcats
+    </text>
+    <text x="404" y="472">
+      del mateix pla
+    </text>
+
+    <rect class="box-ac" x="1" y="541" width="338" height="128"></rect>
+    <text class="t on-ac" x="24" y="584">
+      TINCMEM.CAT
+    </text>
+    <text class="on-ac" x="24" y="620">
+      cerca, mem
+    </text>
+    <text class="on-ac" x="24" y="652">
+      i GIF al navegador
+    </text>
+
+    <rect class="box" x="381" y="541" width="338" height="128"></rect>
+    <text class="t" x="404" y="584">
+      R2 + WORKER
+    </text>
+    <text x="404" y="620">
+      fotogrames a R2
+    </text>
+    <text x="404" y="652">
+      web de ~12 MB
+    </text>
+
+    <g class="ln" marker-end="url(#fig-tincmem-arrow)">
+      <path d="M340 65H378"></path>
+      <path d="M550 130V178"></path>
+      <path d="M170 310V358"></path>
+      <path d="M340 425H378"></path>
+      <path d="M550 490V538"></path>
+      <path d="M380 605H342"></path>
+    </g>
+  </svg>
+</figure>
