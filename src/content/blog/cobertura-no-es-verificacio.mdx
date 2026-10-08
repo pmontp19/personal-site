@@ -5,7 +5,6 @@ date: 2026-10-07
 draft: false
 ---
 
-import Note from '../../components/blog/Note.astro';
 import MutantsFigure from '../../components/blog/MutantsFigure.astro';
 import CrapMapFigure from '../../components/blog/CrapMapFigure.astro';
 
@@ -24,8 +23,6 @@ Aquest post explica el problema que hi ha darrere, en quines idees m'he basat pe
 - **El context:** l'Uncle Bob havia construït aquest 2026 un sistema d'agents amb aquestes mètriques com a barreres dures, i al setembre l'ha abandonat. Les mètriques s'han quedat; les barreres, no.
 - **La solució:** dues comandes que corren a demanda, només sobre el que ha canviat, sense bloquejar res. I una *skill* perquè l'agent que escriu els tests sigui el primer a passar-los per la mutació.
 - **Funciona:** troba forats reals que la cobertura amagava a l'API de Goil, i ja s'ha fet servir per verificar una PR de tests: d'un 50% a més d'un 89% de mutants morts.
-
-<Note>És una foto del 7 d'octubre de 2026. Mentre l'escrivia, la persona en qui em basava va canviar de criteri, així que no ho tracto com una recepta tancada.</Note>
 
 ## El problema
 
