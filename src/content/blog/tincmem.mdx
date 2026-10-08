@@ -31,6 +31,8 @@ Jo m'imaginava que caldria transcriure l'àudio amb algun model de veu i alinear
 
 El primer commit és del 23 de setembre i funcionava amb un sol capítol. El 25 ja era a tincmem.cat amb domini propi. Una setmana i 39 commits després, la web és la que pots veure ara.
 
+Cinc dies després del primer commit ja sortia a la premsa: [Nació Digital](https://naciodigital.cat/next/trend/una-font-inagotable-de-mems-de-plats-bruts-la-nova-creacio-viral-dun-usuari-algu-ho-havia-de-fer.html), [Racó Català](https://www.racocatala.cat/noticia/72170/aplicacio-permet-convertir-tots-fotogrames-dialegs-plats-bruts-mems) i [El Món a RAC1](https://x.com/pmontp19/status/2104852329954787654) se'n van fer ressò.
+
 ## Els subtítols ja diuen qui parla
 
 La sorpresa més gran van ser els colors. Els subtítols de TV3 fan servir colors per distingir els personatges principals, i el VTT ho guarda amb una etiqueta per parlant. Al primer capítol, quan el David es retroba amb el Lopes:
@@ -72,6 +74,8 @@ Tota la web és un sol `index.html`. La cerca és al navegador, amb [MiniSearch]
 
 La part estàtica són uns 12 MB, sobretot les frases en JSON, i va en un Worker de Cloudflare. Els fotogrames no hi caben: els fitxers estàtics dels Workers tenen un límit de 20.000 fitxers i aquí n'hi ha més de 69.000 només de fotogrames. Van a R2, l'emmagatzematge d'objectes de Cloudflare, amb un domini propi.
 
+Aquí hi va haver un cas de CORS que val la pena explicar. Per copiar imatges i fer GIFs, el navegador necessita capçaleres CORS a R2. Però la memòria cau de Cloudflare no fa cas de `Vary: Origin`: si una sola petició sense `Origin` (un crawler, la previsualització d'un enllaç) arriba primer, la memòria cau guarda la resposta sense CORS, i després la web veu imatges trencades. La solució va ser una Transform Rule que posa `Access-Control-Allow-Origin: *` a tot el domini dels mitjans, i demanar sempre les imatges amb `crossorigin`.
+
 El nom, per cert, també té la seva història. L'agent el va batejar Platsiac, i després va proposar «Tinc meme»: gairebé tots els capítols de la primera temporada es diuen «Tinc alguna cosa», com *Tinc pis*, *Tinc por* o *Tinc enveja*. Jo hi vaig canviar *meme* per «mem», la forma que recomana el TERMCAT, i tincmem.cat estava lliure. I si vas a una adreça que no existeix, la pàgina d'error és un fotograma del T6C12 on l'Emma diu: «No existeix! Te l'has inventada!».
 
 ## També per a agents
@@ -92,6 +96,13 @@ Així, pots demanar a Claude «busca'm un mem de Plats bruts per dir que no tinc
 Cada fotograma té la seva adreça (`/T1C1/642400/213`) i una previsualització que genera el Worker. El sitemap en llista més de 31.000, una per frase. Vaig donar d'alta la web a Google Search Console i, poques hores després, va caure: s'havia acabat la quota gratuïta de Workers, 100.000 peticions al dia per compte. El primer sospitós era Google, però les dades deien una altra cosa. Entre el 25 i el 29 de setembre, Googlebot no va arribar a 2.000 peticions, i AhrefsBot, un rastrejador de SEO, en va fer unes 260.000. I com que la quota és per compte, també va caure el servidor MCP.
 
 La solució immediata va ser el pla de pagament de Workers, 5 dòlars al mes, i en 30 segons tornava a funcionar. El dia abans, la sessió al núvol ja havia preparat un canvi per treure feina al Worker, i el vaig desplegar just després. D'una banda, la portada ja no hi passa, i això són moltes menys peticions. De l'altra, la cerca dels agents no construeix cap índex. Això no era per la quota sinó per la CPU: el pla gratuït només deixa 10 ms per petició, i muntar l'índex de MiniSearch en trigava entre 400 i 700. Ara és una cerca lineal sobre un fitxer de text pla, que hi cap de sobres.
+
+## Analítiques sense cookies
+
+Volia saber què passava sense posar cookies ni banners de consentiment. Faig servir dues coses:
+
+- **Cloudflare Web Analytics** per a visites i pàgines. Com que la web navega amb `pushState`, vaig haver d'activar-hi els canvis d'historial perquè comptés cada fotograma com una vista.
+- **Esdeveniments propis** (cerques, fotogrames vistos, accions) que el Worker envia a Cloudflare Analytics Engine, i un petit script que els consulta.
 
 ## Teresina S.A., al calaix
 
