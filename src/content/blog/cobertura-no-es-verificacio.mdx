@@ -6,10 +6,14 @@ draft: false
 ---
 
 import Note from '../../components/blog/Note.astro';
+import MutantsFigure from '../../components/blog/MutantsFigure.astro';
+import CrapMapFigure from '../../components/blog/CrapMapFigure.astro';
 
 A l'API de Goil hi ha un cas d'ús amb un 89% de cobertura de tests. Desa un registre i actualitza unes metadades dins d'un `Promise.all`. He substituït tot el `Promise.all([...])` per `Promise.all([])`, buit, i he passat la suite de tests. Cap test ha fallat.
 
 Els tests executaven aquelles línies. No en comprovaven res. I la cobertura ho comptava com una bona notícia.
+
+<MutantsFigure />
 
 Aquest post explica el problema que hi ha darrere, en quines idees m'he basat per atacar-lo, com ha canviat d'opinió pel camí qui més les ha defensat, i què hem acabat posant a l'API de Goil.
 
@@ -84,6 +88,8 @@ Els exponents són el missatge. La complexitat va al quadrat, però la manca de 
 Els dos casos avorrits no són perillosos. Codi simple sense tests, l'entens llegint-lo. Codi complex amb tests, si el trenques els tests et criden. El que fa mal és la combinació, i el CRAP aïlla exactament aquesta intersecció i l'ordena.
 
 Però té un punt cec, i és el que fa que no el pugui fer servir sol. El seu ingredient de cobertura és la mateixa cobertura de sempre: "s'ha executat". Una funció amb tests que no afirmen res puntua igual de bé que una amb tests de debò. El cas d'ús de l'inici té un CRAP de 12, banda moderada, gens alarmant. I li sobreviuen onze mutants.
+
+<CrapMapFigure />
 
 Per això van tots dos junts. El CRAP és el radar que et diu on mirar. El mutation testing és la prova.
 
