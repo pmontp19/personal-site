@@ -1,0 +1,76 @@
+---
+// Esquema del cas d'ús de l'inici: cada línia de codi és una barra.
+// [sagnat, amplada relativa, executada?, li sobreviu algun mutant?]
+type Line = [number, number, boolean, boolean];
+const lines: Line[] = [
+  [0, 0.8, true, false],
+  [1, 0.55, true, false],
+  [0, 0.15, true, false],
+  [1, 0.7, true, false],
+  [1, 0.45, true, false],
+  [2, 0.5, false, false],
+  [1, 0.75, true, true],
+  [1, 0.6, true, false],
+  [1, 0.5, true, true], // Promise.all([
+  [2, 0.65, true, true],
+  [2, 0.7, true, true],
+  [1, 0.12, true, true], // ])
+  [1, 0.55, true, false],
+  [1, 0.4, true, true],
+  [2, 0.6, false, false],
+  [1, 0.35, true, false],
+  [1, 0.5, true, true],
+  [0, 0.06, true, false],
+];
+const COL = 330;
+const IND = 24;
+const Y0 = 110;
+const PITCH = 24;
+const H = 14;
+const ly = (i: number) => Y0 + i * PITCH;
+const lw = (l: Line) => Math.min(l[1] * COL, COL - l[0] * IND);
+---
+
+<figure class="fig">
+  <svg viewBox="0 0 720 540" role="img" aria-labelledby="fig-mutants-title">
+    <title id="fig-mutants-title">
+      La mateixa funció vista de dues maneres. A l'esquerra, la cobertura:
+      gairebé totes les línies s'executen. A la dreta, la mutació: a moltes
+      d'aquestes mateixes línies se'ls pot canviar el codi sense que cap test
+      falli
+    </title>
+
+    <text class="t" x="0" y="34">
+      COBERTURA
+    </text>
+    <text x="0" y="70">
+      s'ha executat?
+    </text>
+    <text class="t" x="380" y="34">
+      MUTACIÓ
+    </text>
+    <text x="380" y="70">
+      ho veuria un test?
+    </text>
+
+    {lines.map((l, i) => (
+      <rect
+        class={l[2] ? "tint-2" : "box"}
+        x={l[0] * IND}
+        y={ly(i)}
+        width={lw(l)}
+        height={H}
+      />
+    ))}
+
+    {lines.map((l, i) => (
+      <rect
+        class={!l[2] ? "box" : l[3] ? "ln-ac" : "tint-2"}
+        x={380 + l[0] * IND}
+        y={ly(i)}
+        width={lw(l)}
+        height={H}
+      />
+    ))}
+  </svg>
+</figure>
