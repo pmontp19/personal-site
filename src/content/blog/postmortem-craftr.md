@@ -3,6 +3,9 @@ title: "craftr: el producte que funcionava i que ningú podia fer servir"
 description: "Vaig construir el Lightroom dels usuaris de Cricut en quatre setmanes amb agents de codi. Tècnicament és excel·lent. La visió tenia un forat que cap refactor tapa: el que entra a Cricut Design Space no en torna a sortir."
 date: 2026-10-09
 draft: true
+hairline:
+  name: prestatge
+  alt: "Un classificador de fulls amb dissenys a cada ranura i, al costat, una caixa tancada amb pestell: els fulls del classificador surten quan hi passes el punter, la caixa no s'obre i no en surt res."
 ---
 
 Fa sis mesos vaig tenir per primera vegada un producte propi a punt per llançar. Funcionava, la usabilitat era bona, Stripe connectat, domini reservat. I un bon dia em vaig aturar a pensar en el primer pas que faria qualsevol usuari nou: «puja la teva biblioteca de dissenys». Com? Des d'on? Cricut Design Space no et deixa treure res. El que entra, no en surt.
