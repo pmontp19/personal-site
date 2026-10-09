@@ -2,7 +2,7 @@
 title: "Tres intents per fer un assistent d'IA que serveixi: de les eines a les capacitats"
 description: "Com he passat d'un assistent amb una eina per cada funcionalitat, a una exploració amb UI generada pel model, a un assistent amb capacitats que el model proposa i les persones aproven. Què va fallar i què he après."
 date: 2026-10-09
-draft: true
+draft: false
 hairline:
   name: tauler
   alt: "Un tauler d'eines en tres fases: un tauler atapeït de tornavisos gairebé iguals, tres taulers petits separats, i un sol mànec amb tres puntes davant d'un calaix de fitxes que s'allarga."
