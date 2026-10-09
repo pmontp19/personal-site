@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import HairlineFigure from "../../components/blog/HairlineFigure.astro";
 import { getCollection, render } from "astro:content";
 import { calculateReadingTime } from "../../utils/readingTime";
 import { getSlug } from "../../utils/date";
@@ -87,6 +88,12 @@ function formatDate(date: Date): string {
       )}
       <span> · {readingTime}</span>
     </p>
+
+    {entry.data.hairline && (
+      <div class="hero-hairline">
+        <HairlineFigure {...entry.data.hairline} />
+      </div>
+    )}
 
     {entry.data.image && (
       <div class="hero-image">
@@ -308,6 +315,10 @@ function formatDate(date: Date): string {
 
   .hero-image {
     margin: 1.5rem 0 0;
+  }
+  .hero-hairline :global(.fig) {
+    margin: 1.5rem auto 0;
+    max-width: 34rem;
   }
   .hero-image :global(img) {
     width: 100%;
