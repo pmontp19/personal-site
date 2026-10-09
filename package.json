@@ -15,7 +15,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate-history": "tsx scripts/generate-git-history.ts"
+    "generate-history": "tsx scripts/generate-git-history.ts",
+    "hairline:og": "node scripts/hairline-og.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "0.4.2",
@@ -39,6 +40,7 @@
     "eslint": "^10.11.0",
     "eslint-plugin-astro": "^3.2.1",
     "globals": "^17.13.0",
+    "playwright-core": "^1.64.0",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
     "tsx": "^4.23.15",

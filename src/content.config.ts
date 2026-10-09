@@ -12,6 +12,8 @@ const blog = defineCollection({
       draft: z.boolean().optional(),
       image: image().optional(),
       imageAlt: z.string().optional(),
+      // figura Hairline destacada (public/hairline/<name>.js) i la seva captura per a l'OG
+      hairline: z.object({ name: z.string(), alt: z.string() }).optional(),
     }),
 });
 

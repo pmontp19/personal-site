@@ -1,0 +1,54 @@
+---
+// Figura Hairline: dibuix isomètric de línia que respon al punter.
+// La figura viu a public/hairline/<name>.js; kernel.js i host.js la munten.
+interface Props {
+  name: string;
+  alt: string;
+  title?: string;
+  sub?: string;
+}
+const { name, title, sub, alt } = Astro.props;
+---
+
+<figure class="fig hl">
+  {title && (
+    <figcaption>
+      <b>{title}</b>
+      {sub && <span>{sub}</span>}
+    </figcaption>
+  )}
+  <div class="plate">
+    <span class="hl-read" aria-hidden="true">
+      rest
+    </span>
+    <div class="hl-stage" role="img" aria-label={alt}></div>
+  </div>
+  <script is:inline src="/hairline/kernel.js"></script>
+  <script is:inline src="/hairline/host.js"></script>
+  <script is:inline src={`/hairline/${name}.js`}></script>
+</figure>
+
+<style>
+  .plate {
+    position: relative;
+    border: 1px solid var(--line);
+  }
+  .hl-read {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    z-index: 1;
+    font: 11px/1 var(--mono);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+  /* la paleta de Hairline, amb els tokens del blog: el traç brillant és l'ambre */
+  .hl-stage {
+    --hairline-plate: var(--bg);
+    --hairline-hi: var(--accent);
+    --hairline-edge: color-mix(in oklab, var(--fg) 42%, var(--bg));
+    --hairline-mid: color-mix(in oklab, var(--fg) 24%, var(--bg));
+    --hairline-lo: var(--line);
+  }
+</style>

@@ -46,6 +46,8 @@ export interface OGImageOptions {
   };
   padding?: number;
   logo?: { path: string; size?: [number] | [number, number] };
+  /** A picture on the inline-end side, fitted to the full height minus padding; the text wraps beside it. */
+  figure?: { path: string };
   font?: { title?: OGFontStyle; description?: OGFontStyle };
   fonts?: string[];
   format?: "PNG" | "JPEG" | "WEBP";
@@ -183,6 +185,7 @@ export async function generateOgImage(
     bgGradient = [[0, 0, 0]],
     padding = 60,
     logo,
+    figure,
     fonts = [
       "https://api.fontsource.org/v1/fonts/noto-sans/latin-400-normal.ttf",
     ],
@@ -198,6 +201,7 @@ export async function generateOgImage(
   };
 
   const loadedLogo = logo && (await loadImage(logo.path));
+  const loadedFigure = figure && (await loadImage(figure.path));
 
   // Cache lookup keyed by a hash of every input that affects the output.
   let cacheFilePath: string | undefined;
@@ -212,6 +216,7 @@ export async function generateOgImage(
           border,
           padding,
           logo,
+          figure,
           font,
           fonts,
           format,
@@ -219,6 +224,7 @@ export async function generateOgImage(
         }),
       )
       .update(loadedLogo ?? Buffer.alloc(0))
+      .update(loadedFigure ?? Buffer.alloc(0))
       .digest("hex")
       .slice(0, 16);
     cacheFilePath = path.join(cacheDir, `${hash}.${format.toLowerCase()}`);
@@ -302,6 +308,28 @@ export async function generateOgImage(
     }
   }
 
+  // Figure on the inline-end side, scaled to fit its box (LTR only).
+  let figureWidth = 0;
+  if (loadedFigure) {
+    const img = CanvasKit.MakeImageFromEncoded(loadedFigure);
+    if (img) {
+      const boxH = HEIGHT - padding;
+      const scale = boxH / img.height();
+      figureWidth = img.width() * scale;
+      canvas.drawImageRect(
+        img,
+        CanvasKit.XYWHRect(0, 0, img.width(), img.height()),
+        CanvasKit.XYWHRect(
+          WIDTH - padding / 2 - figureWidth,
+          padding / 2,
+          figureWidth,
+          boxH,
+        ),
+        new CanvasKit.Paint(),
+      );
+    }
+  }
+
   // Title + description paragraph.
   if (fontMgrInstance) {
     const textStyle = (f: Required<OGFontStyle>) => ({
@@ -337,7 +365,11 @@ export async function generateOgImage(
 
     const para = builder.build();
     const paraWidth =
-      WIDTH - margin["inline-start"] - margin["inline-end"] - padding;
+      WIDTH -
+      margin["inline-start"] -
+      margin["inline-end"] -
+      padding -
+      (figureWidth && figureWidth - padding / 2);
     para.layout(paraWidth);
     const paraLeft = isRtl
       ? WIDTH - margin["inline-start"] - para.getMaxWidth()
