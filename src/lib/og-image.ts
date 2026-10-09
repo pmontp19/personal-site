@@ -308,22 +308,26 @@ export async function generateOgImage(
     }
   }
 
-  // Figure on the inline-end side, scaled to fit its box (LTR only).
+  // Figure on the inline-end side, fitted to at most the full height and 45%
+  // of the width, centred vertically (LTR only).
   let figureWidth = 0;
   if (loadedFigure) {
     const img = CanvasKit.MakeImageFromEncoded(loadedFigure);
     if (img) {
-      const boxH = HEIGHT - padding;
-      const scale = boxH / img.height();
+      const scale = Math.min(
+        (HEIGHT - padding) / img.height(),
+        (WIDTH * 0.45) / img.width(),
+      );
       figureWidth = img.width() * scale;
+      const figureHeight = img.height() * scale;
       canvas.drawImageRect(
         img,
         CanvasKit.XYWHRect(0, 0, img.width(), img.height()),
         CanvasKit.XYWHRect(
           WIDTH - padding / 2 - figureWidth,
-          padding / 2,
+          (HEIGHT - figureHeight) / 2,
           figureWidth,
-          boxH,
+          figureHeight,
         ),
         new CanvasKit.Paint(),
       );
