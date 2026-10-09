@@ -3,6 +3,9 @@ title: "Tres intents per fer un assistent d'IA que serveixi: de les eines a les 
 description: "Com he passat d'un assistent amb una eina per cada funcionalitat, a una exploració amb UI generada pel model, a un assistent amb capacitats que el model proposa i les persones aproven. Què va fallar i què he après."
 date: 2026-10-09
 draft: true
+hairline:
+  name: tauler
+  alt: "Un tauler d'eines en tres fases: un tauler atapeït de tornavisos gairebé iguals, tres taulers petits separats, i un sol mànec amb tres puntes davant d'un calaix de fitxes que s'allarga."
 ---
 
 A [Goil](https://goil.app) fem una plataforma perquè negocis (clubs, acadèmies, gestories, empreses, ajuntaments) es comuniquin amb la seva gent i la gestionin: una app amb la seva marca per als usuaris i un backoffice per a l'equip. Al gener vaig explicar [com vaig muntar el RAG](/blog/rag-pipeline-goil) perquè la IA conegués el context de cada negoci.
