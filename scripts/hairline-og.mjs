@@ -34,14 +34,15 @@ const vars =
 const browser = await chromium
   .launch({ channel: "chrome" })
   .catch(() => chromium.launch());
-const page = await browser.newPage({
-  viewport: { width: 640, height: 512 },
-  deviceScaleFactor: 2,
-});
-await page.emulateMedia({ reducedMotion: "reduce" });
 await fs.mkdir(OUT, { recursive: true });
 
 for (const name of names) {
+  // una pàgina per figura: les figures declaren const globals que xocarien
+  const page = await browser.newPage({
+    viewport: { width: 640, height: 512 },
+    deviceScaleFactor: 2,
+  });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const figure = await js(`${name}.js`);
   await page.setContent(
     `<body style="margin:0;background:${PALETTE.plate}">
@@ -67,5 +68,6 @@ for (const name of names) {
   const file = path.join(OUT, `${name}.png`);
   await page.locator(".hl-stage").screenshot({ path: file });
   console.log("captura", file);
+  await page.close();
 }
 await browser.close();
