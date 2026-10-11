@@ -344,42 +344,54 @@ export async function generateOgImage(
       heightMultiplier: f.lineHeight,
     });
 
-    const paragraphStyle = new CanvasKit.ParagraphStyle({
-      textAlign: isRtl ? CanvasKit.TextAlign.Right : CanvasKit.TextAlign.Left,
-      textStyle: textStyle(font.title as Required<OGFontStyle>),
-      textDirection: isRtl
-        ? CanvasKit.TextDirection.RTL
-        : CanvasKit.TextDirection.LTR,
-    });
-    const builder = CanvasKit.ParagraphBuilder.Make(
-      paragraphStyle,
-      fontMgrInstance,
-    );
-    builder.addText(title);
-    builder.pushStyle(
-      new CanvasKit.TextStyle({ fontSize: padding / 3, heightMultiplier: 1 }),
-    );
-    builder.addText("\n\n");
-    builder.pushStyle(
-      new CanvasKit.TextStyle(
-        textStyle(font.description as Required<OGFontStyle>),
-      ),
-    );
-    builder.addText(description);
-
-    const para = builder.build();
     const paraWidth =
       WIDTH -
       margin["inline-start"] -
       margin["inline-end"] -
       padding -
       (figureWidth && figureWidth - padding / 2);
-    para.layout(paraWidth);
+    const minTop =
+      margin["block-start"] + logoHeight + (logoHeight ? padding : 0);
+    // a long title beside a wide figure shrinks until it fits under the logo
+    const titleFont = font.title as Required<OGFontStyle>;
+    const build = (size: number) => {
+      const paragraphStyle = new CanvasKit.ParagraphStyle({
+        textAlign: isRtl ? CanvasKit.TextAlign.Right : CanvasKit.TextAlign.Left,
+        textStyle: textStyle({ ...titleFont, size }),
+        textDirection: isRtl
+          ? CanvasKit.TextDirection.RTL
+          : CanvasKit.TextDirection.LTR,
+      });
+      const builder = CanvasKit.ParagraphBuilder.Make(
+        paragraphStyle,
+        fontMgrInstance,
+      );
+      builder.addText(title);
+      builder.pushStyle(
+        new CanvasKit.TextStyle({ fontSize: padding / 3, heightMultiplier: 1 }),
+      );
+      builder.addText("\n\n");
+      builder.pushStyle(
+        new CanvasKit.TextStyle(
+          textStyle(font.description as Required<OGFontStyle>),
+        ),
+      );
+      builder.addText(description);
+
+      const built = builder.build();
+      built.layout(paraWidth);
+      return built;
+    };
+    let size = titleFont.size;
+    let para = build(size);
+    while (
+      size > 40 &&
+      para.getHeight() > HEIGHT - margin["block-end"] - minTop
+    )
+      para = build((size -= 4));
     const paraLeft = isRtl
       ? WIDTH - margin["inline-start"] - para.getMaxWidth()
       : margin["inline-start"];
-    const minTop =
-      margin["block-start"] + logoHeight + (logoHeight ? padding : 0);
     const maxTop = minTop + (logoHeight ? padding : 0);
     const naturalTop = HEIGHT - margin["block-end"] - para.getHeight();
     const paraTop = Math.max(minTop, Math.min(maxTop, naturalTop));
