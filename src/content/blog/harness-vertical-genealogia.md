@@ -1,6 +1,6 @@
 ---
 title: "Les regles que els agents no es poden saltar: el harness vertical de la meva genealogia"
-description: "Un butlletí em va donar el nom (harness vertical) i un post de Twitter el criteri (la piràmide invertida). Com vaig convertir en barreres les regles en prosa del projecte de genealogia, i per què les barreres també s'han de provar."
+description: "Un tuit em va donar el nom (harness vertical) i un altre el criteri (la piràmide invertida). Com vaig convertir en barreres les regles en prosa del projecte de genealogia, i per què les barreres també s'han de provar."
 date: 2026-10-17
 draft: true
 ---
@@ -9,11 +9,11 @@ Al post de [gedlint](/blog/gedlint) vaig deixar escrita una frase que no he deix
 
 El projecte de genealogia té agents que treballen hores seguides, gairebé desatesos, i al darrere un munt de regles apreses a cops: el número de sessió es calcula així, a l'arxiu diocesà només hi va un agent alhora, tota afirmació forta porta la imatge de l'acta. Cada regla neix d'un incident real. Però on viuen? En markdown, i una regla en markdown és una petició. El linter i el ratchet en fan complir una part, i la resta confia que l'agent ho llegirà, ho entendrà i ho obeirà.
 
-Aquesta setmana han coincidit dues lectures que m'han donat les paraules per a això. La primera, un passatge d'un butlletí, sense firma, que tradueixo:
+Aquesta setmana han coincidit dues lectures que m'han donat les paraules per a això. La primera, un [tuit de Greg Isenberg](https://x.com/gregisenberg/status/2110414696037716372) que tradueixo:
 
 > Els harnesses d'agents són els nous GPT wrappers, però en el bon sentit, sobretot els verticals. Els millors equips tracten el model com una peça intercanviable i encaminen models diferents a feines diferents. Fan servir prompts portables en comptes de fine-tuning, i fan A/B testing sobre el que els usuaris fan amb la sortida: l'editen, l'exporten, la comparteixen? Un harness vertical és bàsicament quatre coses: els connectors per a les dades d'aquella indústria, els evals escrits per gent que en sap de l'ofici, les regles sobre què l'agent pot tocar i què no, i una pantalla neta perquè un humà ho revisi. El model és, com a molt, un 20% de tot plegat.
 
-La segona, un post de Twitter amb una idea senzilla: si vols confiar en la feina dels agents, inverteix la piràmide. Més esforç a dalt de tot, al codi, i el mínim a la revisió humana. Les dues juntes diuen una cosa que el repo ja intentava fer sense saber-ho: un harness vertical és el lloc on les regles deixen de ser peticions i es converteixen en barreres, perquè l'agent pugui treballar sol de debò.
+La segona, un [tuit de @poteto](https://x.com/poteto/status/2111133080526495985) amb una idea senzilla: si vols confiar en la feina dels agents, inverteix la piràmide. Més esforç a dalt de tot, al codi, i el mínim a la revisió humana. Les dues juntes diuen una cosa que el repo ja intentava fer sense saber-ho: un harness vertical és el lloc on les regles deixen de ser peticions i es converteixen en barreres, perquè l'agent pugui treballar sol de debò.
 
 **En resum**
 
@@ -49,7 +49,7 @@ La taula diu on era fort, però no per què. Això m'ho va respondre la piràmid
 
 ## La piràmide invertida
 
-El post de Twitter plantejava quatre capes, de més a menys esforç:
+El tuit plantejava quatre capes, de més a menys esforç:
 
 1. **Codi.** Millores que eliminin categories senceres de problemes. Els agents copien el que ja existeix i agafen el camí més curt, així que fes que el camí fàcil sigui el correcte.
 2. **Anàlisi estàtica.** Linters, tests, CI.
