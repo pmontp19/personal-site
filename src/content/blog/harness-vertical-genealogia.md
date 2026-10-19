@@ -11,7 +11,7 @@ El projecte de genealogia té agents que treballen hores seguides, gairebé desa
 
 Aquesta setmana han coincidit dues lectures que m'han donat les paraules per a això. La primera, un [tuit de Greg Isenberg](https://x.com/gregisenberg/status/2110414696037716372) que tradueixo:
 
-> Els harnesses d'agents són els nous GPT wrappers, però en el bon sentit, sobretot els verticals. Els millors equips tracten el model com una peça intercanviable i encaminen models diferents a feines diferents. Fan servir prompts portables en comptes de fine-tuning, i fan A/B testing sobre el que els usuaris fan amb la sortida: l'editen, l'exporten, la comparteixen? Un harness vertical és bàsicament quatre coses: els connectors per a les dades d'aquella indústria, els evals escrits per gent que en sap de l'ofici, les regles sobre què l'agent pot tocar i què no, i una pantalla neta perquè un humà ho revisi. El model és, com a molt, un 20% de tot plegat.
+> Els harnesses d'agents són els nous GPT wrappers, però en el bon sentit, sobretot els verticals. Els millors equips tracten el model com una peça intercanviable i assignen un model diferent a cada feina. Fan servir prompts portables en comptes de fine-tuning, i fan A/B testing sobre el que els usuaris fan amb la sortida: l'editen, l'exporten, la comparteixen? Un harness vertical és bàsicament quatre coses: els connectors per a les dades d'aquella indústria, els evals escrits per gent que en sap de l'ofici, les regles sobre què l'agent pot tocar i què no, i una pantalla neta perquè un humà ho revisi. El model és, com a molt, un 20% de tot plegat.
 
 La segona, un [tuit de @poteto](https://x.com/poteto/status/2111133080526495985) amb una idea senzilla: si vols confiar en la feina dels agents, inverteix la piràmide. Més esforç a dalt de tot, al codi, i el mínim a la revisió humana. Les dues juntes diuen una cosa que el repo ja intentava fer sense saber-ho: un harness vertical és el lloc on les regles deixen de ser peticions i es converteixen en barreres, perquè l'agent pugui treballar sol de debò.
 
@@ -22,7 +22,7 @@ La segona, un [tuit de @poteto](https://x.com/poteto/status/2111133080526495985)
 - Vaig auditar el repo amb dades (409 commits i la taula d'incidents): les regles que vivien al codi no han tornat a fallar, les que només eren prosa, sí. De 26 regles, 7 les fa complir el codi o el CI, 7 tenen una eina o un control parcial, i 12 encara són prosa.
 - Vaig passar a codi cinc regles, vaig posar evals conductuals a la prosa que quedava i una pantalla per a l'humà.
 - Les barreres són codi, i el codi falla. El hook que havia de protegir l'arbre rebutjava tots els commits, bons i dolents, i ningú ho havia provat. Un revisor adversarial en va trobar més.
-- Per deixar treballar agents sols calen tres coses: barreres, barreres provades i una pantalla que basti. L'eval és l'única peça que millora amb cada model nou.
+- Per deixar treballar agents sols calen tres coses: barreres, barreres provades i una pantalla suficient. L'eval és l'única peça que millora amb cada model nou.
 
 ## El terme i el debat
 
@@ -56,7 +56,7 @@ El tuit plantejava quatre capes, de més a menys esforç:
 3. **Prosa.** Regles, documents d'instruccions, skills, el mínim indispensable.
 4. **Revisió humana.** La que menys escala, al final de tot.
 
-Vaig demanar a un agent que revisés el meu harness amb aquest criteri, i amb dades: els 409 commits del repo i la taula d'incidents que fa mesos que mantinc, on cada regla del projecte té al costat l'incident real que la va fer néixer. El patró era net. On la regla vivia al codi (el format de l'arbre, la pausa mínima entre peticions a l'arxiu) el problema no havia tornat. On només vivia en prosa (el número de sessió, la mida dels lots de lectura, "tota afirmació forta porta la imatge de l'acta") tornava una vegada i una altra.
+Vaig demanar a un agent que revisés el meu harness amb aquest criteri, i amb dades: els 409 commits del repo i la taula d'incidents que fa mesos que mantinc, on cada regla del projecte té al costat l'incident real que la va fer néixer. El patró era net. Quan la regla vivia al codi (el format de l'arbre, la pausa mínima entre peticions a l'arxiu) el problema no havia tornat. On només vivia en prosa (el número de sessió, la mida dels lots de lectura, "tota afirmació forta porta la imatge de l'acta") tornava una vegada i una altra.
 
 Era el que ja passava amb gedlint sense que jo ho hagués dit així. El linter de l'arbre és la capa 2 d'aquesta piràmide, i funciona perquè no demana res a l'agent: si el commit trenca una regla, el build es posa vermell. Tot el que no passava per allà depenia de la bona voluntat.
 
@@ -79,7 +79,7 @@ El precedent ja hi era. Al [primer post](/blog/myheritage-agents-autonoms) expli
 
 **Una comprovació d'estat net.** La llista de coses que una sessió ha de complir per tancar era prosa. Ara és una ordre que comprova l'arbre, la cua de treball, tots els tests de les eines, els guions llargs (una mania d'estil del projecte), que cada negatiu estigui al registre de negatius i cada unitat tancada al diari, i que cada imatge citada a l'arbre sigui al repo. Corre a cada PR i, abans de cada push, sobre els commits que es pugen. És la cinquena regla que passa a codi.
 
-**El fitxer de l'arbre, protegit.** Un hook de git que rebutja el commit si l'edició deixa errors d'integritat o línies massa llargues. La regla "un sol escriptor del fitxer" passa de prosa a enforcement: pots desobeir-la, però el commit no passa. (Spoiler: no funcionava. Hi arribo més avall.)
+**El fitxer de l'arbre, protegit.** Un hook de git que rebutja el commit si l'edició deixa errors d'integritat o línies massa llargues. La regla "un sol escriptor del fitxer" passa de prosa a barrera real: pots desobeir-la, però el commit no passa. (Spoiler: no funcionava. Hi arribo més avall.)
 
 **Permisos al harness.** La configuració dels agents ara té regles: editar l'arbre a mà, denegat; pujar a main, pregunta; forçar la pujada, denegat. Els incidents de seguretat d'agents que s'han fet públics aquest mes són fallades de frontera, no de capacitat.
 
@@ -91,11 +91,11 @@ La skill ja tenia sis casos d'exemple amb la resposta esperada, que ningú execu
 
 I dos dels sis fallats ensenyen més que els sis aprovats. Un fallava per literalitat de la rúbrica (el model deia "agnatícia" i l'eval buscava "patrilineal"). L'altre és or: l'eval demanava com desbloquejar l'origen d'una besàvia, i el model va llegir l'estat de la recerca, va veure que aquesta qüestió ja estava resolta amb fonts des de fa dies, i va redirigir la resposta cap al bloqueig real. L'eval era vell; el model, correcte. Quan un eval falla, la primera pregunta és si falla l'eval.
 
-Per acabar-ho d'arrodonir, model com a jutge. La rúbrica de paraules clau és barata però literal, així que una segona crida avalua la resposta contra el criteri d'expert, amb permís explícit per premiar qui detecta que la pregunta està desactualitzada. Jutge diferent del generador, sortida en JSON, veredicte en una taula.
+Per acabar-ho d'arrodonir, model com a jutge. La rúbrica de paraules clau és barata, però literal, així que una segona crida avalua la resposta contra el criteri d'expert, amb permís explícit per premiar qui detecta que la pregunta està desactualitzada. Jutge diferent del generador, sortida en JSON, veredicte en una taula.
 
-### L'humà: una pantalla que basti
+### L'humà: una pantalla suficient
 
-Un tauler HTML generat des de les fonts vives del repo: la cua de treball amb el que està encallat i per què, l'estat de les comprovacions, els murs de pedra documentals i la cobertura de cada branca. I una regla nova al document d'instruccions que ho lliga tot: l'usuari no està dins del bucle. El que veu dels agents és només el missatge, i ha de bastar: què s'està fent i per què, els codis interns traduïts, i la part humana al final. Ni un W713 sols a cap missatge.
+Un tauler HTML generat des de les fonts vives del repo: la cua de treball amb allò que està encallat i per què, l'estat de les comprovacions, els murs de pedra documentals i la cobertura de cada branca. I una regla nova al document d'instruccions que ho lliga tot: l'usuari no està dins del bucle. El que veu dels agents és només el missatge, i ha de ser suficient: què s'està fent i per què, els codis interns traduïts, i la part humana al final. Ni un W713 sols a cap missatge.
 
 ### No tota regla mereix una barrera
 
@@ -117,7 +117,7 @@ Va trobar també que el control del push jutjava la còpia de treball i no els c
 
 I em va corregir un recompte. Jo havia marcat com a "fet complir pel codi" regles que ara tenen una eina, però que res no obliga a fer servir. Una eina disponible fa que el camí correcte sigui el fàcil, que no és poc, però no és una barrera. Amb aquest criteri més estricte, de les 26 regles de la taula d'incidents, 7 les fa complir el codi o el CI, 7 tenen una eina o un control parcial, i 12 encara són prosa. Ara la taula té una columna que ho diu.
 
-El tauler de revisió, la pantalla del primer dia, va passar pel mateix revisor abans de fusionar-se, i el servidor del mode viu tenia dos forats. Servia qualsevol fitxer del repo, inclòs `.git` amb tot l'historial, cosa que amb Tailscale vol dir a qualsevol dispositiu de la meva xarxa. I no comprovava la capçalera `Host`, de manera que una web qualsevol oberta al navegador podria haver llegit l'arbre, amb dades de persones vives, a través de localhost (el que es coneix com a *DNS rebinding*). Cap dels dos era difícil d'arreglar, i cap dels dos el veu un humà mirant la pantalla. Que una pantalla basti per decidir no equival a una revisió.
+El tauler de revisió, la pantalla del primer dia, va passar pel mateix revisor abans de fusionar-se, i el servidor del mode viu tenia dos forats. Servia qualsevol fitxer del repo, inclòs `.git` amb tot l'historial, cosa que amb Tailscale vol dir a qualsevol dispositiu de la meva xarxa. I no comprovava la capçalera `Host`, de manera que una web qualsevol oberta al navegador podria haver llegit l'arbre, amb dades de persones vives, a través de localhost (el que es coneix com a *DNS rebinding*). Cap dels dos era difícil d'arreglar, i cap dels dos el veu un humà mirant la pantalla. Que una pantalla sigui suficient per decidir no equival a una revisió.
 
 ## Què m'emporto
 
@@ -127,7 +127,7 @@ Per deixar treballar agents de forma autònoma calen tres coses, i totes tres s�
 
 **Barreres provades.** El codi d'una barrera és codi com qualsevol altre, i necessita el seu test i el seu revisor. Una regla escrita és una petició; un hook sense test és una regla escrita amb pretensions. Cal provar-les sobre dades reals i no només sintètiques, i deixar que un revisor intenti refutar-les.
 
-**Una pantalla que basti, i saber què no veu.** L'esforç humà no ha d'anar a llegir cada PR, sinó a dissenyar l'entorn perquè l'agent faci el correcte per defecte i a comprovar de tant en tant que l'entorn fa el que diu.
+**Una pantalla suficient, i saber què no veu.** L'esforç humà no ha d'anar a llegir cada PR, sinó a dissenyar l'entorn perquè l'agent faci el correcte per defecte i a comprovar de tant en tant que l'entorn fa el que diu.
 
 La regla de decisió que jo en trauria: especialitza el harness exactament on la tasca està més enllà del que el model fa sol, i poda la resta a cada model nou. Tècniques concretes caduquen. Els connectors, les fronteres i la pantalla són estructurals, però l'única peça que es fa més forta amb cada model que surt és l'eval, perquè cada model nou és una passada gratis contra el teu criteri. Els actius més duradors del meu repo no són tècnics sinó epistèmics: el registre de cerques tancades sense resultat, la font oral documentada, els nivells de prova. Gent que sap de l'ofici escrivint els criteris amb què es jutja la feina. El mateix que monetitzen Harvey i els seus. El model arriba i passa; el criteri es queda.
 
