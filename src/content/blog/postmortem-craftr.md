@@ -1,8 +1,7 @@
 ---
 title: "craftr: el producte que funcionava i que ningú podia omplir"
 description: "Vaig construir el Lightroom dels usuaris de Cricut en quatre setmanes amb agents de codi. Funcionava. La visió tenia un forat que cap refactor tapa: per a la majoria d'usuaris, la biblioteca real és la de Cricut Design Space, i d'allà no en surt res."
-date: 2026-10-09
-draft: true
+date: 2026-10-20
 hairline:
   name: prestatge
   alt: "Un classificador obert ple de fulls amb dissenys, al costat d'una caixa tancada amb pestell."
