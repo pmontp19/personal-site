@@ -8,11 +8,15 @@ hairline:
   alt: "Un tauler d'eines en tres fases: un tauler atapeït de tornavisos gairebé iguals, tres taulers petits separats, i un sol mànec amb tres puntes davant d'un calaix de fitxes que s'allarga."
 ---
 
+import HairlineFigure from "../../components/blog/HairlineFigure.astro";
+
 A [Goil](https://goil.app) fem una plataforma perquè negocis (clubs, acadèmies, gestories, empreses, ajuntaments) es comuniquin amb la seva gent i la gestionin: una app amb la seva marca per als usuaris i un backoffice per a l'equip. Al gener vaig explicar [com vaig muntar el RAG](/blog/rag-pipeline-goil) perquè la IA conegués el context de cada negoci.
 
 Aquest post explica el que va venir després: posar un assistent dins del producte que no només respongui, sinó que faci coses. M'hi he equivocat dues vegades abans d'arribar a una cosa que m'agrada. Les errades són la part interessant.
 
 ## Primer intent: una eina per cada funcionalitat
+
+<HairlineFigure name="tauler" at={[90, 150]} alt="Un sol tauler atapeït de dotze tornavisos gairebé iguals." />
 
 La idea més òbvia: un assistent dins del producte amb un conjunt d'eines escrites a mà, cadascuna lligada a una funcionalitat. «Quins esdeveniments tinc aquesta setmana?» crida una eina. «Crea un avís» en crida una altra.
 
@@ -25,6 +29,8 @@ Funciona a la demo. A producció, els problemes:
 El problema no era el model. Era que havia convertit el catàleg del producte en el catàleg d'eines del model, i tots dos creixen a ritmes molt diferents.
 
 ## Segon intent: especialistes i interfície generada
+
+<HairlineFigure name="tauler" at={[200, 150]} alt="Tres taulers petits i separats, amb quatre tornavisos cadascun." />
 
 La premissa era descarregar l'assistent d'eines. En lloc d'un sol assistent amb tot, diversos assistents especialitzats, cadascun amb les seves eines i la seva expertesa: un per a calendari i reserves, un altre per a notificacions, un altre per a gestió d'usuaris. Cada agent veu poques eines, així que en teoria cadascun tria bé.
 
@@ -42,6 +48,8 @@ Va ser una bona exploració perquè va fallar de maneres molt clares:
 Aquesta branca no va arribar a producció, i va fer bé de no arribar-hi. Però em va deixar quatre idees clares: repartir les eines entre agents no elimina el problema, el converteix en un d'encaminament i de context compartit; el que el model produeix ha de passar per validació; les dades han d'anar per referència i no per còpia; i l'agent ha d'usar el que el producte ja fa, no una versió paral·lela.
 
 ## Tercer intent: un assistent, moltes capacitats
+
+<HairlineFigure name="tauler" at={[310, 150]} alt="Un sol mànec amb tres puntes, davant d'un calaix de fitxes obert." />
 
 La resposta ha estat girar el plantejament. Hi ha un únic assistent. Les seves eines i les seccions del seu prompt es munten a cada torn segons les **capacitats** habilitades per a aquella persona. Tres coses decideixen què té: el seu rol, el que inclou el pla del negoci i un interruptor que el negoci pot girar.
 

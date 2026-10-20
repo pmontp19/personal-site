@@ -1,16 +1,19 @@
 ---
 // Figura Hairline: dibuix isomètric de línia que respon al punter.
 // La figura viu a public/hairline/<name>.js; kernel.js i host.js la munten.
+// Amb `at` ([x, y] del viewBox) és un fotograma fix d'una figura que ja és a la
+// pàgina (la de capçalera): no carrega scripts ni respon al punter.
 interface Props {
   name: string;
   alt: string;
   title?: string;
   sub?: string;
+  at?: [number, number];
 }
-const { name, title, sub, alt } = Astro.props;
+const { name, title, sub, alt, at } = Astro.props;
 ---
 
-<figure class="fig hl">
+<figure class="fig hl" data-name={name} data-at={at?.join(",")}>
   {title && (
     <figcaption>
       <b>{title}</b>
@@ -23,15 +26,22 @@ const { name, title, sub, alt } = Astro.props;
     </span>
     <div class="hl-stage" role="img" aria-label={alt}></div>
   </div>
-  <script is:inline src="/hairline/kernel.js"></script>
-  <script is:inline src="/hairline/host.js"></script>
-  <script is:inline src={`/hairline/${name}.js`}></script>
+  {!at && (
+    <>
+      <script is:inline src="/hairline/kernel.js" />
+      <script is:inline src="/hairline/host.js" />
+      <script is:inline src={`/hairline/${name}.js`} />
+    </>
+  )}
 </figure>
 
 <style>
   .plate {
     position: relative;
     border: 1px solid var(--line);
+  }
+  [data-at] .hl-stage {
+    pointer-events: none;
   }
   .hl-read {
     position: absolute;
