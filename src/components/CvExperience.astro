@@ -1,0 +1,44 @@
+---
+// Secció d'experiència del CV, generada des de la col·lecció `experience`.
+// Mateix marcatge que el markdown d'abans (h3 + p meta + ul) per al CSS d'impressió.
+import { getCollection } from "astro:content";
+
+interface Props {
+  lang: "ca" | "en" | "es";
+}
+const { lang } = Astro.props;
+
+const present = { ca: "Actualitat", en: "Present", es: "Actualidad" }[lang];
+const monthFmt = new Intl.DateTimeFormat(lang, {
+  month: "long",
+  timeZone: "UTC",
+});
+const fmt = (d: Date, yearOnly?: boolean) => {
+  if (yearOnly) return String(d.getUTCFullYear());
+  const m = monthFmt.format(d);
+  return `${m[0].toUpperCase()}${m.slice(1)} ${d.getUTCFullYear()}`;
+};
+
+const entries = (await getCollection("experience")).sort(
+  (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf(),
+);
+---
+
+{entries.map(({ data }) => {
+  const t = data[lang];
+  const end = data.endDate ? fmt(data.endDate, data.yearOnly) : present;
+  return (
+    <>
+      <h3>{t.role}</h3>
+      <p>
+        <strong>{data.company}</strong> · {fmt(data.startDate, data.yearOnly)} –{" "}
+        {end} · {t.location}
+      </p>
+      <ul>
+        {t.bullets.map((b) => (
+          <li>{b}</li>
+        ))}
+      </ul>
+    </>
+  );
+})}

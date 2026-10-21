@@ -25,7 +25,7 @@ const expLines = (await getCollection("experience"))
     const end = e.data.endDate
       ? formatDate(e.data.endDate, dateOpts, "ca-ES")
       : "Actual";
-    return `- ${start} — ${end}: ${e.data.role} @ ${e.data.company}`;
+    return `- ${start} — ${end}: ${e.data.ca.role} @ ${e.data.company}`;
   })
   .join("\n");
 
@@ -87,7 +87,7 @@ Enginyer de programari especialitzat en tot i en res. Actualment, fent que els o
 <span class="tilde">~~~</span>
 
 <span class="label">PROJECTES:</span>
-{projects.map((p) => (<Fragment>- <a class="mdlink" href={p.data.url} target="_blank" rel="noopener noreferrer">{p.data.name}</a> <span class="muted">{p.data.description}</span>
+{projects.map((p) => (<Fragment>- <a class="mdlink" href={`/projectes/#${p.id}`}>{p.data.name}</a> <span class="muted">{p.data.description}</span>
 </Fragment>))}<a class="mdlink" href="/projectes">veure tots →</a>
 
 <span class="tilde">~~~</span>

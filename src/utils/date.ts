@@ -11,5 +11,6 @@ export const formatDate = (
   locale: string = "ca-ES",
 ): string => {
   const dateObj = date instanceof Date ? date : new Date(date);
-  return dateObj.toLocaleDateString(locale, options);
+  // les dates de les col·leccions són mitjanit UTC: formatar-les en UTC
+  return dateObj.toLocaleDateString(locale, { timeZone: "UTC", ...options });
 };

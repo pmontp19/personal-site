@@ -21,7 +21,7 @@ const projects = await Promise.all(
   </p>
 
   {projects.map((p) => (
-    <article>
+    <article id={p.id}>
       <p class="proj-head">
         <a
           class="mdlink title"
@@ -33,6 +33,7 @@ const projects = await Promise.all(
         </a>
         <span class="muted"> · {p.data.year}</span>
         {p.data.status && <span class="muted"> · {p.data.status}</span>}
+        <span class="cursor" aria-hidden="true" />
       </p>
       <p class="proj-desc">{p.data.description}</p>
       <div class="proj-desc">
@@ -72,6 +73,21 @@ const projects = await Promise.all(
   }
   .proj-head {
     margin: 0;
+  }
+  /* arribant des d'un enllaç /projectes/#id */
+  article:target {
+    scroll-margin-top: 2rem;
+  }
+  article:target .proj-head::before {
+    content: "> ";
+    color: var(--accent);
+  }
+  .proj-head .cursor {
+    display: none;
+    margin-left: 1ch;
+  }
+  article:target .proj-head .cursor {
+    display: inline-block;
   }
   .proj-desc {
     margin: 0 0 0.5rem;

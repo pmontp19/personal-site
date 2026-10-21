@@ -1,0 +1,249 @@
+---
+// Línia de vida (inspirada en Lifeline d'evilrabbit, MIT).
+// Anys buits estrets, anys amb fites amples. L'scroll vertical mou l'eix en
+// horitzontal (scroll-driven animations); sense suport, scroll horitzontal normal.
+import { getCollection } from "astro:content";
+
+const now = new Date();
+// les dates de les col·leccions són mitjanit UTC: llegir-les en UTC
+const month = new Intl.DateTimeFormat("ca", {
+  month: "short",
+  timeZone: "UTC",
+});
+
+const roles = (await getCollection("experience")).sort(
+  (a, b) => a.data.startDate.valueOf() - b.data.startDate.valueOf(),
+);
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const posts = await getCollection("blog", ({ data }) => data.draft !== true);
+
+const minYear = Math.min(
+  ...roles.map((r) => r.data.startDate.getUTCFullYear()),
+  ...projects.map((p) => p.data.year),
+  ...posts.map((p) => p.data.date.getUTCFullYear()),
+);
+const years = Number.isFinite(minYear)
+  ? Array.from({ length: now.getUTCFullYear() - minYear + 1 }, (_, i) => {
+      const y = minYear + i;
+      const yRoles = roles.filter(
+        (r) => r.data.startDate.getUTCFullYear() === y,
+      );
+      const yProjects = projects.filter((p) => p.data.year === y);
+      const yPosts = posts.filter((p) => p.data.date.getUTCFullYear() === y);
+      const empty = !yRoles.length && !yProjects.length && !yPosts.length;
+      return { y, yRoles, yProjects, yPosts, empty };
+    })
+  : [];
+const nEmpty = years.filter((y) => y.empty).length;
+---
+
+{years.length > 0 && (
+  <section
+    class="lifeline"
+    style={`--n-full:${years.length - nEmpty};--n-empty:${nEmpty}`}
+    aria-label="Línia de vida: rols, projectes i posts per any"
+  >
+    <div class="panel">
+      <ol class="track">
+        {years.map(({ y, yRoles, yProjects, yPosts, empty }) => (
+          <li class:list={["year", { empty }]}>
+            <span class="year-label">{y}</span>
+            <span class="tick" aria-hidden="true" />
+            {!empty && (
+              <ul class="events">
+                {yRoles.map((r) => (
+                  <li>
+                    {!r.data.yearOnly && (
+                      <span class="muted">
+                        {month.format(r.data.startDate)}{" "}
+                      </span>
+                    )}
+                    <span class="title">{r.data.ca.role}</span>
+                    <span class="muted"> @ </span>
+                    <span class="accent">{r.data.company}</span>
+                    {!r.data.endDate && (
+                      <span class="pulse" role="img" aria-label="actual" />
+                    )}
+                  </li>
+                ))}
+                {yProjects.length > 0 && (
+                  <li>
+                    <span class="muted">projectes </span>
+                    {yProjects.map((p, i) => (
+                      <>
+                        <a href={`/projectes/#${p.id}`}>{p.data.name}</a>
+                        {i < yProjects.length - 1 && ", "}
+                      </>
+                    ))}
+                  </li>
+                )}
+                {yPosts.length > 0 && (
+                  <li>
+                    <a
+                      class="muted"
+                      href="/blog/"
+                      aria-label={`${yPosts.length} posts del ${y}`}
+                    >
+                      {yPosts.length} {yPosts.length === 1 ? "post" : "posts"} →
+                    </a>
+                  </li>
+                )}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}
+
+<style>
+  /* 100vw inclou la barra de scroll on és visible; clip (no hidden) no trenca el sticky */
+  :global(html) {
+    overflow-x: clip;
+  }
+  .lifeline {
+    --pad: 12vw;
+    --full: 15rem;
+    --empty: 3.5rem;
+    /* full-bleed fora de l'amplada del main */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
+  .panel {
+    overflow-x: auto;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--pad),
+      #000 calc(100% - var(--pad)),
+      transparent
+    );
+  }
+  .track {
+    display: flex;
+    width: max-content;
+    list-style: none;
+    margin: 0;
+    padding: 0 var(--pad);
+  }
+
+  .year {
+    width: var(--full);
+    padding-right: 1.25rem;
+  }
+  .year.empty {
+    width: var(--empty);
+    padding-right: 0;
+  }
+  .year-label {
+    display: block;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 10px;
+  }
+  .year.empty .year-label {
+    color: var(--muted);
+    font-weight: 400;
+  }
+  /* eix: marca a l'inici de cada any sobre una línia discontínua */
+  .tick {
+    display: block;
+    position: relative;
+    height: 7px;
+    margin-bottom: 14px;
+    border-left: 1px solid var(--muted);
+  }
+  .tick::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: var(--full);
+    top: 3px;
+    border-top: 1px dashed var(--line);
+  }
+  .year.empty .tick::after {
+    width: var(--empty);
+  }
+
+  .events {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .events li {
+    margin-bottom: 8px;
+    overflow-wrap: anywhere;
+  }
+  .pulse {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .lifeline {
+      --pad: 6vw;
+      --full: 12rem;
+    }
+  }
+
+  /* scroll vertical → desplaçament horitzontal (sense reduced motion) */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .lifeline {
+        view-timeline: --lifeline block;
+        height: max(
+          100svh,
+          calc(
+            100svh + var(--n-full) * var(--full) + var(--n-empty) *
+              var(--empty) + 2 * var(--pad) - 100vw
+          )
+        );
+      }
+      .panel {
+        position: sticky;
+        top: 0;
+        height: 100svh;
+        overflow: clip;
+        scrollbar-width: none;
+        display: flex;
+        align-items: center;
+      }
+      /* clip (no hidden): no és contenidor d'scroll, així el focus no hi deixa
+       un offset sumat a la transformació. Amb focus dins, scroll natiu */
+      .panel:focus-within {
+        overflow-x: auto;
+      }
+      .panel:focus-within .track {
+        animation: none;
+      }
+      .track {
+        animation: scrub linear both;
+        animation-timeline: --lifeline;
+        animation-range: contain;
+      }
+      @keyframes scrub {
+        to {
+          transform: translateX(min(0px, calc(100vw - 100%)));
+        }
+      }
+    }
+  }
+  @media print {
+    .lifeline {
+      display: none;
+    }
+  }
+</style>

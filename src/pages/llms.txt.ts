@@ -39,7 +39,7 @@ export const GET: APIRoute = async () => {
     let llmsContent = "";
 
     for (const post of sortedPosts) {
-      llmsContent += `--- title: ${post.data.title} description: ${post.data.description} date: ${post.data.date} ---\n\n`;
+      llmsContent += `--- title: ${post.data.title} description: ${post.data.description} date: ${post.data.date.toISOString().slice(0, 10)} ---\n\n`;
       llmsContent += `# ${post.data.title}\n`;
 
       const processedContent = extractContent(post.body ?? "");
