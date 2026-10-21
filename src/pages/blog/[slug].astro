@@ -326,17 +326,18 @@ function formatDate(date: Date): string {
   }
 
   /* --- cos de l'article: Geist Sans (excepció de prosa) --- */
+  /* tipografia fluida: 17px a mòbil → 20px a ~1600px; títols i columna en em perquè l'acompanyin */
   .post-content {
-    font-size: 1.0625rem;
-    max-width: 42rem;
+    font-size: clamp(1.0625rem, 0.95rem + 0.3vw, 1.25rem);
+    max-width: 39.5em;
   }
   .post-content :global(h2) {
-    font-size: 1.4rem;
+    font-size: 1.32em;
     font-weight: 600;
     margin: 2rem 0 0.75rem;
   }
   .post-content :global(h3) {
-    font-size: 1.15rem;
+    font-size: 1.08em;
     font-weight: 600;
     margin: 1.5rem 0 0.5rem;
   }
