@@ -55,7 +55,11 @@ const nEmpty = years.filter((y) => y.empty).length;
               <ul class="events">
                 {yRoles.map((r) => (
                   <li>
-                    <span class="muted">{month.format(r.data.startDate)} </span>
+                    {!r.data.yearOnly && (
+                      <span class="muted">
+                        {month.format(r.data.startDate)}{" "}
+                      </span>
+                    )}
                     <span class="title">{r.data.ca.role}</span>
                     <span class="muted"> @ </span>
                     <span class="accent">{r.data.company}</span>
