@@ -278,7 +278,8 @@ function formatDate(date: Date): string {
     button.addEventListener("click", () =>
       setOpen(!bar.hasAttribute("data-open")),
     );
-    addEventListener("click", (e) => {
+    // pointerdown: iOS Safari no propaga click des d'elements no clicables
+    addEventListener("pointerdown", (e) => {
       if (!bar.contains(e.target as Node)) setOpen(false);
     });
     addEventListener("keydown", (e) => {
@@ -511,7 +512,7 @@ function formatDate(date: Date): string {
     display: none;
     position: fixed;
     left: 50%;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
     z-index: 5;
   }
