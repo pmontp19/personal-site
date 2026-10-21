@@ -230,7 +230,11 @@ const nEmpty = years.filter((y) => y.empty).length;
         animation: none;
       }
       .track {
-        animation: scrub linear both;
+        /* longhands: el minificador fusiona shorthand + timeline en un
+         `animation` que Chrome descarta */
+        animation-name: scrub;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: --lifeline;
         animation-range: contain;
       }
