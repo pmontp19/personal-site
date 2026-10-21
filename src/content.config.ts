@@ -17,16 +17,25 @@ const blog = defineCollection({
     }),
 });
 
+// font única de l'experiència: la pàgina /experiencia i els CV (ca/en/es)
+const experienceLang = z.object({
+  role: z.string(),
+  location: z.string(),
+  bullets: z.array(z.string()),
+});
+
 const experience = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/experience" }),
+  loader: glob({ pattern: "**/*.md", base: "./src/content/experience" }),
   schema: z.object({
     company: z.string(),
-    role: z.string(),
     startDate: z.coerce.date(),
     endDate: z.coerce.date().optional(),
-    description: z.string().optional(),
+    // el CV mostra només l'any (dates de mes aproximades)
+    yearOnly: z.boolean().optional(),
     tags: z.array(z.string()).optional(),
-    logo: z.string().optional(),
+    ca: experienceLang,
+    en: experienceLang,
+    es: experienceLang,
   }),
 });
 
