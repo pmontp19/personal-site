@@ -264,8 +264,7 @@ const { Content } = await render(cv);
     .prose :global(ol) {
       margin: 2pt 0 6pt 16pt;
       padding: 0;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      /* les llistes llargues es parteixen entre punts (cada li ja evita partir-se) */
     }
 
     .prose :global(li) {
