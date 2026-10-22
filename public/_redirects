@@ -1,0 +1,4 @@
+# Redirect HTTP real (el meta-refresh de cv/index.astro és només el fallback
+# per a entorns sense _redirects, p. ex. `astro preview` local).
+/cv /cv/ca/ 301
+/cv/ /cv/ca/ 301

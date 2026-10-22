@@ -65,7 +65,7 @@ const personSchema = {
     <InteractiveAvatar />
   </div>
 
-  <pre class="doc home-doc"><span class="title">PERE MONTPEÓ</span> <span class="cursor" aria-hidden="true" />
+  <pre class="doc home-doc"><h1 class="title">PERE MONTPEÓ</h1> <span class="cursor" aria-hidden="true" />
 
 Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols. Si no estic programant, segurament em trobaràs sobre la bicicleta, a la cuina o llegint.
 
@@ -119,6 +119,14 @@ Enginyer de programari especialitzat en tot i en res. Actualment, fent que els o
 <style>
   .home-avatar {
     margin-bottom: 24px;
+  }
+
+  /* h1 del document de terminal: mateixa línia i mida que la resta */
+  .home-doc h1 {
+    display: inline;
+    margin: 0;
+    font-size: inherit;
+    font-weight: 700;
   }
 
   .email-link {

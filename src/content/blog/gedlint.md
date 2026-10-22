@@ -48,7 +48,7 @@ Això és el que separa un linter útil d'un que acabes silenciant. Quan l'arbre
 
 Ho vaig veure aviat, perquè l'arbre ja venia brut. La solució és el baseline ([#22](https://github.com/pmontp19/gedlint/issues/22), obert el 7 de setembre i fusionat el 8):
 
-```
+```sh
 gedlint --write-baseline gedlint.baseline.json arbre/*.ged
 gedlint --baseline gedlint.baseline.json arbre/*.ged
 ```

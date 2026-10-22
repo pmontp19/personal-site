@@ -8,7 +8,11 @@ import headingIds from "./src/plugins/satteri-heading-ids.ts";
 
 export default defineConfig({
   site: "https://peremontpeo.dev",
-  integrations: [sitemap(), mdx()],
+  integrations: [
+    // /cv/ és una redirecció a /cv/ca/ (les variants d'idioma sí que hi són).
+    sitemap({ filter: (page) => !page.endsWith("dev/cv/") }),
+    mdx(),
+  ],
   vite: {
     resolve: {
       // Astro 7 imports `parseCookie` from cookie@2 (ESM). pnpm doesn't hoist
