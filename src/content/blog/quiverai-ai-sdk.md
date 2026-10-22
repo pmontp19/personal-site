@@ -55,7 +55,7 @@ Esperes, arriba la imatge sencera, la renderitzes. Simple, net. L'esperable per 
 
 Ara ve la part divertida. Com que el SVG és text, pots fer streaming token a token. Cada fragment que arriba és un tros petit de markup XML — a vegades un sol caràcter, a vegades uns pocs bytes:
 
-```
+```xml
 <
 svg
  xmlns
@@ -176,7 +176,7 @@ You wait, the entire image arrives, you render it. Simple, clean. What you'd exp
 
 Now comes the fun part. Since the SVG is text, you can stream it token by token. Each chunk that arrives is a small piece of XML markup — sometimes a single character, sometimes a few bytes:
 
-```
+```xml
 <
 svg
  xmlns
