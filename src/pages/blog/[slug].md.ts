@@ -1,8 +1,7 @@
 import type { APIRoute } from "astro";
-import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import { getSlug } from "../../utils/date";
-import { cleanBody } from "../../utils/llms";
+import { cleanBody, SITE } from "../../utils/llms";
 
 // Mirror en Markdown de cada apunt: /blog/<slug>.md
 // Anunciat amb <link rel="alternate" type="text/markdown"> des de la pàgina HTML.
@@ -13,7 +12,7 @@ export async function getStaticPaths() {
   );
   return entries.map((entry) => ({
     params: { slug: getSlug(entry.id) },
-    props: { entry: entry as CollectionEntry<"blog"> },
+    props: { entry },
   }));
 }
 
@@ -23,7 +22,7 @@ export const GET: APIRoute = async ({ props }) => {
   const markdown = [
     `# ${entry.data.title}`,
     "",
-    `URL: https://peremontpeo.dev/blog/${slug}/`,
+    `URL: ${SITE}/blog/${slug}/`,
     `Data: ${entry.data.date.toISOString().slice(0, 10)}`,
     `Descripció: ${entry.data.description}`,
     "",

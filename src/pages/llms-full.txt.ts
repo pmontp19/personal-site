@@ -1,12 +1,11 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { getSlug } from "../utils/date";
+import { SITE } from "../utils/llms";
 import { cleanBody } from "../utils/llms";
 
 // Bolcat complet de tots els apunts en text pla.
 // L'índex curt viu a /llms.txt; cada apunt també té mirror a /blog/<slug>.md.
-const SITE = "https://peremontpeo.dev";
-
 export const GET: APIRoute = async () => {
   try {
     const posts = (

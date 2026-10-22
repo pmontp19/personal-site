@@ -1,11 +1,10 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { getSlug } from "../utils/date";
+import { SITE } from "../utils/llms";
 
 // Índex concís segons llmstxt.org: fets, pàgines clau i llista d'apunts.
 // El contingut complet viu a /llms-full.txt i /blog/<slug>.md.
-const SITE = "https://peremontpeo.dev";
-
 export const GET: APIRoute = async () => {
   try {
     const posts = (

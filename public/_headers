@@ -1,0 +1,8 @@
+# Cache dels endpoints de text per a agents (els headers dels endpoints
+# d'Astro SSG no arriben al client en sortida estàtica).
+/llms.txt
+  Cache-Control: public, max-age=3600
+/llms-full.txt
+  Cache-Control: public, max-age=3600
+/blog/*.md
+  Cache-Control: public, max-age=3600
