@@ -22,4 +22,4 @@
 
 ## Soroll local conegut
 
-- `pnpm lint` falla per `hairline/` i `.agents/` (no versionats): no afecta CI.
+- `pnpm lint` falla per `hairline/` (no versionat): no afecta CI.

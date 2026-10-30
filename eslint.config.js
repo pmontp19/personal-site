@@ -4,9 +4,10 @@ import astro from "eslint-plugin-astro";
 import globals from "globals";
 
 export default tseslint.config(
-  // Build output, generated types and static assets are never linted.
+  // Build output, generated types, static assets and vendored agent skills
+  // (.agents/, installed from skills-lock.json) are never linted.
   {
-    ignores: ["dist/", ".astro/", "public/", "pnpm-lock.yaml"],
+    ignores: ["dist/", ".astro/", "public/", "pnpm-lock.yaml", ".agents/"],
   },
 
   // Base JS + TypeScript rules. typescript-eslint registers the
