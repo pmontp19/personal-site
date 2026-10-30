@@ -19,6 +19,9 @@
 
 - `llms.txt` (índex), `llms-full.txt` (bolcat) i `blog/<slug>.md` (mirrors) surten
   de la col·lecció `blog`: un post nou hi apareix sol en fer build.
+- `src/assets/fonts/geist-sans-*.woff2` i `src/styles/geist-sans.css` surten de
+  `scripts/subset-fonts.py` (a mà, no al build). Torna'l a executar si un post nou
+  usa un caràcter fora del `unicode-range` del core (instruccions al script).
 
 ## Soroll local conegut
 

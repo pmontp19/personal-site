@@ -2,6 +2,7 @@
 import { getEntry, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import geistCore from "../../assets/fonts/geist-sans-core.woff2?url";
 
 export async function getStaticPaths() {
   return [
@@ -48,6 +49,15 @@ const { Content } = await render(cv);
   description={descriptions[lang]}
   canonicalUrl={`https://peremontpeo.dev/cv/${lang}/`}
 >
+  <Fragment slot="head">
+    <link
+      rel="preload"
+      href={geistCore}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </Fragment>
   <main class="cv-page">
     <div class="cv-actions">
       <LanguageSwitcher currentLang={lang} />

@@ -5,6 +5,7 @@ import HairlineFigure from "../../components/blog/HairlineFigure.astro";
 import { getCollection, render } from "astro:content";
 import { calculateReadingTime } from "../../utils/readingTime";
 import { getSlug } from "../../utils/date";
+import geistCore from "../../assets/fonts/geist-sans-core.woff2?url";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
@@ -62,6 +63,13 @@ function formatDate(date: Date): string {
   ogType="article"
 >
   <Fragment slot="head">
+    <link
+      rel="preload"
+      href={geistCore}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <meta
       property="article:published_time"
       content={entry.data.date.toISOString()}
