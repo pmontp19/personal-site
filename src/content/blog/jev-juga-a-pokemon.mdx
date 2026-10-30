@@ -1,0 +1,120 @@
+---
+title: "Jev juga a Pokémon: què he après d'un model que només tria"
+description: "Un experiment per entendre com funcionen els models tipus Jev: un harness que deixa que un model de TypeSafe decideixi, amb preguntes tipades, com es juga a Pokémon Flama Roja. Què ha funcionat, què ha fet el codi i per què Pokémon no és el cas ideal."
+date: 2026-10-30
+draft: false
+---
+
+import JevCicleFigure from '../../components/blog/JevCicleFigure.astro';
+
+Pensava que Pokémon seria el cas ideal per a un model com Jev. Un joc per torns, amb estat estructurat i decisions petites: sembla fet a mida. He construït un harness (el codi que envolta el model: li dona l'estat, li fa preguntes i tradueix les respostes en accions) que el fa jugar a *Pokémon Flama Roja* (el patch català de FireRed) per entendre com funcionen aquests models. He descobert que el model és la part fàcil.
+
+**En resum**
+
+- **Jev** és un model de TypeSafe que no escriu text: respon a moltes preguntes tipades alhora i torna probabilitats per opció.
+- El meu harness el va fer arribar al gimnàs de Pewter, i va guanyar el Brock amb un Squirtle de nivell 15.
+- El cost real de l'experiment no és el model, és el harness.
+
+## Què és Jev
+
+Jev és el backend System One de [TypeSafe](https://typesafe.ai/), en accés anticipat (SDK `typesafe_sdk`). No s'assembla a un LLM de xat: no escriu text lliure, no crida eines, no té estat ni context entre crides. Fa una sola cosa: rep un estat i moltes preguntes **tipades** en paral·lel, i per a cada pregunta torna probabilitats.
+
+Els tipus són pocs: `Choice` (triar entre opcions amb criteris), `Noul` (una probabilitat entre 0 i 1) i `Score` (una puntuació). Una pregunta del meu harness, la del destí de navegació (simplificada):
+
+```python
+"nav_destination": Choice(
+    instructions="Pick the destination. Code walks there.",
+    criteria={
+        "warp_0": "door to Pewter City (never visited)",
+        "warp_1": "door to Route 2 (visited 3x)",
+        "none": "No warp destination in this map",
+    },
+)
+```
+
+La resposta no és una frase. És `warp_0: 68%`, `none: 32%`. Això és tot el que dona el model, i també el que el fa interessant: la sortida és compacta i veus on dubta.
+
+## Com funciona el harness
+
+Un emulador mGBA executa el joc. A cada cicle:
+
+1. Llegeixo la RAM: posició, mapa, equip, estat del combat, el text a pantalla, les medalles.
+2. Construeixo un payload JSON i hi afegeixo les preguntes: quina pantalla és, què fer a l'overworld, com respondre un diàleg, el pla de combat, el destí, l'objectiu, el risc d'HP (`Noul`) i l'amenaça de l'enemic (`Score`).
+3. Faig una sola crida a Jev. Les vuit preguntes s'avaluen en paral·lel sobre el mateix estat.
+4. El **codi** converteix les respostes en botons.
+
+<JevCicleFigure />
+
+El pas 4 és on es decideix tot. Jev tria una porta: el codi fa el pathfinding fins a ella, sense cap LLM. Jev tria "atacar": el codi calcula quin moviment fa més dany esperat i navega pels menús amb els cursors reals de la memòria. Jev diu "avança el text": el codi prem A. Quan vull canviar el comportament toco un llindar a `PolicyConfig`, no un prompt.
+
+Com que Jev no recorda res, la memòria l'escriu el harness. `world.py` apunta des de la RAM els mapes visitats, d'on venim i el text que hem vist, i ho torna a posar al payload. A cada porta que proposo li poso l'etiqueta *never visited* o *visited 3x*. Hi afegeixo `last_action`, la darrera acció i el resultat, com a fil de continuïtat (payload retallat):
+
+```json
+{
+  "badges": 0,
+  "oaks_parcel_delivered": true,
+  "last_action": "walked toward tile (6, 12): warped, now in map 6/2",
+  "memory": {
+    "visited_maps": ["Pallet Town", "Viridian City", "Pewter City"],
+    "here_visits": 1,
+    "here_notes": []
+  }
+}
+```
+
+També hi ha coneixement escrit a mà: els noms dels mapes i el text de la missió ("ves al gimnàs de Pewter i guanya el Brock"). El model no els descobreix, els rep.
+
+![Un entrenador al costat d'una zona d'herba alta a la Ruta 1](/images/blog/jev-ruta1.webp)
+
+![Combat contra el rival Gari: A lluitar contra RIVAL GARI!](/images/blog/jev-combat.webp)
+
+## Què va aconseguir
+
+Quan el payload era clar i les opcions eren concretes, Jev triava bé: sortir de casa, parlar amb l'Oak, anar a la botiga, lliurar el paquet, anar al nord, el Bosc Verd, Pewter, el gimnàs. Va derrotar el jove entrenador i després el Brock (en català, ROC: Geodude de nivell 12 i Onix de nivell 14) amb Tortusguit, el Squirtle, de nivell 15. Va rebre la MT39.
+
+![Dashboard del harness: ROC diu «Soc el LÍDER d'este GIMNÀS» i, a la dreta, les probabilitats de cada pregunta de Jev](/images/blog/jev-dashboard-roc.webp)
+
+El dashboard és el que més m'agrada. Mostra, per a cada pregunta, què ha respost Jev i amb quin pes. Aquí: pantalla, 95% *dialog*; resposta al diàleg, 92% *advance*; objectiu, 74% *story*. Veus on el model ho té clar i on dubta, encara que no he comprovat si les probabilitats estan ben calibrades.
+
+Després de la medalla va continuar amb l'objectiu "curar" i es va quedar en bucle xerrant amb la recepcionista del Centre Pokémon. Aquesta és una limitació real: no sap fer servir el Centre. Només hi ha implementada la mare.
+
+![Dashboard del harness al Centre Pokémon: la recepcionista explica la sala Unió i Jev respon «advance» una vegada i una altra](/images/blog/jev-dashboard-centre.webp)
+
+## El que va fallar
+
+Els bloqueigs no eren decisions dolentes de Jev. Eren coses que Jev no pot veure ni fer: com que només tria, tot el que no és triar ho ha de fer el harness. I en vaig trobar moltes:
+
+- **Coses que no veu.** Caixes de text sense detectar: la blava, la grisa i la pantalla negra del *whiteout* (quan perds un combat). El joc esperava una A i el harness creia que podia caminar.
+- **Coses que no sap de la ROM.** El codi de la ROM catalana és en altres adreces que el de la castellana. Els punters del menú de combat eren els de la castellana: combatia a cegues prement A, i va entrar en un bucle de "no li queden PP".
+- **Coses que no pot fer.** Navegar sense quedar-se en bucles de portes, entrenar (un Squirtle de nivell 5 no aguanta el bosc), curar, o sortir d'un menú encallat: el d'oblidar un moviment s'empassava tots els botons.
+- **Coses que no recorda.** Sense noms de mapa ni missió no sabia què era el paquet de l'Oak, i el flag de "paquet lliurat" es perdia en reprendre des d'un *save state*. Ara llegeixo el flag de la Pokédex.
+
+![Pantalla negra amb el missatge de whiteout: PERE va tornar corrents a casa seva per curar els seus Pokémon](/images/blog/jev-whiteout.webp)
+
+La imatge és el cas del *whiteout*: un text sobre fons negre que no s'assembla a cap caixa de diàleg que el harness conegués. Cada bloqueig d'aquests va ser una tanda de depuració al harness, no una decisió de Jev.
+
+## Qui juga de debò
+
+Al cicle 1000 de l'última tirada, 248 de 1.001 decisions eren de Jev: un 25%. La xifra compta cicles, no importància: una part s'explica perquè, en combat, quan només cal avançar text, el codi prem A sense cridar Jev.
+
+Jev fa de director d'alt nivell: tria objectius i portes. "Jev juga a Pokémon" és defensable en aquest sentit, no en el de "descobreix el joc".
+
+I aquí hi ha el que no vaig calcular quan vaig començar: l'esforç del harness. Veia un model que tria opcions i un joc per torns, i em semblava poca feina. Però Jev són vuit preguntes, i el harness són unes 2.500 línies de Python. I encara no sap usar el Centre Pokémon, la bossa ni canviar de Pokémon en combat, ni resoldre puzles, i cada ciutat nova demana noms i missions escrits a mà. Probablement, el harness necessita molta més feina de la que em pensava, i això forma part del resultat.
+
+## Jev i Claude Plays Pokémon
+
+Anthropic té Claude Plays Pokémon, el mateix joc amb un enfocament oposat: un agent amb context llarg, eines (`press_buttons`, `navigate_to`), notes que escriu ell mateix i resums, que raona en text.
+
+També carrega molta feina al harness; la diferència és què hi queda. Amb Jev hi queda tot menys triar. Amb un agent, el model assumeix part de la navegació, de la memòria i de les situacions noves, i probablement a canvi de més cost i menys control. No ho he mesurat: són impressions, no una comparació.
+
+## Conclusió
+
+Volia saber si Pokémon és el cas ideal per a un model com Jev. La resposta que he trobat és que no del tot, però amb matisos.
+
+No ho és per a un joc obert: cal entendre menús, descobrir llocs i improvisar quan les coses no encaixen, i això, en el meu harness, ho feia jo o ho feia el codi. Per a tasques repetibles, amb estat clar i opcions finites, el patró (un model ràpid decideix, el codi executa i la memòria viu al harness) sí que és una arquitectura vàlida i fàcil de depurar. Pokémon sembla senzill per al model, però no per a qui construeix el harness.
+
+Un model que només tria bé depèn que algú li prepari bé les opcions.
+
+## El codi
+
+El repo és [pmontp19/flama-roja-jev](https://github.com/pmontp19/flama-roja-jev). **La ROM no s'hi inclou.** Cal el teu propi dump de *Pokémon Edición Rojo Fuego* i aplicar-hi el patch català de [Flama Roja](https://tradusquare.es/proyectos/pokemon-flama-roja-fulla-verda/).

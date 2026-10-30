@@ -1,0 +1,89 @@
+---
+const W = 480;
+const steps = [
+  { y: 0, title: "RAM DEL JOC", desc: "posició, mapa, equip, text" },
+  { y: 150, title: "PAYLOAD", desc: "estat + 7 preguntes" },
+  { y: 300, title: "JEV", desc: "una crida: probabilitats", ac: true },
+  { y: 450, title: "POLÍTICA (CODI)", desc: "tradueix a accions" },
+  { y: 600, title: "EMULADOR", desc: "botons A, B, fletxes" },
+];
+---
+
+<figure class="fig">
+  <figcaption>
+    <b>El cicle de Jev</b>
+    <span>El model només tria · el codi llegeix, recorda i executa</span>
+  </figcaption>
+  <svg viewBox="0 0 720 700" role="img" aria-labelledby="fig-jev-cicle-title">
+    <title id="fig-jev-cicle-title">
+      Cicle del harness: es llegeix la RAM del joc, es construeix un payload amb
+      l'estat i set preguntes tipades, Jev respon amb probabilitats per opció,
+      la política en codi les converteix en accions i es premen els botons a
+      l'emulador. La memòria del harness, amb els mapes visitats i l'última
+      acció, torna al payload del cicle següent
+    </title>
+    <defs>
+      <marker
+        id="fig-jev-cicle-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path class="mk" d="M0 0L10 5L0 10z"></path>
+      </marker>
+      <marker
+        id="fig-jev-cicle-arrow-ac"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="5"
+        markerHeight="5"
+        orient="auto-start-reverse"
+      >
+        <path class="mk-ac" d="M0 0L10 5L0 10z"></path>
+      </marker>
+    </defs>
+
+    {steps.map((s) => (
+      <>
+        <rect
+          class={s.ac ? "box-ac" : "box"}
+          x="1"
+          y={s.y + 1}
+          width={W - 2}
+          height="98"
+        />
+        <text class={s.ac ? "t on-ac" : "t"} x="24" y={s.y + 44}>
+          {s.title}
+        </text>
+        <text class={s.ac ? "on-ac" : ""} x="24" y={s.y + 80}>
+          {s.desc}
+        </text>
+      </>
+    ))}
+    <g class="ln" marker-end="url(#fig-jev-cicle-arrow)">
+      <path d="M40 100V148"></path>
+      <path d="M40 250V298"></path>
+      <path d="M40 400V448"></path>
+      <path d="M40 550V598"></path>
+    </g>
+
+    <path
+      class="ln-ac dash"
+      d="M480 650H714V200H486"
+      marker-end="url(#fig-jev-cicle-arrow-ac)"
+    ></path>
+    <text class="ac b" x="500" y="386">
+      MEMÒRIA
+    </text>
+    <text class="ac" x="500" y="420">
+      world
+    </text>
+    <text class="ac" x="500" y="454">
+      last_action
+    </text>
+  </svg>
+</figure>
