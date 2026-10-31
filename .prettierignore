@@ -2,6 +2,7 @@
 dist/
 .astro/
 public/
+src/styles/geist-sans.css
 
 # Dependencies & lockfile
 node_modules/

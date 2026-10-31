@@ -11,5 +11,4 @@ declare module "htmldiff-js" {
 
 // `@fontsource/*` packages are imported only for their CSS side effects and
 // expose no module shape.
-declare module "@fontsource/geist-sans";
 declare module "@fontsource/geist-mono";
