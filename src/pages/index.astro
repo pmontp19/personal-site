@@ -38,8 +38,6 @@ const personSchema = {
   "@type": "Person",
   name: "Pere Montpeó",
   url: "https://peremontpeo.dev",
-  jobTitle: "AI Lead Engineer",
-  worksFor: { "@type": "Organization", name: "Goil" },
   address: {
     "@type": "PostalAddress",
     addressLocality: "Tarragona",
@@ -69,10 +67,6 @@ const personSchema = {
   <pre class="doc home-doc"><span class="title" aria-hidden="true">PERE MONTPEÓ</span> <span class="cursor" aria-hidden="true" />
 
 Enginyer de programari especialitzat en tot i en res. Actualment, fent que els ordinadors facin coses sols. Si no estic programant, segurament em trobaràs sobre la bicicleta, a la cuina o llegint.
-
-<span class="label">STATUS:</span> AI Lead Engineer @ Goil <span class="accent">· Actual</span>
-
-<span class="tilde">~~~</span>
 
 <span class="label">ÚLTIM APUNT:</span>
 {latest && (<a class="mdlink" href={`/blog/${getSlug(latest.id)}/`}>{latest.data.title}</a>)}
