@@ -1,0 +1,10 @@
+// Worker "web" de Cloudflare (Workers Builds): serveix el build estàtic d'Astro.
+// `previews` (pot ser buit) cal perquè `wrangler preview` creï previews de les PRs.
+{
+  "name": "web",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+  },
+  "previews": {},
+}
