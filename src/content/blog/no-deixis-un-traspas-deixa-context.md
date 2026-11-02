@@ -12,7 +12,7 @@ No volia deixar això. Volia deixar una cosa a qui puguin preguntar.
 **En resum**
 
 - Un agent em va entrevistar amb més de cent preguntes en divuit rondes: visió, projectes, decisions, tasques en curs, què es trencarà primer.
-- Ho va contrastar amb la documentació, el codi i l'estat real de les tasques, i on no quadrava em tornava a preguntar.
+- Ho va contrastar amb la documentació, el codi, l'estat real de les tasques i les meves converses amb Claude Code dels últims mesos, i on no quadrava em tornava a preguntar.
 - Amb tot això he deixat un agent a qui l'equip pot preguntar quan jo ja no hi soc.
 
 ## El problema dels traspassos
@@ -29,7 +29,9 @@ Amb els agents passa una cosa semblant. Un agent sense context és com un compan
 
 En lloc d'escriure, vaig fer que un agent m'entrevistés.
 
-Primer va llegir la documentació dels projectes i dels productes, els repositoris i les tasques obertes. Amb això va preparar preguntes. Res de genèric com "explica'm el projecte X": preguntava pels forats. Aquí hi ha una branca a mitges, és per acabar o per llençar? Aquesta decisió de fa mesos, per què? Qui ho porta, ara que marxes?
+Primer va llegir la documentació dels projectes i dels productes, els repositoris i les tasques obertes. També les meves converses amb Claude Code dels últims mesos. Allà hi havia el que no queda enlloc més: les decisions que vaig prendre mentre programava, els canvis de rumb i els errors, amb el seu perquè. Moltes coses que jo ja havia oblidat hi eran explicades al moment en què van passar.
+
+Amb tot això va preparar preguntes. Res de genèric com "explica'm el projecte X": preguntava pels forats. Aquí hi ha una branca a mitges, és per acabar o per llençar? Aquesta decisió de fa mesos, per què? Qui ho porta, ara que marxes?
 
 Jo només havia de respondre. Ràpid, informal, com si m'ho preguntés un company al passadís. De vegades una línia. De vegades un paràgraf llarg explicant tot el que havia intentat aquell estiu i per què. De vegades "ni idea, això no és meu, pregunta-ho a qui ho porta".
 
@@ -68,7 +70,7 @@ No sé quant de temps el faran servir. Potser unes setmanes, fins que l'equip fa
 
 ## Què n'he après
 
-**El context no s'escriu, s'extreu.** Si m'haguessin demanat un document, hauria escrit una fracció del que va sortir amb les preguntes. Que algú et pregunti, i et repregunti quan no quadra, treu coses que no sabies que sabies.
+**El context no s'escriu, s'extreu.** Si m'haguessin demanat un document, hauria escrit una fracció del que va sortir amb les preguntes. Que algú et pregunti, i et repregunti quan no quadra, treu coses que no sabies que sabies. I si treballes amb agents, part d'aquest context ja l'has anat deixant sense adonar-te'n: les converses on decideixes, t'equivoques i rectifiques són el diari de la feina que mai vas escriure.
 
 **Un agent és tan bo com el context i la direcció que li dones.** Vaig provar una dotzena de models i els bons quedaven a poques dècimes. El que els separava era si tenien el *per què* i si sabien fins on arribar. Ho he anat veient tot l'any, amb [l'assistent del producte](/blog/assistent-ia-goil-capacitats) i amb [com programo ara](/blog/com-programo-ara): la major part de la feina és preparar el context.
 
