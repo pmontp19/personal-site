@@ -1,5 +1,5 @@
 ---
-title: "No deixis un traspàs, deixa context"
+title: "Me'n vaig, però el meu fantasma es queda"
 description: "Quan vaig marxar de Goil, en lloc d'escriure un traspàs vaig deixar que un agent m'entrevistés amb més de cent preguntes i ho contrastés amb el codi. Ara l'equip pot preguntar-li què faria jo. Per què el context i la direcció valen més que un document."
 date: 2026-11-01
 draft: false
@@ -7,7 +7,7 @@ draft: false
 
 El 30 d'octubre va ser el meu últim dia a [Goil](https://goil.app). Quan marxes d'una empresa, toca fer el traspàs. Tots sabem com acaba: un document llarg, escrit a correcuita l'última setmana, que algú obre un cop, hi passa la vista per sobre i no torna a obrir mai més. Quan el necessiten de veritat, sis mesos després, ja no se'n recorden o no hi troben la resposta.
 
-No volia deixar això. Volia deixar una cosa a qui puguin preguntar.
+No volia deixar això. Volia deixar una cosa a qui puguin preguntar. Un fantasma, dels que ajuden.
 
 **En resum**
 
@@ -66,7 +66,7 @@ L'equip el té on ja és: el xat on parlem cada dia. Li pregunten com em pregunt
 
 Qui treballa amb un agent de programació el pot instal·lar al seu, i aleshores l'agent té el meu context mentre toca el codi: sap per què una cosa és com és abans de canviar-la.
 
-No sé quant de temps el faran servir. Potser unes setmanes, fins que l'equip faci seves les coses que portava. Potser més. També he deixat escrit com desmuntar-lo quan ja no aporti res, perquè no es quedi oblidat fent soroll.
+No sé quant de temps el faran servir. Potser unes setmanes, fins que l'equip faci seves les coses que portava. Potser més. També he deixat escrit com desmuntar-lo quan ja no aporti res, perquè no es quedi rondant pels passadissos fent soroll.
 
 ## Què n'he après
 

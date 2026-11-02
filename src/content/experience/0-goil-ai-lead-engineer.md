@@ -1,6 +1,7 @@
 ---
 company: "Goil"
 startDate: 2025-07-01
+endDate: 2026-10-30
 tags: ["AI agents", "LLM", "RAG", "MCP", "Evals", "FinOps", "Sandboxes", "Multitenancy", "TypeScript"]
 ca:
   role: "AI Lead Engineer"
