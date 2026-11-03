@@ -141,5 +141,3 @@ Per deixar treballar agents sols calen quatre coses, i totes són feina de dalt 
 **Mesurar l'autonomia, no suposar-la.** Les regles que frenen l'agent també són regles, i sense dades no les veus.
 
 La regla de decisió que en trauria: especialitza el harness on la tasca està més enllà del que el model fa sol, i poda la resta a cada model nou. Les tècniques concretes caduquen. L'única peça que es fa més forta amb cada model que surt és l'eval, perquè cada model nou és una passada gratis contra el teu criteri. Els actius més duradors del meu repo no són tècnics sinó epistèmics: el registre de cerques sense resultat, els nivells de prova, la font oral documentada. Gent que sap de l'ofici escrivint els criteris amb què es jutja la feina. El model arriba i passa; el criteri es queda.
-
-El flux de feina d'aquest projecte el vaig explicar a [Com programo ara](/blog/com-programo-ara), i la filosofia de verificació, a [Cobertura no és verificació](/blog/cobertura-no-es-verificacio).
