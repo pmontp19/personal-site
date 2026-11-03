@@ -2,7 +2,10 @@
 title: "Les regles que els agents no es poden saltar: el harness vertical de la meva genealogia"
 description: "Un tuit em va donar el nom (harness vertical) i un altre el criteri (la piràmide invertida). Com vaig convertir en barreres les regles en prosa del projecte de genealogia, per què les barreres també s'han de provar, i què vaig aprendre quan vaig deixar els agents sols dies seguits."
 date: 2026-11-01
-draft: true
+draft: false
+hairline:
+  name: piramide
+  alt: "Quatre lloses apilades en piràmide invertida: a dalt la més ampla, el codi, que és l'única ressaltada; cada capa per sota és més estreta, fins a la punta de baix, la revisió humana."
 ---
 
 Al post de [gedlint](/blog/gedlint) vaig deixar escrita una frase que no he deixat de rumiar: el pitjor mode de fallada d'un gate és un build verd que no ha validat res. Parlava d'un linter, però el problema és més gran.
@@ -55,6 +58,29 @@ El tuit plantejava quatre capes, de més a menys esforç:
 2. **Anàlisi estàtica.** Linters, tests, CI.
 3. **Prosa.** Regles, instruccions, skills, el mínim indispensable.
 4. **Revisió humana.** La que menys escala, al final de tot.
+
+<figure style="margin:1.5rem 0">
+<svg viewBox="0 0 640 380" role="img" aria-labelledby="piramide-esquema" style="width:100%;height:auto;font-family:var(--mono);font-size:15px">
+<title id="piramide-esquema">La piràmide invertida: quatre capes, de més a menys esforç. A dalt i ampla, el codi; després l'anàlisi estàtica; la prosa, el mínim; i a la punta de baix, la revisió humana.</title>
+<g fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--muted)">
+<polygon points="58,48 582,48 320,356" vector-effect="non-scaling-stroke"/>
+<line x1="123.5" y1="125" x2="516.5" y2="125" vector-effect="non-scaling-stroke"/>
+<line x1="189" y1="202" x2="451" y2="202" vector-effect="non-scaling-stroke"/>
+<line x1="254.5" y1="279" x2="385.5" y2="279" vector-effect="non-scaling-stroke"/>
+<line x1="612" y1="352" x2="612" y2="58" stroke-dasharray="2 6" vector-effect="non-scaling-stroke"/>
+<polygon points="612,48 605,64 619,64"/>
+</g>
+<g fill="currentColor" style="color:var(--muted)" text-anchor="middle">
+<text x="320" y="96">codi</text>
+<text x="320" y="173">anàlisi estàtica</text>
+<text x="320" y="250">prosa</text>
+<text x="320" y="314" font-size="13">revisió</text>
+<text x="320" y="329" font-size="13">humana</text>
+<text x="636" y="40" text-anchor="end" font-size="12">més esforç</text>
+<text x="636" y="372" text-anchor="end" font-size="12">menys escala</text>
+</g>
+</svg>
+</figure>
 
 Vaig demanar a un agent que revisés el harness amb aquest criteri, contrastant l'historial del repo amb la taula d'incidents on cada regla té al costat l'incident que la va fer néixer. El patró era net: quan la regla vivia al codi, el problema no tornava; quan només vivia en prosa, tornava una vegada i una altra.
 
