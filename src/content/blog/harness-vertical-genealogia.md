@@ -1,7 +1,7 @@
 ---
 title: "Les regles que els agents no es poden saltar: el harness vertical de la meva genealogia"
 description: "Un tuit em va donar el nom (harness vertical) i un altre el criteri (la piràmide invertida). Com vaig convertir en barreres les regles en prosa del projecte de genealogia, per què les barreres també s'han de provar, i què vaig aprendre quan vaig deixar els agents sols dies seguits."
-date: 2026-11-01
+date: 2026-11-04
 draft: false
 hairline:
   name: piramide
