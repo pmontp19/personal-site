@@ -1,16 +1,16 @@
 ---
 title: "mailcow-agent: l'API d'AgentMail sobre el meu propi servidor de correu"
 description: "Per què he fet un servei que dona bústies de correu als agents sobre mailcow, per què copia l'API d'AgentMail en lloc d'inventar-ne una, i com l'especificació d'un altre va fer de revisor d'un projecte fet en poques hores amb un agent."
-date: 2026-10-26
-draft: true
+date: 2026-11-06
+draft: false
 hairline:
   name: bustia
   alt: "Un bloc de quinze bústies de replà, cadascuna amb una placa de punts que diu quina clau l'ha creada. En triar-ne una, només s'obren les bústies de la mateixa clau, amb una carta a dins; les altres queden tancades."
 ---
 
-<!-- PERE: obre amb una escena real, si en tens una (per exemple, l'agent que et demanava un codi de verificació que t'havia arribat al correu). -->
+L'agent familiar de casa té una bústia pròpia per gestionar factures i notificacions de l'escola. De moment, només hi podem escriure la meva dona i jo: no vull que un correu de desconeguts li coli instruccions.
 
-Els agents cada cop necessiten més una adreça de correu. Per donar-se d'alta a un servei, rebre un codi de verificació, llegir una factura o enviar-me un resum. Donar-los la meva bústia no és una opció: un agent amb accés al meu correu ho pot llegir tot, i qualsevol que li escrigui li pot donar instruccions.
+És un cas concret d'una necessitat cada cop més comuna: els agents han de poder donar-se d'alta a serveis, rebre codis de verificació, llegir factures o enviar-me resums. Donar-los la meva bústia no és una opció: un agent amb accés al meu correu ho pot llegir tot, i qualsevol que m'escrigui li pot donar instruccions.
 
 [AgentMail](https://agentmail.to) resol això com a servei: una API per crear bústies per a agents, enviar, rebre i reaccionar amb webhooks. Està ben pensat, però les bústies viuen a la infraestructura d'un tercer. Jo ja tinc un servidor de correu, un [mailcow](https://mailcow.email), i la mateixa regla que a [pdrop](/blog/pdrop): **res surt a internet si no ho decideixo jo**. Així va néixer mailcow-agent.
 
@@ -21,8 +21,6 @@ Els agents cada cop necessiten més una adreça de correu. Per donar-se d'alta a
 - Cada agent té la seva clau, i només veu les bústies que ha creat ell. A la meva xarxa, fins i tot se la pot fer sol.
 
 ## Per què copiar una API
-
-<!-- PERE: confirma que el primer impuls va ser fer-ne una de pròpia. -->
 
 El primer impuls era fer una API pròpia, petita i a la meva mida. Hauria estat un error. Una API pròpia vol dir escriure els clients, la documentació i el servidor MCP, i que cap agent la conegui.
 
@@ -50,19 +48,17 @@ El servei només escolta a la meva tailnet, la xarxa privada de [Tailscale](http
 
 Ara els agents escriuen el codi i també els tests, i ja vaig explicar per què [la cobertura no és verificació](/blog/cobertura-no-es-verificacio). Aquí tenia una cosa millor que els tests de l'autor: un contracte escrit per algú altre.
 
-Cada resposta dels tests es valida contra l'OpenAPI: codi d'estat, tipus de contingut i esquema JSON. Si un camp no hi és o té el tipus que no toca, el test falla, encara que el test no ho miri. Un altre test recorre les 149 operacions de l'especificació, i cadascuna o està implementada o és en una llista d'excepcions amb el motiu. N'hi ha 16: l'alta autònoma d'agents i AgentID, que depenen dels serveis d'AgentMail i no tenen sentit en un servidor propi.
+Cada resposta dels tests es valida contra l'OpenAPI: codi d'estat, tipus de contingut i esquema JSON. Si un camp no hi és o té el tipus que no toca, el test falla, encara que el test no ho miri. Un altre test recorre les 149 operacions de l'especificació, i cadascuna o està implementada o és en una llista d'excepcions amb el motiu. N'hi ha 16; AgentID n'és un exemple, perquè depèn dels serveis d'AgentMail i no té sentit en un servidor propi.
 
 Els tests de l'agent passaven tots. Llavors hi vam posar [Schemathesis](https://schemathesis.readthedocs.io), que genera peticions a partir de l'especificació i les llança contra cada operació. A la primera passada va trobar una adreça amb un salt de línia que injectava capçaleres i tombava el servei amb un error 500. També caràcters de control que trencaven la cerca, i dos `client_id` buits que es trepitjaven. Cap test els havia buscat, perquè cap test sabia que calia.
 
 ## Com ha anat
 
-Tot el projecte és una sola sessió de Claude Code al núvol, amb la manera de treballar que explicava a [com programo ara](/blog/com-programo-ara). Va ser feina de poques hores: 19 commits, unes 7.300 línies de codi i 3.500 de tests.
+Tot el projecte va sortir d'una sola sessió de Claude Code al núvol, amb la manera de treballar que explicava a [com programo ara](/blog/com-programo-ara). En poques hores: 19 commits, unes 7.300 línies de codi i 3.500 de tests.
 
-Primer va venir el nucli: l'API, la compatibilitat amb el servidor MCP i dues revisions, una de seguretat i una d'arquitectura. La de seguretat partia d'una idea senzilla: el correu és entrada hostil, perquè qualsevol pot escriure a una bústia. Ara un correu fet per fer mal no pot bloquejar la sincronització, els PDF adjunts es llegeixen en un procés fill amb límit de temps i memòria, i les llistes de remitents permesos miren l'autenticació que ja fa rspamd, no el `From`, que es falsifica en una línia. Cada punt que va trobar té el seu test de regressió.
+Primer vam aixecar el nucli —l'API i la compatibilitat amb MCP— i el vam passar per dues revisions, de seguretat i d'arquitectura. La de seguretat va partir d'una premissa concreta: qualsevol pot escriure a una bústia. Va trobar, entre altres coses, que un correu malformat podia aturar la sincronització i que es confiava en el `From`, una capçalera falsificable. Vam corregir els problemes i afegir un test de regressió per a cada un.
 
-La segona part va començar sense codi: un pla amb les funcionalitats que faltaven, cadascuna amb els seus tests. Després, quatre branques en paral·lel: supressió de rebots, text dels adjunts, la guia de desplegament i les claus per agent. Del pla tancat a l'última fusió, amb conflictes en tres fitxers, van passar uns vint minuts.
-
-<!-- PERE: confirma que la decisió d'ajornar l'IMAP va ser teva. -->
+Després vaig fer un pla per a les peces que faltaven, amb els tests definits abans d'implementar-les. El vam repartir en quatre branques paral·leles: rebots, text dels adjunts, desplegament i claus per agent. En uns vint minuts vam integrar-les totes, tot i haver de resoldre conflictes en tres fitxers.
 
 La decisió que més m'agrada del pla és una que diu que no. AgentMail ofereix accés per IMAP i SMTP, i el pla ho tenia dissenyat. Ho vaig ajornar: els meus agents fan servir el SDK o l'MCP, i si vull llegir la bústia d'un agent ja la tinc al webmail. Ho faré el dia que una eina que només parli IMAP ho necessiti.
 
@@ -80,7 +76,7 @@ I si no vull que l'agent enviï res pel seu compte, una clau amb `draft_create` 
 
 Tot i això, encara m'havia de posar jo pel mig: crear una clau per a cada agent abans que pogués fer res. Quan ho vaig provar, no tenia gaire sentit. Són agents meus, a la meva xarxa, i soc jo qui els diu que es creïn una bústia quan necessitin enviar un correu.
 
-AgentMail ja ho preveu: té una alta per a agents, `POST /v0/agent/sign-up`, que no demana cap clau. L'agent tria un nom i rep una clau i una bústia. Per evitar abusos, no pot enviar res fins que una persona el verifica amb un codi que li arriba per correu. A casa, aquesta verificació ja la fa la tailnet: si l'agent hi arriba, és meu.
+AgentMail ja ho preveu: té una alta per a agents, `POST /v0/agent/sign-up`, que no demana cap clau. L'agent tria un nom i rep una clau i una bústia. Per evitar abusos, si hi ha una persona vinculada, l'agent només li pot escriure fins que ella el verifica amb un codi rebut per correu; sense cap persona vinculada, no pot enviar. A casa no em cal aquest pas: l'accés a la tailnet ja limita quins agents poden arribar al servei.
 
 Així que mailcow-agent implementa la mateixa ruta, sense el codi. Està apagada per defecte, perquè si un dia el servei sortís a internet, qualsevol podria crear bústies al meu domini. L'agent rep una clau de provisió amb un límit de tres bústies, i el `/skill.md` li explica com fer-ho. Ara n'hi ha prou amb dir-li a un agent «llegeix el `/skill.md` i fes-te una bústia».
 
@@ -90,8 +86,6 @@ Per no perdre el fil de qui s'ha apuntat, hi ha una pàgina `/admin` que només 
 
 ## Com el faig servir
 
-<!-- PERE: quin agent, quina bústia, quin correu ha rebut o enviat de debò. Dues o tres frases concretes. -->
+Ara ja ho fan servir dos agents: el familiar, amb aquesta restricció de remitents, i el de genealogia, que també té la seva pròpia bústia.
 
-Aquesta API va sortir en poques hores, i no perquè l'agent sigui ràpid, sinó perquè algú altre ja havia escrit el contracte i els tests el feien complir. Ara els meus agents tenen la seva bústia, al meu servidor, i cap no pot llegir la dels altres. La pròxima vegada que un agent necessiti una cosa nova, primer buscaré si algú ja n'ha escrit l'especificació.
-
-<!-- PERE: si el repo es fa públic, enllaça'l aquí. -->
+Aquesta API va sortir en poques hores, i no perquè l'agent sigui ràpid, sinó perquè algú altre ja havia escrit el contracte i els tests el feien complir. Ara cada agent té la seva bústia al meu servidor, i cap no pot llegir la dels altres. La pròxima vegada que un agent necessiti una cosa nova, primer buscaré si algú ja n'ha escrit l'especificació.
