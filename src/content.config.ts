@@ -4,17 +4,29 @@ import { glob } from "astro/loaders";
 const blog = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
   schema: ({ image }) =>
-    z.object({
-      title: z.string(),
-      description: z.string(),
-      date: z.coerce.date(),
-      lastUpdated: z.coerce.date().optional(),
-      draft: z.boolean().optional(),
-      image: image().optional(),
-      imageAlt: z.string().optional(),
-      // figura Hairline destacada (public/hairline/<name>.js) i la seva captura per a l'OG
-      hairline: z.object({ name: z.string(), alt: z.string() }).optional(),
-    }),
+    z
+      .object({
+        title: z.string(),
+        description: z.string(),
+        date: z.coerce.date(),
+        lastUpdated: z.coerce.date().optional(),
+        draft: z.boolean().optional(),
+        image: image().optional(),
+        imageAlt: z.string().trim().min(1).optional(),
+        tags: z
+          .array(z.enum(["agents-ia", "projectes", "enginyeria"]))
+          .default([]),
+        // figura Hairline destacada (public/hairline/<name>.js) i la seva captura per a l'OG
+        hairline: z.object({ name: z.string(), alt: z.string() }).optional(),
+      })
+      .refine((data) => !data.image || !!data.imageAlt, {
+        message: "Cal imageAlt quan hi ha una imatge",
+        path: ["imageAlt"],
+      })
+      .refine((data) => !data.lastUpdated || data.lastUpdated >= data.date, {
+        message: "lastUpdated no pot ser anterior a date",
+        path: ["lastUpdated"],
+      }),
 });
 
 // font única de l'experiència: la pàgina /experiencia i els CV (ca/en/es)

@@ -3,7 +3,10 @@ import fs from "node:fs";
 import { OGImageRoute } from "../../../lib/og-image";
 import { getSlug } from "../../../utils/date";
 
-const blogEntries = await getCollection("blog");
+const blogEntries = await getCollection(
+  "blog",
+  ({ data }) => data.draft !== true,
+);
 const pages = Object.fromEntries(
   blogEntries.map(({ id, data }) => [getSlug(id), data]),
 );

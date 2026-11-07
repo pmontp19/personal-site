@@ -58,3 +58,17 @@ imatges Open Graph de cada apunt.
 Cada PR a `main` passa per [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
 instal·lació amb lockfile, `format:check`, `lint`, `check` i `build`. Vegeu
 [`docs/plans/ci-checks-roadmap.md`](docs/plans/ci-checks-roadmap.md).
+
+### Flux editorial dels apunts
+
+Els apunts viuen a `src/content/blog/` en Markdown o MDX. `date` és la data
+original de publicació; afegeix `lastUpdated` quan una revisió canviï de manera
+significativa el contingut útil, sense canviar `date`. Les correccions menors no
+necessiten actualitzar-la. `draft: true` reserva l'apunt per a desenvolupament i
+l'exclou de les sortides públiques. Una imatge de portada requereix `imageAlt`
+descriptiu. Opcionalment, `tags` accepta `agents-ia`, `projectes` i `enginyeria`;
+utilitza només els temes que ajudin a trobar l'apunt.
+
+Després de `pnpm build`, `pnpm check:blog-output` comprova URLs duplicades,
+la presència dels articles publicats i l'absència dels esborranys a les sortides.
+La mateixa comprovació s'executa a CI.

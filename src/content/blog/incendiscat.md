@@ -1,4 +1,5 @@
 ---
+tags: [projectes]
 title: "Incendis Catalunya: una integració de Home Assistant"
 description: "He construït i publicat ha-incendiscat, una integració de Home Assistant per seguir incendis forestals a Catalunya en temps real, i he desglossat quant m'ha costat en tokens fer-ho amb Claude Code."
 date: 2026-07-06

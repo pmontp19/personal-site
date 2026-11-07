@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { tagNames } from "../../utils/blog";
 import { formatDate, getSlug } from "../../utils/date";
 
 const allPosts = (
@@ -24,6 +25,15 @@ const allPosts = (
   <p class="tilde" aria-hidden="true">
     ~~~
   </p>
+
+  <nav aria-label="Temes dels apunts">
+    Temes:{" "}
+    {Object.entries(tagNames).map(([tag, name]) => (
+      <a class="mdlink" href={`/blog/tema/${tag}/`}>
+        {name}
+      </a>
+    ))}
+  </nav>
 
   <ul class="term-list">
     {allPosts.map((post) => (
@@ -51,6 +61,12 @@ const allPosts = (
     max-width: 60ch;
   }
 
+  nav {
+    margin-bottom: 1.5rem;
+  }
+  nav a {
+    margin-left: 0.5rem;
+  }
   .term-list {
     list-style: none;
     margin: 0;

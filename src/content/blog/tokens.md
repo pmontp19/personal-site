@@ -1,4 +1,5 @@
 ---
+tags: [enginyeria]
 title: "Autenticació i seguretat a les aplicacions web"
 description: "Com protegir els teus tokens d'accés i de refresc amb HTTP Only Cookies i encriptació"
 date: 2025-07-27

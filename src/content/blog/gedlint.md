@@ -1,4 +1,5 @@
 ---
+tags: [projectes, enginyeria]
 title: "No tenia un problema de genealogia, tenia un problema de software"
 description: "Com vaig passar d'un script de Python a gedlint, un linter en Rust per a GEDCOM amb regles, reparacions i un ratchet per adoptar-lo sobre un arbre brut."
 date: 2026-10-03
