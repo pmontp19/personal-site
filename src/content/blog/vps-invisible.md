@@ -111,10 +111,11 @@ RestartSec=3
 
 `systemctl daemon-reload`, i el següent reinici ja és tranquil. La moral per a qui posa SSH només a la IP de la VPN: **prova un reboot d'assaig abans de donar-ho per tancat**, i recorda que la consola web del proveïdor és la teva xarxa de seguretat si alguna cosa d'això es gira.
 
-## Què queda pendent
+## Una segona capa i les actualitzacions
 
-- Un **tallafoc del proveïdor sense regles d'entrada**, com a segona capa. Això afegeix protecció si algú modifica ufw per error. Tailscale sol funcionar encara que el UDP 41641 estigui bloquejat, perquè pot recórrer als seus relays DERP; però sense trànsit UDP directe pot perdre rendiment. No donis per fet que qualsevol tallafoc deixarà passar el trànsit entrant només perquè els dos extrems iniciïn connexions de sortida.
-- Fer **`apt upgrade` regularment**: `unattended-upgrades` cobreix les actualitzacions de seguretat configurades per a la distribució, però no necessàriament els paquets de tots els repositoris de tercers (com ara Docker).
+Un cop revisat el tallafoc de la màquina, vaig deixar també activa una segona capa al proveïdor. Així, si algun dia canvio una regla local per error, el trànsit continua filtrat abans d'arribar al servidor. Tailscale pot recórrer als seus relays DERP quan no és possible establir una connexió UDP directa, tot i que això pot reduir-ne el rendiment.
+
+També vaig deixar automatitzades les actualitzacions de seguretat, després de revisar quins orígens cobreix la configuració. Activar `unattended-upgrades` no garanteix que s'hi incloguin els paquets de tercers: cal comprovar-ho.
 
 ## El resultat, per als escàners
 

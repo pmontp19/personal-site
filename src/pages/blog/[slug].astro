@@ -10,7 +10,7 @@ import geistCore from "../../assets/fonts/geist-sans-core.woff2?url";
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
   return blogEntries
-    .filter((entry) => entry.data.draft !== true)
+    .filter((entry) => import.meta.env.DEV || entry.data.draft !== true)
     .map((entry) => ({
       params: { slug: getSlug(entry.id) },
       props: { entry },
