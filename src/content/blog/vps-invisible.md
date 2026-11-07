@@ -1,13 +1,13 @@
 ---
 title: "El meu VPS invisible: guia de camp"
-description: "Un tuit sobre tancar tots els ports d'un VPS em va fer l'auditoria. Escanejos des de fora, la trampa del loopback, el DNAT de Docker, serveis morts i la cursa sshd-tailscaled de l'arrencada."
+description: "Un tuit sobre tancar tots els ports d'un VPS em va fer l'auditoria. Escanejos des de fora, la trampa del loopback, el DNAT de Docker i la cursa sshd-tailscaled de l'arrencada."
 date: 2026-11-07
 draft: true
 ---
 
 Un tuit d'en [Flavio Copes](https://x.com/flaviocopes) de dijous: *«Every open port on your VPS is being scanned right now. I closed all of them, even SSH»*. L'[article de Tailscale](https://flaviocopes.com/tailscale/) que l'acompanya explica com deixar un servidor sense cap port obert a internet i entrar-hi igualment, per una xarxa privada.
 
-En comptes de seguir el tutorial com un receptari, em vaig fer la pregunta contrària: **si el tuit parlés del meu VPS, on hi seria jo?** Un Droplet a Hetzner amb Ubuntu 24.04 que fa de traster i motlle de projectes personals: contenidors Docker, túnels de Cloudflare, agents que corren de matinada. Aquest post és la guia de camp del que vaig trobar i del que vaig arreglar. Tot l'hi he executat contra el servidor real, amb la sortida real dels comandos.
+En comptes de seguir el tutorial com un receptari, em vaig fer la pregunta contrària: **si el tuit parlés del meu VPS, on hi seria jo?** Vaig agafar un dels meus servidors, un Ubuntu 24.04 amb Docker, túnels i serveis que corren de matinada, i li vaig fer l'auditoria sencera. Aquest post és la guia de camp del que vaig trobar i del que vaig arreglar, vàlid per a qualsevol VPS: tot el que hi ha aquí baix l'he executat contra una màquina real, amb la sortida real dels comandos.
 
 ## Primer, saber on ets
 
@@ -19,7 +19,7 @@ Abans de tancar res, cal saber què hi ha obert. Tres fonts, de la més immediat
 ss -tulpn
 ```
 
-La columna d'adreça ho és tot: `127.0.0.1` és local, `100.x.y.z` és la IP de la meva tailnet de Tailscale, i `0.0.0.0` és «qualsevol que truqui». Aquesta última categoria és la que cal justificar una a una.
+La columna d'adreça ho és tot: `127.0.0.1` és local, la `100.x.y.z` és la IP de la tailnet de Tailscale, i `0.0.0.0` és «qualsevol que truqui». Aquesta última categoria és la que cal justificar una a una.
 
 **Què deixa entrar el firewall**, amb les polítiques per defecte, que sovint valen més que les regles:
 
@@ -27,7 +27,7 @@ La columna d'adreça ho és tot: `127.0.0.1` és local, `100.x.y.z` és la IP de
 sudo ufw status verbose
 ```
 
-Al meu: `deny (incoming)` per defecte i només tres regles, totes sobre `tailscale0`. La base ja era bona.
+Si la política d'entrada no és `deny`, aquest és el primer arreglet. A partir d'aquí, cada excepció hauria de tenir un motiu escrit al costat.
 
 **Què veuen els altres.** El que tu veus localment i el que veu un escàner des de Bombai no són el mateix. Per escanejar des de fora sense muntar res, [check-host.net](https://check-host.net) té una API tan honesta com bruta:
 
@@ -40,7 +40,7 @@ curl -s -H 'Accept: application/json' \
   'https://check-host.net/check-result/<request_id>'
 ```
 
-Quan el port està bé tancat, la resposta és una llista de `Connection timed out`: no hi ha ni rebuig, ni res. Filtrat. La [InternetDB de Shodan](https://internetdb.shodan.io) també serveix per saber què han vist els seus escàners a la teva IP durant l'última setmana:
+Quan el port està bé tancat, la resposta és una llista de `Connection timed out`: no hi ha ni rebuig, ni banner, ni res. Filtrat. La [InternetDB de Shodan](https://internetdb.shodan.io) també serveix per saber què han vist els seus escàners a la teva IP durant l'última setmana:
 
 ```bash
 curl -s https://internetdb.shodan.io/203.0.113.10
@@ -67,21 +67,17 @@ La manera ràpida de saber si te'n cases és llegir els destins del DNAT:
 sudo iptables -t nat -S DOCKER | grep DNAT
 ```
 
-Cada línia diu a quina adreça local respon el contenidor. Al meu, totes apuntaven a on tocava: `127.0.0.1` per a serveis que només ús jo, i la IP de la tailnet per al LanguageTool que faig servir des del portàtil. **Cap línia amb `0.0.0.0` ni la IP pública.** Si en veus una, aquest contenidor és públic, t'agradi o no.
+Cada línia diu a quina adreça local respon el contenidor. Si tot apunta a `127.0.0.1` o a una adreça privada teva, perfecte. **Si en veus cap amb `0.0.0.0` o la IP pública, aquest contenidor és públic**, t'agradi o no, i cap regla d'ufw el farà marxa enrere.
 
-## Serveis morts: tallar abans que el firewall
+## Tot allò que escolta i ningú no pot explicar per què
 
-Amb la sortida de `ss` al davant, vaig fer l'exercici honest: per cada procés que escoltava a `0.0.0.0`, preguntar-me qui és i si el necessito. Tres no:
+Amb la sortida de `ss -tulpn` al davant, l'exercici honest és simple: per cada procés que escolta — sobretot els que ho fan a `0.0.0.0` — preguntar-se qui és i per què hi és. En un servidor que porta uns anys vivint sempre hi surten coses: un agent d'una plataforma que es va provar i es va abandonar, una eina d'administració que ja no s'obre ningú, un dimoni que la distro hi va posar «per si de cas». Es desinstal·len amb el seu gestor (`pm2 delete` i `npm uninstall -g`, `systemctl disable --now` i esborrar la unitat, el `snap remove` o l'`apt purge` que toqui).
 
-- un agent d'una plataforma que vaig provar i vaig abandonar, arrencat per PM2 amb auto-restart;
-- un IDE headless amb el seu servei de systemd i 597 MB a `/opt`;
-- **CUPS**, un dimoni d'impressió, en un servidor sense impressores, en un datacenter on no hi ha res per imprimir enlloc.
-
-Cada un amb el seu desinstal·lador: `pm2 delete` + `npm uninstall -g`, `systemctl disable --now` + esborrar la unitat i el binari, `snap remove cups`. El punt no és que ara siguin perillós (els cobreix el `deny` per defecte), sinó que **cada servei mort és superfície d'atac que espera el dia que algú estriqui una regla d'ufw**. El servidor més segur és el que té menys coses.
+El punt no és que siguin perillós **avui** amb el firewall ben posat: és que cada servei que ningú pot justificar és superfície d'atac esperant el dia que algú estriqui una regla, que un dimoni faci un bind que no toca o que un paquet amb una vulnerabilitat segueixi instal·lat anys després d'haver-lo deixat d'usar. **El servidor més segur és el que té menys coses**, i allò que no serveix sempre pot esdevenir un vector.
 
 ## La cursa de l'arrencada (el descobriment valent)
 
-Fins aquí tot anava tornat, i de fet ja complia la tesi de l'article: sshd no escoltava a la IP pública, sinó només a la de la tailnet:
+La meva màquina ja complia la tesi de l'article per bona part: sshd no escoltava a la IP pública, sinó només a la de la tailnet:
 
 ```text
 # /etc/ssh/sshd_config.d/ssh-tailscale.conf
@@ -89,7 +85,7 @@ ListenAddress 100.x.y.z
 ListenAddress fd7a:115c:a1e0::133:fb4c
 ```
 
-El kernel nou de l'`apt upgrade` demanava un reinici, i el reinici em va donar la lliçó del dia: **`ssh.service` mort a l'arrencada**.
+El kernel nou d'un `apt upgrade` demanava un reinici, i el reinici em va donar la lliçó del dia: **`ssh.service` mort a l'arrencada**.
 
 ```text
 sshd[1174]: error: Bind to port 22 on 100.x.y.z failed: Cannot assign requested address.
@@ -118,11 +114,11 @@ RestartSec=3
 ## El que queda pendent
 
 - Un **cloud firewall del proveïdor sense cap regla d'entrada** — la segona capa de l'article. Que trenqui tot a nivell de datacenter encara que algú estriqui ufw. El UDP 41641 de Tailscale no en pateix: ambdós costats fan dial-out, i un firewall stateful deixa passar el que és resposta d'una connexió establerta.
-- L'**`apt upgrade` regular**: `unattended-upgrades` cobreix la seguretat d'Ubuntu, però els paquets del repositori de Docker no hi caiguen mai.
+- L'**`apt upgrade` regular**: `unattended-upgrades` cobreix la seguretat de la distro, però els paquets de repositoris de tercers (Docker, per exemple) no hi caiguen mai.
 
 ## El resultat, per als escàners
 
-Ara mateix, des de nodes externs, la IP pública del servidor respon això en cada port que he provat: `Connection timed out`. Ni rebuig ni banner ni res. L'única cosa que té oberta és el UDP de WireGuard, que és exactament el disseny: no és una porta, és una paret que només reconeix claus.
+Al final, des de nodes externs, cada port de la IP pública respon el mateix: `Connection timed out`. Ni rebuig ni banner ni res. L'única cosa oberta és el UDP de WireGuard, que és exactament el disseny: no és una porta, és una paret que només reconeix claus.
 
 La guia de camp, en una llista:
 
@@ -134,4 +130,4 @@ curl -s https://internetdb.shodan.io/<la-teva-ip>        # què veuen els altres
 # escaneig extern per port (check-host.net), i confiar només en això
 ```
 
-I la regla que ho resumeix: **cap servei a `0.0.0.0` que no sàpigues justificar**, i tot el que és teu — SSH, panells, bases de dades — a la IP de la tailnet o a `127.0.0.1`. Gràcies a en Flavio per l'empenta.
+I les dues regles que ho resumeixen: **cap servei a `0.0.0.0` que no sàpigues justificar** — i el que no serveix, fora — i tot el que és teu, SSH, panells i bases de dades, a la IP de la tailnet o a `127.0.0.1`. Gràcies a en Flavio per l'empenta.
