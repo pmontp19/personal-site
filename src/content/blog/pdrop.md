@@ -1,4 +1,5 @@
 ---
+tags: [projectes]
 title: "pdrop: el meu Artifacts personal"
 description: "Per què m'he fet un servei per publicar l'HTML que em generen els agents a una URL privada, com és per dins, com el va construir un equip d'agents i com el faig servir."
 date: 2026-10-11

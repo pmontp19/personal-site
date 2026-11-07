@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
+    "check:blog-output": "node scripts/check-blog-output.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

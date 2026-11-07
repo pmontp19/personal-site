@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import HairlineFigure from "../../components/blog/HairlineFigure.astro";
 import { getCollection, render } from "astro:content";
+import { tagNames } from "../../utils/blog";
 import { calculateReadingTime } from "../../utils/readingTime";
 import { getSlug } from "../../utils/date";
 import geistCore from "../../assets/fonts/geist-sans-core.woff2?url";
@@ -104,6 +105,17 @@ function formatDate(date: Date): string {
       <span> · {readingTime}</span>
     </p>
 
+    {entry.data.tags.length > 0 && (
+      <p>
+        Temes:{" "}
+        {entry.data.tags.map((tag) => (
+          <a class="mdlink" href={`/blog/tema/${tag}/`}>
+            {tagNames[tag]}
+          </a>
+        ))}
+      </p>
+    )}
+
     {entry.data.hairline && (
       <div class="hero-hairline">
         <HairlineFigure {...entry.data.hairline} />
@@ -114,7 +126,7 @@ function formatDate(date: Date): string {
       <div class="hero-image">
         <Image
           src={entry.data.image}
-          alt={entry.data.imageAlt || entry.data.title}
+          alt={entry.data.imageAlt!}
           widths={[400, 800, 1200]}
           sizes="(max-width: 46rem) 100vw, 46rem"
         />

@@ -43,3 +43,6 @@ jobs:
       # llms.txt and the Open Graph images.
       - name: Build
         run: pnpm build
+
+      - name: Check blog output
+        run: pnpm check:blog-output

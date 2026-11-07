@@ -1,4 +1,5 @@
 ---
+tags: [enginyeria]
 title: "Descobrint Astro"
 description: "Com vaig descobrir Astro i per què funciona tan bé."
 date: 2025-04-28

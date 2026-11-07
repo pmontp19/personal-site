@@ -1,0 +1,43 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { publishedPosts, tagNames } from "../../../utils/blog";
+import { formatDate, getSlug } from "../../../utils/date";
+
+export async function getStaticPaths() {
+  const posts = await publishedPosts();
+  return Object.entries(tagNames).map(([tag, title]) => ({
+    params: { tag },
+    props: {
+      title,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag as keyof typeof tagNames))
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+const { title, posts } = Astro.props;
+---
+
+<Layout
+  title={`${title} | Apunts - Pere Montpeó`}
+  description={`Apunts sobre ${title.toLowerCase()}.`}
+  canonicalUrl={`https://peremontpeo.dev/blog/tema/${Astro.params.tag}/`}
+>
+  <a class="mdlink" href="/blog/">
+    ← tots els apunts
+  </a>
+  <h1 class="title">{title}</h1>
+  <ul>
+    {posts.map((post) => (
+      <li>
+        <time datetime={post.data.date.toISOString()}>
+          {formatDate(post.data.date)}
+        </time>{" "}
+        ·{" "}
+        <a class="mdlink" href={`/blog/${getSlug(post.id)}/`}>
+          {post.data.title}
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>

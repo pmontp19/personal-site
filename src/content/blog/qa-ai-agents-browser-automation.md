@@ -1,4 +1,5 @@
 ---
+tags: [agents-ia, enginyeria]
 title: "QA per a agents d'IA: on la visió es troba amb la realitat"
 description: "Com validar programàticament que el teu agent d'IA ha completat una tasca, i el meu recorregut per trobar l'equilibri entre control i cost amb Playwright MCP, Chrome DevTools MCP i agent-browser de Vercel."
 date: 2026-02-01
